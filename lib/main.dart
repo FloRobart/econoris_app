@@ -203,8 +203,8 @@ class _HomePageState extends State<HomePage> {
   bool _tableView = true;
   String _chartType = 'line';
   String _search = '';
-  String _sortField = 'operations_date';
-  bool _sortAsc = false;
+  final String _sortField = 'operations_date';
+  final bool _sortAsc = false;
   String _categoryFilter = 'Tous';
   int _perPage = 20;
   int _page = 0;
@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openAddModal() async {
-    final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog());
+    final res = await showDialog<Operation>(context: context, builder: (_) => const OperationEditDialog());
     if (res != null && _jwt != null) {
       final body = res.toJson();
       final resp = await ApiService.addOperation(_jwt!, body);
@@ -404,8 +404,12 @@ class _ProfilePageState extends State<ProfilePage> {
       final resp = await ApiService.getProfile(_jwt!);
       if (resp.statusCode == 200) {
         try { final j = jsonDecode(resp.body); setState((){ _email = j['email'] ?? _email; _name = j['name'] ?? _name; _nameC.text = _name ?? ''; _loading = false; }); } catch (e) { setState(()=> _loading = false); }
-      } else setState(()=> _loading = false);
-    } else setState(()=> _loading = false);
+      } else {
+        setState(()=> _loading = false);
+      }
+    } else {
+      setState(()=> _loading = false);
+    }
   }
 
   Future<void> _logout() async {
@@ -457,8 +461,9 @@ class OperationDetailDialog extends StatelessWidget {
     final ok = await showDialog<bool>(context: context, builder: (_) => AlertDialog(title: const Text('Confirmer'), content: const Text('Supprimer cette opération ?'), actions: [TextButton(onPressed: ()=>Navigator.pop(context,false), child: const Text('Non')), TextButton(onPressed: ()=>Navigator.pop(context,true), child: const Text('Oui'))]));
     if (ok == true && jwt != null) {
       final resp = await ApiService.deleteOperation(jwt, operation.operationsId);
-      if (resp.statusCode == 200) Navigator.of(context).pop('deleted');
-      else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
+      if (resp.statusCode == 200) {
+        Navigator.of(context).pop('deleted');
+      } else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){} ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
     }
   }
 
@@ -469,8 +474,9 @@ class OperationDetailDialog extends StatelessWidget {
       final jwt = sp.getString('jwt');
       if (jwt != null) {
         final resp = await ApiService.updateOperation(jwt, operation.operationsId, edited.toJson());
-        if (resp.statusCode == 200) Navigator.of(context).pop('updated');
-        else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
+        if (resp.statusCode == 200) {
+          Navigator.of(context).pop('updated');
+        } else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){} ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
       }
     }
   }
