@@ -51,8 +51,8 @@ class ApiService {
         body: jsonEncode({'operation': body}));
   }
 
-  static Future<http.Response> updateOperation(String jwt, int id, Map<String, dynamic> body) {
-    final url = Uri.parse('${Config.econorisServer}/operations/id/$id');
+  static Future<http.Response> updateOperation(String jwt, Map<String, dynamic> body) {
+    final url = Uri.parse('${Config.econorisServer}/operations');
     return http.put(url,
         headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'},
         body: jsonEncode({'operation': body}));

@@ -473,10 +473,9 @@ class OperationDetailDialog extends StatelessWidget {
       final sp = await SharedPreferences.getInstance();
       final jwt = sp.getString('jwt');
       if (jwt != null) {
-        final resp = await ApiService.updateOperation(jwt, operation.operationsId, edited.toJson());
-        if (resp.statusCode == 200) {
-          Navigator.of(context).pop('updated');
-        } else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){} ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
+        final resp = await ApiService.updateOperation(jwt, edited.toJson());
+        if (resp.statusCode == 200) Navigator.of(context).pop('updated');
+        else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
       }
     }
   }

@@ -71,6 +71,7 @@ class Operation {
 
   Map<String, dynamic> toJson() {
     return {
+      'operations_id': operationsId,
       'operations_date': operationsDate.toUtc().toIso8601String(),
       'operations_name': operationsName,
       'operations_amount': operationsAmount,
