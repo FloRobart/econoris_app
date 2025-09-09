@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// shared_preferences removed; RootRouter handles token removal
 
 /// Simple singleton to broadcast session invalidation (eg. on 401)
 class AuthManager {
@@ -11,9 +11,8 @@ class AuthManager {
   final ValueNotifier<bool> sessionInvalidated = ValueNotifier(false);
 
   Future<void> invalidateSession() async {
-    final sp = await SharedPreferences.getInstance();
-    await sp.remove('jwt');
-    // notify listeners
-    sessionInvalidated.value = true;
+  // only notify listeners; do not remove jwt here.
+  // RootRouter will remove the token and perform navigation.
+  sessionInvalidated.value = true;
   }
 }
