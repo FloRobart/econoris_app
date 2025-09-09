@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'config.dart';
 import 'models/operation.dart';
 import 'services/api_service.dart';
+import 'services/auth_manager.dart';
 import 'widgets/operations_chart.dart';
 import 'pages/calendar_page.dart';
 
@@ -34,6 +35,7 @@ class RootRouter extends StatefulWidget {
 }
 
 class _RootRouterState extends State<RootRouter> {
+  late final VoidCallback _authListener;
   Future<Map<String, dynamic>> _loadLocal() async {
     final sp = await SharedPreferences.getInstance();
     final jwt = sp.getString('jwt');
@@ -55,6 +57,31 @@ class _RootRouterState extends State<RootRouter> {
       }
       return const LoginPage();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _authListener = () {
+      if (AuthManager.instance.sessionInvalidated.value) {
+        // ensure we remove any JWT stored locally and navigate to login
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          final sp = await SharedPreferences.getInstance();
+          await sp.remove('jwt');
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const LoginPage()), (r) => false);
+          // reset the flag so future logins can proceed
+          AuthManager.instance.sessionInvalidated.value = false;
+        });
+      }
+    };
+    AuthManager.instance.sessionInvalidated.addListener(_authListener);
+  }
+
+  @override
+  void dispose() {
+    AuthManager.instance.sessionInvalidated.removeListener(_authListener);
+    super.dispose();
   }
 }
 
@@ -308,6 +335,9 @@ class _HomePageState extends State<HomePage> {
       body: _loading ? const Center(child: CircularProgressIndicator()) : Padding(
         padding: const EdgeInsets.all(12),
         child: Column(children: [
+          // show error if present
+          if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
+
           // Chart area
           Card(child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [
             Expanded(child: SizedBox(height: 220, child: OperationsChart(operations: ops, chartType: _chartType))),
