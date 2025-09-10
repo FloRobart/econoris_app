@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'config.dart';
 import 'models/operation.dart';
 import 'services/api_service.dart';
+import 'services/auth_manager.dart';
+import 'navigation/app_routes.dart';
 import 'widgets/operations_chart.dart';
 import 'pages/calendar_page.dart';
 
@@ -21,7 +23,24 @@ class EconorisApp extends StatelessWidget {
     return MaterialApp(
       title: Config.appName,
       theme: ThemeData(primarySwatch: Colors.green),
-      home: const RootRouter(),
+      initialRoute: AppRoutes.root,
+      routes: {
+        AppRoutes.root: (ctx) => const RootRouter(),
+        AppRoutes.login: (ctx) => const LoginPage(),
+        AppRoutes.home: (ctx) => const HomePage(),
+        AppRoutes.profile: (ctx) => const ProfilePage(),
+        AppRoutes.codeEntry: (ctx) {
+          final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
+          final email = args?['email'] as String? ?? '';
+          final name = args?['name'] as String? ?? '';
+          return CodeEntryPage(email: email, name: name);
+        },
+        AppRoutes.placeholder: (ctx) {
+          final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
+          final title = args?['title'] as String? ?? 'Placeholder';
+          return PlaceholderPage(title: title);
+        },
+      },
       debugShowCheckedModeBanner: false,
     );
   }
@@ -34,6 +53,7 @@ class RootRouter extends StatefulWidget {
 }
 
 class _RootRouterState extends State<RootRouter> {
+  late final VoidCallback _authListener;
   Future<Map<String, dynamic>> _loadLocal() async {
     final sp = await SharedPreferences.getInstance();
     final jwt = sp.getString('jwt');
@@ -55,6 +75,34 @@ class _RootRouterState extends State<RootRouter> {
       }
       return const LoginPage();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _authListener = () {
+      if (AuthManager.instance.sessionInvalidated.value) {
+        // ensure we remove any JWT stored locally and navigate to login
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          final sp = await SharedPreferences.getInstance();
+          await sp.remove('jwt');
+          if (!mounted) return;
+          // show session expired message then redirect
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
+          await Future.delayed(const Duration(milliseconds: 400));
+          Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
+          // reset the flag so future logins can proceed
+          AuthManager.instance.sessionInvalidated.value = false;
+        });
+      }
+    };
+    AuthManager.instance.sessionInvalidated.addListener(_authListener);
+  }
+
+  @override
+  void dispose() {
+    AuthManager.instance.sessionInvalidated.removeListener(_authListener);
+    super.dispose();
   }
 }
 
@@ -78,11 +126,11 @@ class _LoginPageState extends State<LoginPage> {
     await sp.setString('email', email);
     await sp.setString('name', name);
 
-    final resp = await ApiService.requestLoginCode(email, name);
+      final resp = await ApiService.requestLoginCode(email, name);
     setState(() { _loading = false; });
-    if (resp.statusCode == 200) {
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => CodeEntryPage(email: email, name: name)));
+  if (resp.statusCode == 200) {
+  if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email, 'name': name});
     } else {
       String msg = 'Erreur';
       try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
@@ -148,7 +196,7 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
           await sp.setString('email', widget.email);
           await sp.setString('name', widget.name);
           if (!mounted) return;
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
+            Navigator.of(context).pushReplacementNamed(AppRoutes.home);
           return;
         }
       } catch (e) {}
@@ -203,8 +251,8 @@ class _HomePageState extends State<HomePage> {
   bool _tableView = true;
   String _chartType = 'line';
   String _search = '';
-  String _sortField = 'operations_date';
-  bool _sortAsc = false;
+  final String _sortField = 'operations_date';
+  final bool _sortAsc = false;
   String _categoryFilter = 'Tous';
   int _perPage = 20;
   int _page = 0;
@@ -268,7 +316,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openAddModal() async {
-    final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog());
+    final res = await showDialog<Operation>(context: context, builder: (_) => const OperationEditDialog());
     if (res != null && _jwt != null) {
       final body = res.toJson();
       final resp = await ApiService.addOperation(_jwt!, body);
@@ -295,7 +343,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _goToProfile() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfilePage())).then((_) => _init());
+    Navigator.of(context).pushNamed('/profile').then((_) => _init());
   }
 
   @override
@@ -308,6 +356,9 @@ class _HomePageState extends State<HomePage> {
       body: _loading ? const Center(child: CircularProgressIndicator()) : Padding(
         padding: const EdgeInsets.all(12),
         child: Column(children: [
+          // show error if present
+          if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
+
           // Chart area
           Card(child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [
             Expanded(child: SizedBox(height: 220, child: OperationsChart(operations: ops, chartType: _chartType))),
@@ -344,7 +395,7 @@ class _HomePageState extends State<HomePage> {
           ]))
         ]),
       ),
-      bottomNavigationBar: BottomNavigationBar(currentIndex: 0, onTap: (i) { if (i==1) Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PlaceholderPage(title: 'Prêts'))); if (i==2) Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PlaceholderPage(title: 'Horaires'))); }, items: const [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'), BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'), BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Horaires')]),
+  bottomNavigationBar: BottomNavigationBar(currentIndex: 0, onTap: (i) { if (i==1) Navigator.of(context).pushNamed('/placeholder', arguments: {'title': 'Prêts'}); if (i==2) Navigator.of(context).pushNamed('/placeholder', arguments: {'title': 'Horaires'}); }, items: const [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'), BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'), BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Horaires')]),
     );
   }
 
@@ -404,23 +455,31 @@ class _ProfilePageState extends State<ProfilePage> {
       final resp = await ApiService.getProfile(_jwt!);
       if (resp.statusCode == 200) {
         try { final j = jsonDecode(resp.body); setState((){ _email = j['email'] ?? _email; _name = j['name'] ?? _name; _nameC.text = _name ?? ''; _loading = false; }); } catch (e) { setState(()=> _loading = false); }
-      } else setState(()=> _loading = false);
-    } else setState(()=> _loading = false);
+      } else {
+        setState(()=> _loading = false);
+      }
+    } else {
+      setState(()=> _loading = false);
+    }
   }
 
   Future<void> _logout() async {
     if (_jwt != null) await ApiService.logout(_jwt!);
-    final sp = await SharedPreferences.getInstance();
-    await sp.remove('jwt');
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const LoginPage()), (r) => false);
+  final sp = await SharedPreferences.getInstance();
+  await sp.remove('jwt');
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
+  await Future.delayed(const Duration(milliseconds: 400));
+  Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
   }
 
   Future<void> _deleteAccount() async {
     if (_jwt == null) return;
-    await ApiService.deleteUser(_jwt!);
-    final sp = await SharedPreferences.getInstance();
-    await sp.clear();
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const LoginPage()), (r) => false);
+  await ApiService.deleteUser(_jwt!);
+  final sp = await SharedPreferences.getInstance();
+  await sp.clear();
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
+  await Future.delayed(const Duration(milliseconds: 400));
+  Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
   }
 
   Future<void> _updateName() async {
@@ -453,12 +512,19 @@ class OperationDetailDialog extends StatelessWidget {
   final Operation operation;
   const OperationDetailDialog({super.key, required this.operation});
 
-  Future<void> _delete(BuildContext context, String? jwt) async {
+  Future<void> _delete(BuildContext context) async {
     final ok = await showDialog<bool>(context: context, builder: (_) => AlertDialog(title: const Text('Confirmer'), content: const Text('Supprimer cette opération ?'), actions: [TextButton(onPressed: ()=>Navigator.pop(context,false), child: const Text('Non')), TextButton(onPressed: ()=>Navigator.pop(context,true), child: const Text('Oui'))]));
-    if (ok == true && jwt != null) {
+    if (ok == true) {
+      final sp = await SharedPreferences.getInstance();
+      final jwt = sp.getString('jwt');
+      if (jwt == null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Non authentifié')));
+        return;
+      }
       final resp = await ApiService.deleteOperation(jwt, operation.operationsId);
-      if (resp.statusCode == 200) Navigator.of(context).pop('deleted');
-      else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
+      if (resp.statusCode == 200) {
+        Navigator.of(context).pop('deleted');
+      } else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){} ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
     }
   }
 
@@ -468,7 +534,7 @@ class OperationDetailDialog extends StatelessWidget {
       final sp = await SharedPreferences.getInstance();
       final jwt = sp.getString('jwt');
       if (jwt != null) {
-        final resp = await ApiService.updateOperation(jwt, operation.operationsId, edited.toJson());
+        final resp = await ApiService.updateOperation(jwt, edited.toJson());
         if (resp.statusCode == 200) Navigator.of(context).pop('updated');
         else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
       }
@@ -477,9 +543,30 @@ class OperationDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(future: SharedPreferences.getInstance(), builder: (c,s){ final jwt = s.hasData ? s.data!.getString('jwt') : null;
-      return AlertDialog(title: Text(operation.operationsName), content: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Date: ${operation.operationsDate.toIso8601String()}'), Text('Montant: ${operation.operationsAmount}'), Text('Source: ${operation.operationsSource}'), Text('Destination: ${operation.operationsDestination}'), Text('Coûts: ${operation.operationsCosts}'), Text('Catégorie: ${operation.operationsCategory}'), Text('Validée: ${operation.operationsValidated}')],)), actions: [TextButton(onPressed: ()=> Navigator.pop(context), child: const Text('Fermer')), TextButton(onPressed: ()=> _edit(context), child: const Text('Modifier')), TextButton(onPressed: ()=> _delete(context,jwt), child: const Text('Supprimer', style: TextStyle(color: Colors.red))) ]);
-    });
+    return FutureBuilder<SharedPreferences>(
+      future: SharedPreferences.getInstance(),
+      builder: (c, s) {
+        return AlertDialog(
+          title: Text(operation.operationsName),
+          content: SingleChildScrollView(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Date: ${operation.operationsDate.toIso8601String()}'),
+              Text('Montant: ${operation.operationsAmount}'),
+              Text('Source: ${operation.operationsSource}'),
+              Text('Destination: ${operation.operationsDestination}'),
+              Text('Coûts: ${operation.operationsCosts}'),
+              Text('Catégorie: ${operation.operationsCategory}'),
+              Text('Validée: ${operation.operationsValidated}')
+            ]),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer')),
+            TextButton(onPressed: () => _edit(context), child: const Text('Modifier')),
+            TextButton(onPressed: () => _delete(context), child: const Text('Supprimer', style: TextStyle(color: Colors.red)))
+          ],
+        );
+      }
+    );
   }
 }
 

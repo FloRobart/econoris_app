@@ -10,7 +10,7 @@ class OperationsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (operations.isEmpty) return Center(child: Text('Pas d\'opérations'));
+    if (operations.isEmpty) return const Center(child: Text('Pas d\'opérations'));
 
     if (chartType == 'line') return _buildLine();
     if (chartType == 'bar') return _buildBar();
