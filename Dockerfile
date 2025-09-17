@@ -3,14 +3,24 @@ FROM dart:stable AS builder
 WORKDIR /app
 COPY . .
 
-# Activer Flutter Web (si besoin)
+# Installer Flutter SDK (branche stable) et précharger le SDK web
+RUN apt-get update && \
+    apt-get install -y git curl unzip xz-utils ca-certificates && \
+    git clone --branch stable --depth 1 https://github.com/flutter/flutter.git /flutter && \
+    chmod -R a+rX /flutter && \
+    /flutter/bin/flutter --version && \
+    /flutter/bin/flutter precache --web
+
+# Activer Flutter Web et mettre le PATH
+ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
 RUN flutter config --enable-web
 
-# Télécharger dépendances
-RUN flutter pub get
+# Tenter de mettre à jour automatiquement les dépendances majeures (peut résoudre des incompatibilités)
+RUN flutter pub upgrade --major-versions || true
+RUN flutter pub get --offline || flutter pub get
 
 # Build web
-RUN flutter build web
+RUN flutter build web --release
 
 # Étape 2 : Image finale avec NGINX
 FROM nginx:alpine
