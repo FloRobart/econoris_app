@@ -1,16 +1,35 @@
+# Étape 1 : Builder Flutter Web
+FROM dart:stable AS builder
+WORKDIR /app
+COPY . .
+
+# Installer Flutter SDK (branche stable) et précharger le SDK web
+RUN apt-get update && \
+    apt-get install -y git curl unzip xz-utils ca-certificates && \
+    git clone --branch stable --depth 1 https://github.com/flutter/flutter.git /flutter && \
+    chmod -R a+rX /flutter && \
+    /flutter/bin/flutter --version && \
+    /flutter/bin/flutter precache --web
+
+# Activer Flutter Web et mettre le PATH
+ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
+RUN flutter config --enable-web
+
+# Tenter de mettre à jour automatiquement les dépendances majeures (peut résoudre des incompatibilités)
+RUN flutter pub upgrade --major-versions || true
+RUN flutter pub get --offline || flutter pub get
+
+# Build web
+RUN flutter build web --release
+
+# Étape 2 : Image finale avec NGINX
 FROM nginx:alpine
 
 # Remove default nginx website
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy compiled Flutter web app
-COPY build/web /usr/share/nginx/html
+# Copier le build Flutter web
+COPY --from=builder /app/build/web /usr/share/nginx/html
 
-# Copy custom nginx config if present
+# Optionnel : config nginx custom
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
-EXPOSE 80
-
-# Use the default nginx entrypoint
-CMD ["nginx", "-g", "daemon off;"]

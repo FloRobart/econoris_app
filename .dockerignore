@@ -1,1 +1,8 @@
+build
+.dart_tool
+packages
+.git
 .env
+*.iml
+.idea
+*.log
