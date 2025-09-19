@@ -73,18 +73,35 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
       setState(() { _error = 'Aucun email trouvé en local. Veuillez vous reconnecter.'; });
       // navigate back to login after a short delay
       await Future.delayed(const Duration(seconds: 2));
-      if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed('/login');
+  if (!mounted) return;
+  Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       return;
     }
     setState(() { _sendingCode = true; _error = null; _resolvedEmail = email; });
     try {
       final resp = await ApiService.requestLoginCode(email, name);
-      if (resp.statusCode == 200) {
+      if (resp.statusCode >= 200 && resp.statusCode < 400) {
+        // success
         setState(() { _sentNotice = 'Un code a été envoyé à $email'; });
-      } else {
+      } else if (resp.statusCode >= 500) {
+        // server error -> show message like LoginPage
         String msg = 'Erreur lors de l\'envoi du code';
         try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        setState(() { _error = msg; });
+      } else if (resp.statusCode >= 400 && resp.statusCode < 500) {
+        // client error -> clear local creds and redirect to login with API message
+        String msg = 'Erreur';
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        final sp = await SharedPreferences.getInstance();
+        await sp.remove('jwt');
+        await sp.remove('email');
+        await sp.remove('name');
+  if (!mounted) return;
+  // navigate to login and pass the error message to display
+  Navigator.of(context).pushReplacementNamed(AppRoutes.login, arguments: {'error': msg});
+        return;
+      } else {
+        String msg = 'Erreur inconnue lors de l\'envoi du code';
         setState(() { _error = msg; });
       }
     } catch (e) {

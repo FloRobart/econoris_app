@@ -7,7 +7,8 @@ import '../services/api_service.dart';
 import '../navigation/app_routes.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final String? initialError;
+  const LoginPage({super.key, this.initialError});
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -36,6 +37,13 @@ class _LoginPageState extends State<LoginPage> {
       try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
       setState(() { _error = msg; });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // populate any initial error passed via navigation arguments
+    _error = widget.initialError;
   }
 
   @override
