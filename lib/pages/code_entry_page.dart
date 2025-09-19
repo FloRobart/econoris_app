@@ -6,9 +6,9 @@ import '../services/api_service.dart';
 import '../navigation/app_routes.dart';
 
 class CodeEntryPage extends StatefulWidget {
-  final String email;
-  final String name;
-  const CodeEntryPage({super.key, required this.email, required this.name});
+  final String? email;
+  final String? name;
+  const CodeEntryPage({super.key, this.email, this.name});
   @override
   State<CodeEntryPage> createState() => _CodeEntryPageState();
 }
@@ -17,11 +17,19 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
   final _codeC = TextEditingController();
   String? _error;
   bool _loading = false;
+  bool _sendingCode = false;
+  String? _sentNotice;
+  String? _resolvedEmail;
 
   Future<void> _submit() async {
     setState(() { _loading = true; _error = null; });
     final code = _codeC.text.trim();
-    final resp = await ApiService.confirmLoginCode(widget.email, code);
+    final email = (widget.email != null && widget.email!.isNotEmpty) ? widget.email! : (_resolvedEmail ?? '');
+    if (email.isEmpty) {
+      setState(() { _loading = false; _error = 'Aucun email disponible pour confirmer le code'; });
+      return;
+    }
+    final resp = await ApiService.confirmLoginCode(email, code);
     setState(() { _loading = false; });
     if (resp.statusCode == 200) {
       try {
@@ -30,8 +38,8 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
         if (jwt != null) {
           final sp = await SharedPreferences.getInstance();
           await sp.setString('jwt', jwt);
-          await sp.setString('email', widget.email);
-          await sp.setString('name', widget.name);
+          await sp.setString('email', email);
+          await sp.setString('name', widget.name ?? '');
           if (!mounted) return;
           Navigator.of(context).pushReplacementNamed(AppRoutes.home);
           return;
@@ -42,6 +50,47 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
       String msg = 'Erreur';
       try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
       setState(() { _error = msg; });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // attempt to auto-send a code when no email/name were passed to the page
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeAutoSend());
+  }
+
+  Future<void> _maybeAutoSend() async {
+    // if page was opened with explicit params, assume caller already sent the code
+    if ((widget.email ?? '').isNotEmpty && (widget.name ?? '').isNotEmpty) {
+      _resolvedEmail = widget.email;
+      return;
+    }
+    final sp = await SharedPreferences.getInstance();
+    final email = sp.getString('email') ?? '';
+    final name = sp.getString('name') ?? '';
+    if (email.isEmpty || name.isEmpty) {
+      setState(() { _error = 'Aucun email trouvé en local. Veuillez vous reconnecter.'; });
+      // navigate back to login after a short delay
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/login');
+      return;
+    }
+    setState(() { _sendingCode = true; _error = null; _resolvedEmail = email; });
+    try {
+      final resp = await ApiService.requestLoginCode(email, name);
+      if (resp.statusCode == 200) {
+        setState(() { _sentNotice = 'Un code a été envoyé à $email'; });
+      } else {
+        String msg = 'Erreur lors de l\'envoi du code';
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        setState(() { _error = msg; });
+      }
+    } catch (e) {
+      setState(() { _error = 'Erreur réseau lors de l\'envoi du code'; });
+    } finally {
+      setState(() { _sendingCode = false; });
     }
   }
 

@@ -31,8 +31,8 @@ class EconorisApp extends StatelessWidget {
             AppRoutes.profile: (ctx) => const ProfilePage(),
             AppRoutes.codeEntry: (ctx) {
               final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
-              final email = args?['email'] as String? ?? '';
-              final name = args?['name'] as String? ?? '';
+              final email = args?['email'] as String?;
+              final name = args?['name'] as String?;
               return CodeEntryPage(email: email, name: name);
             },
             AppRoutes.placeholder: (ctx) {
