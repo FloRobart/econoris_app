@@ -35,5 +35,8 @@ COPY --from=builder /app/build/web /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Ajout d'un utilisateur non-root avec UID/GID fixes
-RUN addgroup -g 1800 -S econorisgroup && adduser -u 1800 -S econorisuser -G econorisgroup
+RUN addgroup -g 1800 -S econorisgroup && adduser -u 1800 -S econorisuser -G econorisgroup \
+    && mkdir -p /run/nginx /var/cache/nginx /var/run /var/log/nginx \
+    && chown -R econorisuser:econorisgroup /var/cache/nginx /var/run /var/log/nginx /run/nginx \
+    && chmod 0755 /run/nginx
 USER econorisuser
