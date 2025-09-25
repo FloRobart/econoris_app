@@ -33,3 +33,7 @@ COPY --from=builder /app/build/web /usr/share/nginx/html
 
 # Optionnel : config nginx custom
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Ajout d'un utilisateur non-root avec UID/GID fixes
+RUN addgroup -g 1800 -S econorisgroup && adduser -u 1800 -S econorisuser -G econorisgroup
+USER econorisuser
