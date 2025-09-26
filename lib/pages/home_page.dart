@@ -142,8 +142,9 @@ class _HomePageState extends State<HomePage> {
     final ops = _filteredOperations;
     final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
 
-    return Scaffold(
-      appBar: AppBar(title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), const Text(Config.appName)]), actions: [TextButton(onPressed: _goToProfile, child: const Text('Profil', style: TextStyle(color: Colors.white)))]),
+    return AppScaffold(
+      currentIndex: 0,
+      onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed('/profile').then((_) => _init()),
       body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Padding(
         padding: const EdgeInsets.all(12),
@@ -190,8 +191,8 @@ class _HomePageState extends State<HomePage> {
             Row(children: [IconButton(onPressed: ()=> setState(()=> _page = (_page-1).clamp(0,999)), icon: const Icon(Icons.chevron_left)), Text('Page ${_page+1}'), IconButton(onPressed: ()=> setState(()=> _page = _page+1), icon: const Icon(Icons.chevron_right))])
           ]))
         ]),
+        ),
       ),
-  bottomNavigationBar: BottomNavigationBar(currentIndex: 0, onTap: (i) { if (i==1) Navigator.of(context).pushNamed('/placeholder', arguments: {'title': 'Prêts'}); if (i==2) Navigator.of(context).pushNamed('/placeholder', arguments: {'title': 'Horaires'}); }, items: const [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'), BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'), BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Horaires')]),
     );
   }
 
