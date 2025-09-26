@@ -47,7 +47,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchOperations() async {
-    if (_jwt == null) return;
+    if (_jwt == null) {
+      // no JWT -> nothing to fetch. ensure loading is false to avoid stuck spinner.
+      setState(() { _loading = false; _error = null; });
+      return;
+    }
     setState(() { _loading = true; _error = null; });
     try {
       final resp = await ApiService.getOperations(_jwt!);
@@ -59,7 +63,17 @@ class _HomePageState extends State<HomePage> {
         ops.sort((a, b) => b.operationsDate.compareTo(a.operationsDate));
         setState(() { _operations = ops; _loading = false; });
       } else {
-        String msg = 'Erreur'; try { msg = jsonDecode(resp.body)['error'] ?? resp.body; } catch (e) {}
+        String msg = 'Erreur (${resp.statusCode})';
+        try {
+          final body = resp.body;
+          if (body != null && body.isNotEmpty) {
+            final parsed = jsonDecode(body);
+            if (parsed is Map && parsed.containsKey('error')) msg = parsed['error'].toString();
+            else msg = body;
+          }
+        } catch (e) {
+          // keep default msg if parsing fails
+        }
         setState(() { _error = msg; _loading = false; });
       }
     } catch (e) {
