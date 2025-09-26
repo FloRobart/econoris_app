@@ -130,7 +130,8 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), const Text(Config.appName)]), actions: [TextButton(onPressed: _goToProfile, child: const Text('Profil', style: TextStyle(color: Colors.white)))]),
-      body: _loading ? const Center(child: CircularProgressIndicator()) : Padding(
+      body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
+        child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(children: [
           // show error if present
@@ -164,7 +165,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 12),
 
           // content
-          Expanded(child: _tableView ? _buildTableView(ops) : CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op))),
+          // Give the table/calendar a bounded height when inside a vertical scroll view
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.56,
+            child: _tableView ? _buildTableView(ops) : CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
+          ),
 
           if (_tableView) Padding(padding: const EdgeInsets.only(top:8.0), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Row(children: [const Text('Afficher par page:'), const SizedBox(width: 8), DropdownButton<int>(value: _perPage, items: [20,50,100].map((n)=>DropdownMenuItem(value: n, child: Text('$n'))).toList(), onChanged: (v)=> setState(()=>_perPage=v!))]),
