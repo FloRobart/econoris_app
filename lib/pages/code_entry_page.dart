@@ -23,7 +23,7 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
 
   Future<void> _submit() async {
     setState(() { _loading = true; _error = null; });
-    final code = _codeC.text.trim();
+    final code = _codeC.text.trim().replaceAll(' ', '');
     final email = (widget.email != null && widget.email!.isNotEmpty) ? widget.email! : (_resolvedEmail ?? '');
     if (email.isEmpty) {
       setState(() { _loading = false; _error = 'Aucun email disponible pour confirmer le code'; });
