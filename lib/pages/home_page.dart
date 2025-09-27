@@ -5,11 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-import '../config.dart';
 import '../models/operation.dart';
 import '../services/api_service.dart';
-import '../services/auth_manager.dart';
-import '../navigation/app_routes.dart';
 import '../widgets/app_scaffold.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
@@ -73,10 +70,13 @@ class _HomePageState extends State<HomePage> {
         String msg = 'Erreur (${resp.statusCode})';
         try {
           final body = resp.body;
-          if (body != null && body.isNotEmpty) {
+          if (body.isNotEmpty) {
             final parsed = jsonDecode(body);
-            if (parsed is Map && parsed.containsKey('error')) msg = parsed['error'].toString();
-            else msg = body;
+            if (parsed is Map && parsed.containsKey('error')) {
+              msg = parsed['error'].toString();
+            } else {
+              msg = body;
+            }
           }
         } catch (e) {
           // keep default msg if parsing fails
