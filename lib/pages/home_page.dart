@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +10,7 @@ import '../models/operation.dart';
 import '../services/api_service.dart';
 import '../services/auth_manager.dart';
 import '../navigation/app_routes.dart';
+import '../widgets/app_scaffold.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
@@ -47,19 +50,37 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchOperations() async {
-    if (_jwt == null) return;
+    if (_jwt == null) {
+      // no JWT -> nothing to fetch. ensure loading is false to avoid stuck spinner.
+      setState(() { _loading = false; _error = null; });
+      return;
+    }
     setState(() { _loading = true; _error = null; });
     try {
       final resp = await ApiService.getOperations(_jwt!);
 
-      if (resp.statusCode == 200) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
+       if (resp.body.isEmpty) {
+          setState(() { _operations = []; _loading = false; });
+          return;
+        }
         final j = jsonDecode(resp.body);
         final rows = j['rows'] as List? ?? [];
         final ops = rows.map((e) => Operation.fromJson(e)).toList();
         ops.sort((a, b) => b.operationsDate.compareTo(a.operationsDate));
         setState(() { _operations = ops; _loading = false; });
       } else {
-        String msg = 'Erreur'; try { msg = jsonDecode(resp.body)['error'] ?? resp.body; } catch (e) {}
+        String msg = 'Erreur (${resp.statusCode})';
+        try {
+          final body = resp.body;
+          if (body != null && body.isNotEmpty) {
+            final parsed = jsonDecode(body);
+            if (parsed is Map && parsed.containsKey('error')) msg = parsed['error'].toString();
+            else msg = body;
+          }
+        } catch (e) {
+          // keep default msg if parsing fails
+        }
         setState(() { _error = msg; _loading = false; });
       }
     } catch (e) {
@@ -98,7 +119,7 @@ class _HomePageState extends State<HomePage> {
       final body = res.toJson();
       final resp = await ApiService.addOperation(_jwt!, body);
 
-      if (resp.statusCode == 200 || resp.statusCode == 201) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
         try {
           final created = Operation.fromJson(jsonDecode(resp.body));
           setState(() { _operations.insert(0, created); });
@@ -119,18 +140,17 @@ class _HomePageState extends State<HomePage> {
     if (result == 'deleted' || result == 'updated') await _fetchOperations();
   }
 
-  void _goToProfile() {
-    Navigator.of(context).pushNamed('/profile').then((_) => _init());
-  }
 
   @override
   Widget build(BuildContext context) {
     final ops = _filteredOperations;
     final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
 
-    return Scaffold(
-      appBar: AppBar(title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), const Text(Config.appName)]), actions: [TextButton(onPressed: _goToProfile, child: const Text('Profil', style: TextStyle(color: Colors.white)))]),
-      body: _loading ? const Center(child: CircularProgressIndicator()) : Padding(
+    return AppScaffold(
+      currentIndex: 0,
+      onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed('/profile').then((_) => _init()),
+      body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
+        child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(children: [
           // show error if present
@@ -164,15 +184,19 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 12),
 
           // content
-          Expanded(child: _tableView ? _buildTableView(ops) : CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op))),
+          // Give the table/calendar a bounded height when inside a vertical scroll view
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.56,
+            child: _tableView ? _buildTableView(ops) : CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
+          ),
 
           if (_tableView) Padding(padding: const EdgeInsets.only(top:8.0), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Row(children: [const Text('Afficher par page:'), const SizedBox(width: 8), DropdownButton<int>(value: _perPage, items: [20,50,100].map((n)=>DropdownMenuItem(value: n, child: Text('$n'))).toList(), onChanged: (v)=> setState(()=>_perPage=v!))]),
             Row(children: [IconButton(onPressed: ()=> setState(()=> _page = (_page-1).clamp(0,999)), icon: const Icon(Icons.chevron_left)), Text('Page ${_page+1}'), IconButton(onPressed: ()=> setState(()=> _page = _page+1), icon: const Icon(Icons.chevron_right))])
           ]))
         ]),
+        ),
       ),
-  bottomNavigationBar: BottomNavigationBar(currentIndex: 0, onTap: (i) { if (i==1) Navigator.of(context).pushNamed('/placeholder', arguments: {'title': 'Prêts'}); if (i==2) Navigator.of(context).pushNamed('/placeholder', arguments: {'title': 'Horaires'}); }, items: const [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'), BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'), BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Horaires')]),
     );
   }
 
