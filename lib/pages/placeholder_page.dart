@@ -8,9 +8,9 @@ class PlaceholderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
+    return const AppScaffold(
       currentIndex: 0,
-      body: const Center(child: Text('Page en construction')),
+      body: Center(child: Text('Page en construction')),
       // keep default profile behavior and bottom nav behavior
     );
   }

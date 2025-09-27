@@ -19,7 +19,7 @@ class OperationDetailDialog extends StatelessWidget {
         return;
       }
       final resp = await ApiService.deleteOperation(jwt, operation.operationsId);
-      if (resp.statusCode == 200) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
         Navigator.of(context).pop('deleted');
       } else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){} ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
     }
@@ -32,7 +32,7 @@ class OperationDetailDialog extends StatelessWidget {
       final jwt = sp.getString('jwt');
       if (jwt != null) {
         final resp = await ApiService.updateOperation(jwt, edited.toJson());
-        if (resp.statusCode == 200) Navigator.of(context).pop('updated');
+  if (resp.statusCode >= 200 && resp.statusCode < 300) Navigator.of(context).pop('updated');
         else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
       }
     }

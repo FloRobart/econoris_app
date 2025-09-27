@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +10,7 @@ import '../models/operation.dart';
 import '../services/api_service.dart';
 import '../services/auth_manager.dart';
 import '../navigation/app_routes.dart';
+import '../widgets/app_scaffold.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
@@ -56,7 +59,11 @@ class _HomePageState extends State<HomePage> {
     try {
       final resp = await ApiService.getOperations(_jwt!);
 
-      if (resp.statusCode == 200) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
+       if (resp.body.isEmpty) {
+          setState(() { _operations = []; _loading = false; });
+          return;
+        }
         final j = jsonDecode(resp.body);
         final rows = j['rows'] as List? ?? [];
         final ops = rows.map((e) => Operation.fromJson(e)).toList();
@@ -112,7 +119,7 @@ class _HomePageState extends State<HomePage> {
       final body = res.toJson();
       final resp = await ApiService.addOperation(_jwt!, body);
 
-      if (resp.statusCode == 200 || resp.statusCode == 201) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
         try {
           final created = Operation.fromJson(jsonDecode(resp.body));
           setState(() { _operations.insert(0, created); });
@@ -133,9 +140,6 @@ class _HomePageState extends State<HomePage> {
     if (result == 'deleted' || result == 'updated') await _fetchOperations();
   }
 
-  void _goToProfile() {
-    Navigator.of(context).pushNamed('/profile').then((_) => _init());
-  }
 
   @override
   Widget build(BuildContext context) {

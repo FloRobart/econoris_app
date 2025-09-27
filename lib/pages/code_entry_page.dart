@@ -31,7 +31,7 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
     }
     final resp = await ApiService.confirmLoginCode(email, code);
     setState(() { _loading = false; });
-    if (resp.statusCode == 200) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
       try {
         final j = jsonDecode(resp.body);
         final jwt = j['jwt'];
@@ -80,7 +80,7 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
     setState(() { _sendingCode = true; _error = null; _resolvedEmail = email; });
     try {
       final resp = await ApiService.requestLoginCode(email, name);
-      if (resp.statusCode >= 200 && resp.statusCode < 400) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
         // success
         setState(() { _sentNotice = 'Un code a été envoyé à $email'; });
       } else if (resp.statusCode >= 500) {

@@ -35,7 +35,7 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), const Text(Config.appName)]),
+        title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
         actions: [
           TextButton(
             onPressed: () => (onProfilePressed != null ? onProfilePressed!(context) : _defaultProfile(context)),

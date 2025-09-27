@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
     _nameC.text = _name ?? '';
     if (_jwt != null) {
       final resp = await ApiService.getProfile(_jwt!);
-      if (resp.statusCode == 200) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
         try { final j = jsonDecode(resp.body); setState((){ _email = j['email'] ?? _email; _name = j['name'] ?? _name; _nameC.text = _name ?? ''; _loading = false; }); } catch (e) { setState(()=> _loading = false); }
       } else {
         setState(()=> _loading = false);
@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_jwt == null) return;
     final newName = _nameC.text.trim();
     final resp = await ApiService.updateUser(_jwt!, _email ?? '', newName);
-    if (resp.statusCode == 200) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
       final sp = await SharedPreferences.getInstance();
       await sp.setString('name', newName);
       setState(()=> _name = newName);

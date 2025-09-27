@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final resp = await ApiService.requestLoginCode(email, name);
     setState(() { _loading = false; });
-    if (resp.statusCode == 200) {
+  if (resp.statusCode >= 200 && resp.statusCode < 300) {
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email, 'name': name});
     } else {
@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Row(children: [Image.asset('assets/econoris_logo.png', width: 48, height: 48), const SizedBox(width: 8), const Text(Config.appName, style: TextStyle(fontSize: 22))]),
+                Row(children: [Image.asset('assets/econoris_logo.png', width: 48, height: 48), const SizedBox(width: 8), Text(Config.appName, style: const TextStyle(fontSize: 22))]),
                 const SizedBox(height: 12),
                 TextField(controller: _emailC, decoration: const InputDecoration(labelText: 'Email')),
                 const SizedBox(height: 8),
