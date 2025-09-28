@@ -144,8 +144,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ops = _filteredOperations;
-    final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
+  final ops = _filteredOperations;
+  final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
+  final theme = Theme.of(context);
 
     return AppScaffold(
       currentIndex: 0,
@@ -158,14 +159,50 @@ class _HomePageState extends State<HomePage> {
           if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
 
           // Chart area
-          Card(child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [
-            Expanded(child: SizedBox(height: 220, child: OperationsChart(operations: ops, chartType: _chartType))),
-            Column(children: [
-              const Text('Type de graphique'),
-              const SizedBox(height: 8),
-              DropdownButton<String>(value: _chartType, items: ['line','bar','pie'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(), onChanged: (v) => setState(() => _chartType = v!))
-            ])
-          ]))),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Control aligned top-left of the Card (only the dropdown, no label)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      // use card color from theme for better integration with light/dark modes
+                      color: theme.cardColor.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.brightness == Brightness.light ? Colors.black12 : Colors.black26,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        )
+                      ],
+                    ),
+                    child: DropdownButton<String>(
+                      value: _chartType,
+                      dropdownColor: theme.cardColor,
+                      style: theme.textTheme.bodyMedium,
+                      underline: const SizedBox.shrink(),
+                      items: ['line', 'bar', 'pie']
+                          .map((s) => DropdownMenuItem(value: s, child: Text(s, style: theme.textTheme.bodyMedium)))
+                          .toList(),
+                      onChanged: (v) => setState(() => _chartType = v!),
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Chart area below the control
+                  SizedBox(
+                    height: 220,
+                    child: OperationsChart(operations: ops, chartType: _chartType),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
           const SizedBox(height: 12),
 
