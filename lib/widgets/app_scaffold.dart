@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../config.dart';
+import '../navigation/app_routes.dart';
 
 /// Reusable scaffold that provides a consistent AppBar (logo + app name + Profil)
 /// and BottomNavigationBar used across the app.
@@ -23,12 +24,16 @@ class AppScaffold extends StatelessWidget {
   });
 
   void _defaultProfile(BuildContext context) {
-    Navigator.of(context).pushNamed('/profile');
+    Navigator.of(context).pushNamed(AppRoutes.profile);
   }
 
   void _defaultBottomTap(BuildContext context, int i) {
-    if (i == 1) Navigator.of(context).pushReplacementNamed('/placeholder', arguments: {'title': 'Prêts'});
-    if (i == 2) Navigator.of(context).pushReplacementNamed('/placeholder', arguments: {'title': 'Horaires'});
+    // When switching bottom tabs we want to replace the whole navigation stack
+    // so pages don't pile up on top of each other. Use pushNamedAndRemoveUntil
+    // to leave only the newly selected route on the stack.
+    if (i == 0) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => r.isFirst);
+    if (i == 1) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Prêts'});
+    if (i == 2) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Horaires'});
   }
 
   @override

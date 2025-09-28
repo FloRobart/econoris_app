@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../models/operation.dart';
 import '../services/api_service.dart';
 import '../widgets/app_scaffold.dart';
+import '../navigation/app_routes.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
@@ -148,7 +149,7 @@ class _HomePageState extends State<HomePage> {
 
     return AppScaffold(
       currentIndex: 0,
-      onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed('/profile').then((_) => _init()),
+  onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
       body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Padding(
         padding: const EdgeInsets.all(12),
