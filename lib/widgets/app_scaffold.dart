@@ -40,6 +40,7 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
         actions: [
           TextButton(

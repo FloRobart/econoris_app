@@ -85,7 +85,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil')),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Profil')
+      ),
       body: _loading ? const Center(child: CircularProgressIndicator()) : Padding(padding: const EdgeInsets.all(16), child: Column(children: [
         ListTile(title: const Text('Email'), subtitle: Text(_email ?? '')),
         TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Nom')),

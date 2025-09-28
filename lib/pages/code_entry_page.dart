@@ -112,7 +112,10 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Vérification')),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Vérification')
+      ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(20),
