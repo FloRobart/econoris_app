@@ -35,9 +35,19 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use theme's onSurface color for foreground elements so they contrast
+    // correctly with the current theme (light/dark). Keep a slightly faded
+    // color for unselected bottom navigation items.
+    final Color foreground = Theme.of(context).colorScheme.onSurface;
+    final Color unselectedForeground = foreground.withOpacity(0.7);
+    final TextStyle? titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(color: foreground);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        // Ensure AppBar icons and title use the foreground color for contrast
+        iconTheme: IconThemeData(color: foreground),
+        titleTextStyle: titleStyle,
         title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
       ),
       body: body,
@@ -58,6 +68,12 @@ class AppScaffold extends StatelessWidget {
           }
           _defaultBottomTap(context, i);
         },
+        // Use the theme's surface as background and explicit colors for
+        // selected/unselected items so they remain readable in both themes.
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        selectedItemColor: foreground,
+        unselectedItemColor: unselectedForeground,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
           BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'),
