@@ -23,10 +23,6 @@ class AppScaffold extends StatelessWidget {
     this.onBottomNavTap,
   });
 
-  void _defaultProfile(BuildContext context) {
-    Navigator.of(context).pushNamed(AppRoutes.profile);
-  }
-
   void _defaultBottomTap(BuildContext context, int i) {
     // When switching bottom tabs we want to replace the whole navigation stack
     // so pages don't pile up on top of each other. Use pushNamedAndRemoveUntil
@@ -34,6 +30,7 @@ class AppScaffold extends StatelessWidget {
     if (i == 0) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => r.isFirst);
     if (i == 1) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Prêts'});
     if (i == 2) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Horaires'});
+    if (i == 3) Navigator.of(context).pushNamed(AppRoutes.profile);
   }
 
   @override
@@ -42,21 +39,30 @@ class AppScaffold extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(children: [Image.asset('assets/econoris_logo.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
-        actions: [
-          TextButton(
-            onPressed: () => (onProfilePressed != null ? onProfilePressed!(context) : _defaultProfile(context)),
-            child: const Text('Profil', style: TextStyle(color: Colors.white)),
-          ),
-        ],
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
-        onTap: (i) => (onBottomNavTap != null ? onBottomNavTap!(context, i) : _defaultBottomTap(context, i)),
+        onTap: (i) {
+          if (i == 3) {
+            if (onProfilePressed != null) {
+              onProfilePressed!(context);
+              return;
+            }
+            _defaultBottomTap(context, i);
+            return;
+          }
+          if (onBottomNavTap != null) {
+            onBottomNavTap!(context, i);
+            return;
+          }
+          _defaultBottomTap(context, i);
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
           BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'),
           BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Horaires'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
       ),
     );
