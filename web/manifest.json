@@ -1,33 +1,47 @@
 {
-    "name": "econoris_app",
-    "short_name": "econoris_app",
+    "name": "econoris",
+    "short_name": "econoris",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Econoris application",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
+            "src": "assets/econoris_logo-72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "maskable"
         },
         {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
+            "src": "assets/econoris_logo-96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "maskable"
         },
         {
-            "src": "icons/Icon-maskable-192.png",
+            "src": "assets/econoris_logo-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "assets/econoris_logo-192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "icons/Icon-maskable-512.png",
+            "src": "assets/econoris_logo-512.png",
             "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "assets/econoris_logo-1024.png",
+            "sizes": "1024x1024",
             "type": "image/png",
             "purpose": "maskable"
         }

@@ -31,6 +31,9 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copier le build Flutter web
 COPY --from=builder /app/build/web /usr/share/nginx/html
 
+# Copie les assets supplémentaires
+COPY --from=builder /app/assets/* /usr/share/nginx/html/assets/
+
 # Optionnel : config nginx custom
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
