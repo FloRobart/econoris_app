@@ -17,8 +17,6 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
   final _codeC = TextEditingController();
   String? _error;
   bool _loading = false;
-  bool _sendingCode = false;
-  String? _sentNotice;
   String? _resolvedEmail;
 
   Future<void> _submit() async {
@@ -77,12 +75,12 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
   Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       return;
     }
-    setState(() { _sendingCode = true; _error = null; _resolvedEmail = email; });
+    setState(() { _error = null; _resolvedEmail = email; });
     try {
       final resp = await ApiService.requestLoginCode(email, name);
   if (resp.statusCode >= 200 && resp.statusCode < 300) {
         // success
-        setState(() { _sentNotice = 'Un code a été envoyé à $email'; });
+        setState(() { });
       } else if (resp.statusCode >= 500) {
         // server error -> show message like LoginPage
         String msg = 'Erreur lors de l\'envoi du code';
@@ -107,14 +105,17 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
     } catch (e) {
       setState(() { _error = 'Erreur réseau lors de l\'envoi du code'; });
     } finally {
-      setState(() { _sendingCode = false; });
+      setState(() { });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Vérification')),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Vérification')
+      ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(20),

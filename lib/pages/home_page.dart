@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-import '../config.dart';
 import '../models/operation.dart';
 import '../services/api_service.dart';
-import '../services/auth_manager.dart';
-import '../navigation/app_routes.dart';
 import '../widgets/app_scaffold.dart';
+import '../navigation/app_routes.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
@@ -73,10 +71,13 @@ class _HomePageState extends State<HomePage> {
         String msg = 'Erreur (${resp.statusCode})';
         try {
           final body = resp.body;
-          if (body != null && body.isNotEmpty) {
+          if (body.isNotEmpty) {
             final parsed = jsonDecode(body);
-            if (parsed is Map && parsed.containsKey('error')) msg = parsed['error'].toString();
-            else msg = body;
+            if (parsed is Map && parsed.containsKey('error')) {
+              msg = parsed['error'].toString();
+            } else {
+              msg = body;
+            }
           }
         } catch (e) {
           // keep default msg if parsing fails
@@ -143,12 +144,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ops = _filteredOperations;
-    final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
+  final ops = _filteredOperations;
+  final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
+  final theme = Theme.of(context);
 
     return AppScaffold(
       currentIndex: 0,
-      onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed('/profile').then((_) => _init()),
+  onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
       body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Padding(
         padding: const EdgeInsets.all(12),
@@ -157,14 +159,50 @@ class _HomePageState extends State<HomePage> {
           if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
 
           // Chart area
-          Card(child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [
-            Expanded(child: SizedBox(height: 220, child: OperationsChart(operations: ops, chartType: _chartType))),
-            Column(children: [
-              const Text('Type de graphique'),
-              const SizedBox(height: 8),
-              DropdownButton<String>(value: _chartType, items: ['line','bar','pie'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(), onChanged: (v) => setState(() => _chartType = v!))
-            ])
-          ]))),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Control aligned top-left of the Card (only the dropdown, no label)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      // use card color from theme for better integration with light/dark modes
+                      color: theme.cardColor.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.brightness == Brightness.light ? Colors.black12 : Colors.black26,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        )
+                      ],
+                    ),
+                    child: DropdownButton<String>(
+                      value: _chartType,
+                      dropdownColor: theme.cardColor,
+                      style: theme.textTheme.bodyMedium,
+                      underline: const SizedBox.shrink(),
+                      items: ['line', 'bar', 'pie']
+                          .map((s) => DropdownMenuItem(value: s, child: Text(s, style: theme.textTheme.bodyMedium)))
+                          .toList(),
+                      onChanged: (v) => setState(() => _chartType = v!),
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Chart area below the control
+                  SizedBox(
+                    height: 220,
+                    child: OperationsChart(operations: ops, chartType: _chartType),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
           const SizedBox(height: 12),
 
@@ -184,10 +222,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 12),
 
           // content
-          // Give the table/calendar a bounded height when inside a vertical scroll view
-          SizedBox(
+          // The table view adapts its height to the number of rows (up to a max),
+          // to avoid overlapping elements below when inside a scroll view.
+          _tableView ? _buildTableView(ops) : SizedBox(
             height: MediaQuery.of(context).size.height * 0.56,
-            child: _tableView ? _buildTableView(ops) : CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
+            child: CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
           ),
 
           if (_tableView) Padding(padding: const EdgeInsets.only(top:8.0), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -203,22 +242,52 @@ class _HomePageState extends State<HomePage> {
   Widget _buildTableView(List<Operation> ops) {
     final start = _page * _perPage;
     final pageItems = ops.skip(start).take(_perPage).toList();
-    return Card(child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: DataTable(columns: const [
-      DataColumn(label: Text('Date')),
-      DataColumn(label: Text('Nom')),
-      DataColumn(label: Text('Montant'), numeric: true),
-      DataColumn(label: Text('Source')),
-      DataColumn(label: Text('Destination')),
-      DataColumn(label: Text('Catégorie')),
-      DataColumn(label: Text('Validé')),
-    ], rows: pageItems.map((o) => DataRow(cells: [
-      DataCell(Text(DateFormat('yyyy-MM-dd').format(o.date)), onTap: () => _openDetail(o)),
-      DataCell(Text(o.name), onTap: () => _openDetail(o)),
-      DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => _openDetail(o)),
-      DataCell(Text(o.operationsSource), onTap: () => _openDetail(o)),
-      DataCell(Text(o.operationsDestination), onTap: () => _openDetail(o)),
-      DataCell(Text(o.category), onTap: () => _openDetail(o)),
-      DataCell(Icon(o.operationsValidated ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
-    ])).toList())));
+
+    // Estimate heights to size the container dynamically.
+    // Defaults match DataTable's defaults: headingRowHeight and dataRowHeight are 56.0.
+    const double headingHeight = 56.0;
+    const double rowHeight = 56.0;
+    // Extra vertical padding inside the Card (approx)
+    const double cardVerticalPadding = 24.0;
+    final maxHeight = MediaQuery.of(context).size.height * 0.56;
+    final desiredHeight = headingHeight + (pageItems.length * rowHeight) + cardVerticalPadding;
+    // Ensure a sensible minimum height (when there are no rows) and clamp to maxHeight
+    final containerHeight = desiredHeight.clamp(120.0, maxHeight) as double;
+
+    return SizedBox(
+      height: containerHeight,
+      child: Card(
+        child: Scrollbar(
+          thumbVisibility: true,
+          child: SingleChildScrollView(
+            // vertical scrolling within the fixed-height box
+            child: SingleChildScrollView(
+              // horizontal scrolling for wide tables
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+            columns: const [
+              DataColumn(label: Text('Date')),
+              DataColumn(label: Text('Nom')),
+              DataColumn(label: Text('Montant'), numeric: true),
+              DataColumn(label: Text('Source')),
+              DataColumn(label: Text('Destination')),
+              DataColumn(label: Text('Catégorie')),
+              DataColumn(label: Text('Validé')),
+            ],
+            rows: pageItems.map((o) => DataRow(cells: [
+              DataCell(Text(DateFormat('yyyy-MM-dd').format(o.date)), onTap: () => _openDetail(o)),
+              DataCell(Text(o.name), onTap: () => _openDetail(o)),
+              DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => _openDetail(o)),
+              DataCell(Text(o.operationsSource), onTap: () => _openDetail(o)),
+              DataCell(Text(o.operationsDestination), onTap: () => _openDetail(o)),
+              DataCell(Text(o.category), onTap: () => _openDetail(o)),
+              DataCell(Icon(o.operationsValidated ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
+            ])).toList(),
+          ), // DataTable
+        ), // inner horizontal SingleChildScrollView
+      ), // outer vertical SingleChildScrollView
+    ), // Scrollbar
+  ), // Card
+); // SizedBox
   }
 }
