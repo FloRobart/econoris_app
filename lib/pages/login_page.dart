@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 12),
                 TextField(controller: _emailC, decoration: const InputDecoration(labelText: 'Email')),
                 const SizedBox(height: 8),
-                TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Nom')),
+                TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Prenom')),
                 const SizedBox(height: 12),
                 if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
                 const SizedBox(height: 8),
