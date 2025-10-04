@@ -8,7 +8,17 @@ import '../navigation/app_routes.dart';
 
 class LoginPage extends StatefulWidget {
   final String? initialError;
-  const LoginPage({super.key, this.initialError});
+  /// When true the page will ask for the user's name (used for signup).
+  /// When false the name field is hidden and the button text becomes "Se connecter".
+  final bool requireName;
+  const LoginPage({super.key, this.initialError, this.requireName = true});
+
+  /// Convenience constructor for the login (no name required).
+  const LoginPage.login({Key? key, String? initialError}) : this(key: key, initialError: initialError, requireName: false);
+
+  /// Convenience constructor for the signup (name required).
+  const LoginPage.signup({Key? key, String? initialError}) : this(key: key, initialError: initialError, requireName: true);
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -18,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   final _nameC = TextEditingController();
   bool _loading = false;
   String? _error;
+  late bool _requireName;
 
   Future<void> _submit() async {
     setState(() { _loading = true; _error = null; });
@@ -25,7 +36,12 @@ class _LoginPageState extends State<LoginPage> {
     final name = _nameC.text.trim();
     final sp = await SharedPreferences.getInstance();
     await sp.setString('email', email);
-    await sp.setString('name', name);
+    if (_requireName) {
+      await sp.setString('name', name);
+    } else {
+      // remove any previously stored name when in login mode
+      await sp.remove('name');
+    }
 
     final resp = await ApiService.requestLoginCode(email, name);
     setState(() { _loading = false; });
@@ -44,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     // populate any initial error passed via navigation arguments
     _error = widget.initialError;
+    _requireName = widget.requireName;
   }
 
   @override
@@ -62,11 +79,39 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 12),
                 TextField(controller: _emailC, decoration: const InputDecoration(labelText: 'Email')),
                 const SizedBox(height: 8),
-                TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Prenom')),
-                const SizedBox(height: 12),
+                if (_requireName) ...[
+                  TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Prenom')),
+                  const SizedBox(height: 12),
+                ],
                 if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
-                const SizedBox(height: 8),
-                ElevatedButton(onPressed: _loading ? null : _submit, child: _loading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : const Text('Se connecter'))
+                // add a bit more space above the toggle
+                const SizedBox(height: 14),
+                // Toggle between signup and login
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(_requireName ? 'Déjà un compte ?' : "Pas encore de compte ?"),
+                  TextButton(onPressed: _loading ? null : () {
+                    setState(() {
+                      _requireName = !_requireName;
+                      if (!_requireName) _nameC.text = '';
+                    });
+                  }, child: Text(_requireName ? 'Se connecter' : "S'inscrire"))
+                ]),
+                // add a bit more space below the toggle
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      minimumSize: const Size.fromHeight(56),
+                    ),
+                    onPressed: _loading ? null : _submit,
+                    child: _loading
+                        ? const SizedBox(width: 26, height: 26, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : Text(_requireName ? "S'inscrire" : 'Se connecter'),
+                  ),
+                )
               ]),
             ),
           ),
