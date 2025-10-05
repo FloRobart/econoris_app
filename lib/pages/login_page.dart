@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Row(children: [Image.asset('assets/logo/econoris_logo-1024.png', width: 48, height: 48), const SizedBox(width: 8), Text(Config.appName, style: const TextStyle(fontSize: 22))]),
+                Row(children: [Image.asset('logo/econoris_logo-512.png', width: 48, height: 48), const SizedBox(width: 8), Text(Config.appName, style: const TextStyle(fontSize: 22))]),
                 const SizedBox(height: 12),
                 TextField(controller: _emailC, decoration: const InputDecoration(labelText: 'Email')),
                 const SizedBox(height: 8),
