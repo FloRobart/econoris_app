@@ -112,7 +112,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Only show Date, Montant and Catégorie initially
+            // Only show Date, Nom, Montant et Catégorie initially
             Row(children: [
               const Text('Date: '),
               TextButton(
@@ -123,6 +123,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                 child: Text('${_date.year}-${_date.month}-${_date.day}')
               )
             ]),
+            TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Nom')),
             TextField(controller: _amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Montant')),
             TextField(controller: _categoryC, decoration: const InputDecoration(labelText: 'Catégorie')),
 
@@ -137,7 +138,6 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
 
             // Hidden fields — still part of the form and will be sent on save
             if (_expanded) ...[
-              TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Nom')),
               TextField(controller: _sourceC, decoration: const InputDecoration(labelText: 'Source')),
               TextField(controller: _destC, decoration: const InputDecoration(labelText: 'Destination')),
               TextField(controller: _costsC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Coûts')),
