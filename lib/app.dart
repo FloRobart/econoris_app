@@ -20,8 +20,66 @@ class EconorisApp extends StatelessWidget {
       builder: (context, mode, _) {
         return MaterialApp(
           title: Config.appName,
-          theme: ThemeData.light().copyWith(primaryColor: Colors.green, colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green).copyWith(background: Colors.white)),
-          darkTheme: ThemeData.dark().copyWith(primaryColor: Colors.green),
+          theme: ThemeData.light().copyWith(
+      primaryColor: Colors.amber,
+      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber)
+        .copyWith(background: Colors.white, primary: Colors.amber, onPrimary: Colors.white),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amber.shade700,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                elevation: 2,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+              ),
+            ),
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.black,
+                side: BorderSide(color: Colors.amber.shade700),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              ),
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.black,
+            ),
+          ),
+          darkTheme: ThemeData.dark().copyWith(
+      primaryColor: Colors.amber.shade700,
+      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber, brightness: Brightness.dark)
+        .copyWith(primary: Colors.amber.shade700, onPrimary: Colors.white),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amber.shade700,
+                foregroundColor: Colors.grey.shade200,
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                elevation: 2,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade200,
+              ),
+            ),
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.grey.shade200,
+                side: BorderSide(color: Colors.amber.shade700),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              ),
+            ),
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: Colors.amber.shade700,
+              foregroundColor: Colors.grey.shade200,
+            ),
+          ),
           themeMode: mode,
           initialRoute: AppRoutes.root,
           routes: {
