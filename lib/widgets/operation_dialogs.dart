@@ -75,6 +75,7 @@ class OperationEditDialog extends StatefulWidget {
 }
 
 class _OperationEditDialogState extends State<OperationEditDialog> {
+  final _formKey = GlobalKey<FormState>();
   final _nameC = TextEditingController();
   final _amountC = TextEditingController();
   final _sourceC = TextEditingController();
@@ -107,14 +108,16 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.operation==null ? 'Ajouter opération' : 'Modifier opération'),
+      title: Text(widget.operation==null ? 'Ajouter une opération' : 'Modifier une opération'),
       content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             // Only show Date, Nom, Montant et Catégorie initially
             Row(children: [
-              const Text('Date: '),
+              const Text('Date: ', style: TextStyle(fontSize: 16)),
               TextButton(
                 onPressed: () async {
                   final d = await showDatePicker(context: context, initialDate: _date, firstDate: DateTime(2000), lastDate: DateTime(2100));
@@ -123,24 +126,46 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                 child: Text('${_date.year}-${_date.month}-${_date.day}')
               )
             ]),
-            TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Nom')),
-            TextField(controller: _amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Montant')),
-            TextField(controller: _categoryC, decoration: const InputDecoration(labelText: 'Catégorie')),
+            TextFormField(
+              controller: _nameC,
+              decoration: const InputDecoration(labelText: 'Nom *'),
+              validator: (v) { if (v == null || v.trim().isEmpty) return 'Nom requis'; return null; },
+            ),
+            TextFormField(
+              controller: _amountC,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(labelText: 'Montant *'),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'Montant requis';
+                final parsed = double.tryParse(v.replaceAll(',', '.'));
+                if (parsed == null) return 'Montant invalide';
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _categoryC,
+              decoration: const InputDecoration(labelText: 'Catégorie *'),
+              validator: (v) { if (v == null || v.trim().isEmpty) return 'Catégorie requise'; return null; },
+            ),
 
             // Toggle button to show/hide additional fields
             Align(
               alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () => setState(()=>_expanded = !_expanded),
-                child: Text(_expanded ? 'Afficher moins' : 'Afficher plus'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: OutlinedButton(
+                  onPressed: () => setState(()=>_expanded = !_expanded),
+                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
+                  child: Text(_expanded ? 'Afficher moins' : 'Afficher plus'),
+                ),
               ),
             ),
 
             // Hidden fields — still part of the form and will be sent on save
             if (_expanded) ...[
-              TextField(controller: _sourceC, decoration: const InputDecoration(labelText: 'Source')),
-              TextField(controller: _destC, decoration: const InputDecoration(labelText: 'Destination')),
-              TextField(controller: _costsC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Coûts')),
+              TextFormField(controller: _sourceC, decoration: const InputDecoration(labelText: 'Source')),
+              TextFormField(controller: _destC, decoration: const InputDecoration(labelText: 'Destination')),
+              TextFormField(controller: _costsC, keyboardType: TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Coûts')),
             ],
 
             CheckboxListTile(
@@ -151,6 +176,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
           ],
         ),
       ),
+    ),
       actions: [
         TextButton(onPressed: ()=> Navigator.pop(context), child: const Text('Annuler')),
         TextButton(onPressed: ()=> _save(), child: const Text('Enregistrer'))
@@ -159,7 +185,22 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   }
 
   void _save() {
-    final op = Operation(operationsId: widget.operation?.operationsId ?? DateTime.now().millisecondsSinceEpoch, operationsDate: _date, operationsName: _nameC.text, operationsAmount: double.tryParse(_amountC.text) ?? 0, operationsSource: _sourceC.text, operationsDestination: _destC.text, operationsCosts: double.tryParse(_costsC.text) ?? 0, operationsCategory: _categoryC.text, operationsValidated: _validated, operationsRedundancy: '', operationsCreatedAt: DateTime.now());
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final parsedAmount = double.tryParse(_amountC.text.replaceAll(',', '.')) ?? 0.0;
+    final parsedCosts = double.tryParse(_costsC.text.replaceAll(',', '.')) ?? 0.0;
+    final op = Operation(
+      operationsId: widget.operation?.operationsId ?? DateTime.now().millisecondsSinceEpoch,
+      operationsDate: _date,
+      operationsName: _nameC.text,
+      operationsAmount: parsedAmount,
+      operationsSource: _sourceC.text,
+      operationsDestination: _destC.text,
+      operationsCosts: parsedCosts,
+      operationsCategory: _categoryC.text,
+      operationsValidated: _validated,
+      operationsRedundancy: '',
+      operationsCreatedAt: DateTime.now(),
+    );
     Navigator.of(context).pop(op);
   }
 }
