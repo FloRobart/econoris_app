@@ -133,7 +133,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
             ),
             TextFormField(
               controller: _amountC,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(labelText: 'Montant *'),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Montant requis';
@@ -165,7 +165,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
             if (_expanded) ...[
               TextFormField(controller: _sourceC, decoration: const InputDecoration(labelText: 'Source')),
               TextFormField(controller: _destC, decoration: const InputDecoration(labelText: 'Destination')),
-              TextFormField(controller: _costsC, keyboardType: TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Coûts')),
+              TextFormField(controller: _costsC, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Coûts')),
             ],
 
             CheckboxListTile(
