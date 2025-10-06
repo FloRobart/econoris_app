@@ -119,18 +119,42 @@ class _HomePageState extends State<HomePage> {
     if (res != null && _jwt != null) {
       final body = res.toJson();
       final resp = await ApiService.addOperation(_jwt!, body);
-
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
+    if (resp.statusCode >= 200 && resp.statusCode < 300) {
         try {
-          final created = Operation.fromJson(jsonDecode(resp.body));
-          setState(() { _operations.insert(0, created); });
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
+          // Parse body robustly: server may wrap the created operation in
+          // {"operation": {...}} or {"rows": [...]}, or return it directly.
+          final parsed = jsonDecode(resp.body);
+          Map<String, dynamic>? opJson;
+          if (parsed is Map<String, dynamic>) {
+            if (parsed.containsKey('operation') && parsed['operation'] is Map) {
+              opJson = Map<String, dynamic>.from(parsed['operation']);
+            } else if (parsed.containsKey('rows') && parsed['rows'] is List && (parsed['rows'] as List).isNotEmpty && (parsed['rows'][0] is Map)) {
+              opJson = Map<String, dynamic>.from(parsed['rows'][0]);
+            } else if (parsed.containsKey('data') && parsed['data'] is Map) {
+              opJson = Map<String, dynamic>.from(parsed['data']);
+            } else {
+              // Maybe the response is already the operation map
+              opJson = Map<String, dynamic>.from(parsed);
+            }
+          } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
+            opJson = Map<String, dynamic>.from(parsed[0]);
+          }
+
+          if (opJson != null) {
+            final created = Operation.fromJson(opJson);
+            setState(() { _operations.insert(0, created); });
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
+          } else {
+            // fallback: refresh full list
+            await _fetchOperations();
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
+          }
         } catch (e) {
           await _fetchOperations();
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
         }
       } else {
-        String m = 'Erreur'; try { m = jsonDecode(resp.body)['error'] ?? resp.body; } catch (e) {}
+        String m = 'Erreur'; try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (e) {}
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
       }
     }
@@ -252,7 +276,7 @@ class _HomePageState extends State<HomePage> {
     final maxHeight = MediaQuery.of(context).size.height * 0.56;
     final desiredHeight = headingHeight + (pageItems.length * rowHeight) + cardVerticalPadding;
     // Ensure a sensible minimum height (when there are no rows) and clamp to maxHeight
-    final containerHeight = desiredHeight.clamp(120.0, maxHeight) as double;
+  final containerHeight = desiredHeight.clamp(120.0, maxHeight);
 
     return SizedBox(
       height: containerHeight,
