@@ -4,11 +4,13 @@ import '../config.dart';
 import 'auth_manager.dart';
 
 class ApiService {
-  static Future<http.Response> requestLoginCode(String email, String name) {
+  static Future<http.Response> requestLoginCode(String email, [String? name]) {
     final url = Uri.parse('${Config.floraccessServer}/code/login/request');
+    final body = <String, dynamic>{'email': email};
+    if (name != null && name.isNotEmpty) body['name'] = name;
     return http.post(url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'name': name}));
+        body: jsonEncode(body));
   }
 
   static Future<http.Response> confirmLoginCode(String email, String code) {
@@ -16,6 +18,17 @@ class ApiService {
     return http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'code': code}));
+  }
+
+  // Register a user by email. The server is expected to return a JWT on
+  // successful registration so the client can log the user in immediately.
+  static Future<http.Response> registerUser(String email, [String? name]) {
+    final url = Uri.parse('${Config.floraccessServer}/user/register');
+    final body = <String, dynamic>{'email': email};
+    if (name != null && name.isNotEmpty) body['name'] = name;
+    return http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body));
   }
 
   static Future<http.Response> getProfile(String jwt) {

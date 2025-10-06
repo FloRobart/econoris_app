@@ -43,15 +43,46 @@ class _LoginPageState extends State<LoginPage> {
       await sp.remove('name');
     }
 
-    final resp = await ApiService.requestLoginCode(email, name);
-    setState(() { _loading = false; });
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
-      if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email, 'name': name});
+    // If a name was provided we treat this as the signup flow which calls
+    // the register endpoint and expects a JWT back. If only the email was
+    // provided we call the requestLoginCode endpoint (login by code).
+    if (_requireName && name.isNotEmpty) {
+      // Signup -> registerUser (expect immediate JWT)
+      final resp = await ApiService.registerUser(email, name);
+      setState(() { _loading = false; });
+      if (resp.statusCode >= 200 && resp.statusCode < 300) {
+        try {
+          final j = jsonDecode(resp.body);
+          final jwt = j['jwt'];
+          final nameResp = j['name'] ?? name;
+          if (jwt != null) {
+            final sp = await SharedPreferences.getInstance();
+            await sp.setString('jwt', jwt);
+            await sp.setString('email', email);
+            await sp.setString('name', nameResp);
+            if (!mounted) return;
+            Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+            return;
+          }
+        } catch (e) {}
+        setState(() { _error = 'Réponse invalide du serveur'; });
+      } else {
+        String msg = 'Erreur';
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        setState(() { _error = msg; });
+      }
     } else {
-      String msg = 'Erreur';
-      try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
-      setState(() { _error = msg; });
+      // Login -> requestLoginCode and go to code entry
+      final resp = await ApiService.requestLoginCode(email);
+      setState(() { _loading = false; });
+      if (resp.statusCode >= 200 && resp.statusCode < 300) {
+        if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email, 'name': ''});
+      } else {
+        String msg = 'Erreur';
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        setState(() { _error = msg; });
+      }
     }
   }
 
