@@ -238,8 +238,6 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 12),
             ElevatedButton(onPressed: _openAddModal, child: const Text('Ajouter une opération')),
             const SizedBox(width: 8),
-            OutlinedButton(onPressed: _fetchOperations, child: const Text('Rafraîchir')),
-            const SizedBox(width: 8),
             ElevatedButton(onPressed: () => setState(() => _tableView = !_tableView), child: Text(_tableView ? 'Vue calendrier' : 'Vue tableau'))
           ]),
 
