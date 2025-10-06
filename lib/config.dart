@@ -11,18 +11,14 @@ class Config {
   static late final String appName;
   static late final String econorisServer;
   static late final String floraccessServer;
-  static late final String supportEmail;
-  static late final String version;
   static late final String defaultLanguage;
   static late final String defaultCurrency;
 
   /// Charge les valeurs depuis `dotenv`. Appeler après `await dotenv.load(...)`.
   static void load() {
-    appName = dotenv.get('APP_NAME', fallback: 'Econoris');
+    appName = dotenv.get('APP_NAME', fallback: 'Econoris default');
     floraccessServer = dotenv.get('FLORACCESS_SERVER', fallback: 'http://localhost:26001');
     econorisServer = dotenv.get('ECONORIS_SERVER', fallback: 'http://localhost:26002');
-    supportEmail = dotenv.get('SUPPORT_EMAIL', fallback: 'Unknown');
-    version = dotenv.get('APP_VERSION', fallback: 'Unknown');
     defaultLanguage = dotenv.get('DEFAULT_LANGUAGE', fallback: 'fr_FR');
     defaultCurrency = dotenv.get('DEFAULT_CURRENCY', fallback: 'EUR');
   }
