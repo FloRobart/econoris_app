@@ -20,8 +20,66 @@ class EconorisApp extends StatelessWidget {
       builder: (context, mode, _) {
         return MaterialApp(
           title: Config.appName,
-          theme: ThemeData.light().copyWith(primaryColor: Colors.green, colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green).copyWith(background: Colors.white)),
-          darkTheme: ThemeData.dark().copyWith(primaryColor: Colors.green),
+          theme: ThemeData.light().copyWith(
+      primaryColor: Colors.amber,
+      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber)
+        .copyWith(surface: Colors.white, primary: Colors.amber, onPrimary: Colors.white),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFBB80A),
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                elevation: 2,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+              ),
+            ),
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.black,
+                side: const BorderSide(color: Color(0xFFFBB80A)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              ),
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Color(0xFFFBB80A),
+              foregroundColor: Colors.black,
+            ),
+          ),
+          darkTheme: ThemeData.dark().copyWith(
+      primaryColor: Colors.amber.shade700,
+      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber, brightness: Brightness.dark)
+        .copyWith(primary: Colors.amber.shade700, onPrimary: Colors.white),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFBB80A),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                elevation: 2,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+              ),
+            ),
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: Color(0xFFFBB80A)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              ),
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Color(0xFFFBB80A),
+              foregroundColor: Colors.white,
+            ),
+          ),
           themeMode: mode,
           initialRoute: AppRoutes.root,
           routes: {

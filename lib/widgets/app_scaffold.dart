@@ -48,7 +48,7 @@ class AppScaffold extends StatelessWidget {
         // Ensure AppBar icons and title use the foreground color for contrast
         iconTheme: IconThemeData(color: foreground),
         titleTextStyle: titleStyle,
-        title: Row(children: [Image.asset('assets/logo/econoris_logo-1024.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
+        title: Row(children: [Image.asset('logo/econoris_logo-512.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(

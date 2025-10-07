@@ -59,15 +59,16 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
   }
 
   Future<void> _maybeAutoSend() async {
-    // if page was opened with explicit params, assume caller already sent the code
-    if ((widget.email ?? '').isNotEmpty && (widget.name ?? '').isNotEmpty) {
+    // if page was opened with explicit params that include an email,
+    // assume caller already sent the code (name is optional)
+    if ((widget.email ?? '').isNotEmpty) {
       _resolvedEmail = widget.email;
       return;
     }
     final sp = await SharedPreferences.getInstance();
     final email = sp.getString('email') ?? '';
     final name = sp.getString('name') ?? '';
-    if (email.isEmpty || name.isEmpty) {
+    if (email.isEmpty) {
       setState(() { _error = 'Aucun email trouvé en local. Veuillez vous reconnecter.'; });
       // navigate back to login after a short delay
       await Future.delayed(const Duration(seconds: 2));
