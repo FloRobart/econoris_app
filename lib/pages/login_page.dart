@@ -76,8 +76,19 @@ class _LoginPageState extends State<LoginPage> {
       final resp = await ApiService.requestLoginCode(email);
       setState(() { _loading = false; });
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        if (!mounted) return;
-        Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email, 'name': ''});
+        // Expect the server to return a token to be used when confirming the code
+        try {
+          final j = jsonDecode(resp.body);
+          final token = j['token'];
+          if (token != null && token is String && token.isNotEmpty) {
+            final sp = await SharedPreferences.getInstance();
+            await sp.setString('login_token', token);
+            if (!mounted) return;
+            Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email, 'name': ''});
+            return;
+          }
+        } catch (e) {}
+        setState(() { _error = 'Réponse invalide du serveur'; });
       } else {
         String msg = 'Erreur';
         try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}

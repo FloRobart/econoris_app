@@ -4,26 +4,28 @@ import '../config.dart';
 import 'auth_manager.dart';
 
 class ApiService {
-  static Future<http.Response> requestLoginCode(String email, [String? name]) {
-    final url = Uri.parse('${Config.floraccessServer}/code/login/request');
+  static Future<http.Response> requestLoginCode(String email) {
+    final url = Uri.parse('${Config.floraccessServer}/users/login/request');
     final body = <String, dynamic>{'email': email};
-    if (name != null && name.isNotEmpty) body['name'] = name;
     return http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body));
   }
 
-  static Future<http.Response> confirmLoginCode(String email, String code) {
-    final url = Uri.parse('${Config.floraccessServer}/code/login/confirm');
+  // Confirm a login using the token previously received from requestLoginCode
+  // and the secret (code) entered by the user. The server expects an object
+  // { email, token, secret } and will reply with the final JWT on success.
+  static Future<http.Response> confirmLoginCode(String email, String token, String secret) {
+    final url = Uri.parse('${Config.floraccessServer}/users/login/confirm');
     return http.post(url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'code': code}));
+        body: jsonEncode({'email': email, 'token': token, 'secret': secret}));
   }
 
   // Register a user by email. The server is expected to return a JWT on
   // successful registration so the client can log the user in immediately.
   static Future<http.Response> registerUser(String email, [String? name]) {
-    final url = Uri.parse('${Config.floraccessServer}/user/register');
+    final url = Uri.parse('${Config.floraccessServer}/users/register');
     final body = <String, dynamic>{'email': email};
     if (name != null && name.isNotEmpty) body['name'] = name;
     return http.post(url,
@@ -32,22 +34,22 @@ class ApiService {
   }
 
   static Future<http.Response> getProfile(String jwt) {
-    final url = Uri.parse('${Config.floraccessServer}/user/profile');
+    final url = Uri.parse('${Config.floraccessServer}/users');
   return _wrap(http.get(url, headers: {'Authorization': 'Bearer $jwt'}));
   }
 
   static Future<http.Response> logout(String jwt) {
-    final url = Uri.parse('${Config.floraccessServer}/user/logout');
+    final url = Uri.parse('${Config.floraccessServer}/users/logout');
   return _wrap(http.post(url, headers: {'Authorization': 'Bearer $jwt'}));
   }
 
   static Future<http.Response> deleteUser(String jwt) {
-    final url = Uri.parse('${Config.floraccessServer}/user');
+    final url = Uri.parse('${Config.floraccessServer}/users');
   return _wrap(http.delete(url, headers: {'Authorization': 'Bearer $jwt'}));
   }
 
   static Future<http.Response> updateUser(String jwt, String email, String name) {
-    final url = Uri.parse('${Config.floraccessServer}/user');
+    final url = Uri.parse('${Config.floraccessServer}/users');
   return _wrap(http.put(url,
     headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'},
     body: jsonEncode({'email': email, 'name': name})));

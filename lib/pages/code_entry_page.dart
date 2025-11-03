@@ -27,7 +27,15 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
       setState(() { _loading = false; _error = 'Aucun email disponible pour confirmer le code'; });
       return;
     }
-    final resp = await ApiService.confirmLoginCode(email, code);
+    // retrieve the login token stored after the initial requestLoginCode call
+    final sp = await SharedPreferences.getInstance();
+    final token = sp.getString('login_token') ?? '';
+    if (token.isEmpty) {
+      setState(() { _loading = false; _error = 'Aucun token trouvé pour confirmer la connexion. Veuillez renvoyer le code.'; });
+      return;
+    }
+
+    final resp = await ApiService.confirmLoginCode(email, token, code);
     setState(() { _loading = false; });
   if (resp.statusCode >= 200 && resp.statusCode < 300) {
       try {
@@ -38,6 +46,8 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
           await sp.setString('jwt', jwt);
           await sp.setString('email', email);
           await sp.setString('name', widget.name ?? '');
+          // remove temporary login token
+          await sp.remove('login_token');
           if (!mounted) return;
           Navigator.of(context).pushReplacementNamed(AppRoutes.home);
           return;
@@ -67,7 +77,6 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
     }
     final sp = await SharedPreferences.getInstance();
     final email = sp.getString('email') ?? '';
-    final name = sp.getString('name') ?? '';
     if (email.isEmpty) {
       setState(() { _error = 'Aucun email trouvé en local. Veuillez vous reconnecter.'; });
       // navigate back to login after a short delay
@@ -78,10 +87,22 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
     }
     setState(() { _error = null; _resolvedEmail = email; });
     try {
-      final resp = await ApiService.requestLoginCode(email, name);
+      final resp = await ApiService.requestLoginCode(email);
   if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        // success
-        setState(() { });
+        // success - expect a token in response body
+        try {
+          final j = jsonDecode(resp.body);
+          final token = j['token'];
+          if (token != null && token is String && token.isNotEmpty) {
+            await sp.setString('login_token', token);
+            setState(() {});
+          } else {
+            String msg = 'Réponse invalide du serveur';
+            setState(() { _error = msg; });
+          }
+        } catch (e) {
+          setState(() { _error = 'Réponse invalide du serveur'; });
+        }
       } else if (resp.statusCode >= 500) {
         // server error -> show message like LoginPage
         String msg = 'Erreur lors de l\'envoi du code';

@@ -18,6 +18,13 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _jwt;
   String? _email;
   String? _name;
+  String? _error;
+  int? id;
+  bool? _isConnected;
+  bool? _isVerifiedEmail;
+  DateTime? _lastLogin;
+  DateTime? _createdAt;
+  DateTime? updatedAt;
   String? _appVersion;
   bool _loading = true;
   final _nameC = TextEditingController();
@@ -43,8 +50,36 @@ class _ProfilePageState extends State<ProfilePage> {
     _nameC.text = _name ?? '';
     if (_jwt != null) {
       final resp = await ApiService.getProfile(_jwt!);
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        try { final j = jsonDecode(resp.body); setState((){ _email = j['email'] ?? _email; _name = j['name'] ?? _name; _nameC.text = _name ?? ''; _loading = false; }); } catch (e) { setState(()=> _loading = false); }
+      if (resp.statusCode >= 200 && resp.statusCode < 300) {
+        final j = jsonDecode(resp.body);
+        // Assume API returns a valid user object with all fields present.
+        setState((){
+          id = j['id'];
+          _email = j['email'];
+          // API returns pseudo instead of name
+          _name = j['pseudo'] ?? j['name'];
+          _nameC.text = _name!;
+          _isConnected = j['is_connected'];
+          _isVerifiedEmail = j['is_verified_email'];
+          _lastLogin = DateTime.parse(j['last_login']);
+          _createdAt = DateTime.parse(j['created_at']);
+          updatedAt = DateTime.parse(j['updated_at']);
+          _error = null;
+          _loading = false;
+        });
+      } else if (resp.statusCode == 401 || resp.statusCode == 422) {
+        // Clear local credentials and force login
+        final sp = await SharedPreferences.getInstance();
+        await sp.remove('jwt');
+        await sp.remove('email');
+        await sp.remove('name');
+        if (!mounted) return;
+        Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
+        return;
+      } else if (resp.statusCode >= 500) {
+        String msg = 'Erreur serveur';
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        setState((){ _error = msg; _loading = false; });
       } else {
         setState(()=> _loading = false);
       }
@@ -156,7 +191,35 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 12),
+
+                    // Show API error if any
+                    if (_error != null) Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(child: Text(_error!, style: const TextStyle(color: Colors.red))),
+                    ),
+
+                    // Account status summary (from API)
+                    if (_isConnected != null || _isVerifiedEmail != null || _lastLogin != null || _createdAt != null)
+                      Card(
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            const Text('Statut du compte', style: TextStyle(fontWeight: FontWeight.w600)),
+                            const SizedBox(height: 8),
+                            if (_isConnected != null) Row(children: [const Icon(Icons.link), const SizedBox(width: 8), Text('Connecté : ${_isConnected! ? 'Oui' : 'Non'}'),]),
+                            if (_isConnected != null) const SizedBox(height: 6),
+                            if (_isVerifiedEmail != null) Row(children: [const Icon(Icons.email), const SizedBox(width: 8), Text('Email vérifié : ${_isVerifiedEmail! ? 'Oui' : 'Non'}'),]),
+                            if (_isVerifiedEmail != null) const SizedBox(height: 6),
+                            if (_lastLogin != null) Row(children: [const Icon(Icons.access_time), const SizedBox(width: 8), Text('Dernière connexion : ${_lastLogin != null ? _lastLogin!.toLocal().toString() : ''}'),]),
+                            if (_createdAt != null) Row(children: [const Icon(Icons.calendar_today), const SizedBox(width: 8), Text('Créé le : ${_createdAt != null ? _createdAt!.toLocal().toString().split('.').first : ''}'),]),
+                          ]),
+                        ),
+                      ),
+
+                    const SizedBox(height: 16),
 
                   // Form card
                   Card(
