@@ -14,6 +14,8 @@ class AppScaffold extends StatelessWidget {
   /// If provided, called with (BuildContext, index) when a bottom nav item is tapped.
   /// Otherwise a default replacement navigation to '/placeholder' for indices 1 and 2 is used.
   final void Function(BuildContext context, int index)? onBottomNavTap;
+  /// Optional floating action button displayed by the Scaffold.
+  final Widget? floatingActionButton;
 
   const AppScaffold({
     super.key,
@@ -21,6 +23,7 @@ class AppScaffold extends StatelessWidget {
     this.currentIndex = 0,
     this.onProfilePressed,
     this.onBottomNavTap,
+    this.floatingActionButton,
   });
 
   void _defaultBottomTap(BuildContext context, int i) {
@@ -51,6 +54,7 @@ class AppScaffold extends StatelessWidget {
         title: Row(children: [Image.asset('logo/econoris_logo-512.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
       ),
       body: body,
+  floatingActionButton: floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (i) {

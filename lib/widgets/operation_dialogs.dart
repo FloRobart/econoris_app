@@ -69,7 +69,10 @@ class OperationDetailDialog extends StatelessWidget {
 
 class OperationEditDialog extends StatefulWidget {
   final Operation? operation;
-  const OperationEditDialog({super.key, this.operation});
+  /// mode can be 'revenue', 'depense' or 'abonnement'. If null the dialog
+  /// behaves normally.
+  final String? mode;
+  const OperationEditDialog({super.key, this.operation, this.mode});
   @override
   State<OperationEditDialog> createState() => _OperationEditDialogState();
 }
@@ -85,6 +88,10 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   DateTime _date = DateTime.now();
   bool _validated = true;
   bool _expanded = false;
+  // subscription fields (only used in UI for 'abonnement' mode)
+  String _frequency = 'mensuel';
+  int? _customFreqCount;
+  String? _customFreqUnit; // 'jours', 'semaines', 'mois'
 
   @override
   void initState(){
@@ -115,6 +122,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+            if (widget.mode != null) Align(alignment: Alignment.centerLeft, child: Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_modeLabel(), style: const TextStyle(fontWeight: FontWeight.w600)))),
             // Only show Date, Nom, Montant et Catégorie initially
             Row(children: [
               const Text('Date: ', style: TextStyle(fontSize: 16)),
@@ -142,6 +150,59 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                 return null;
               },
             ),
+            // For 'abonnement' show frequency selector
+            if (widget.mode == 'abonnement') Padding(
+              padding: const EdgeInsets.only(top:8.0),
+              child: Row(children: [
+                const Text('Fréquence: '),
+                const SizedBox(width: 8),
+                DropdownButton<String>(
+                  value: _frequency,
+                  items: const [
+                    DropdownMenuItem(value: 'mensuel', child: Text('Mensuel')),
+                    DropdownMenuItem(value: 'trimestriel', child: Text('Trimestriel')),
+                    DropdownMenuItem(value: 'semestriel', child: Text('Semestriel')),
+                    DropdownMenuItem(value: 'annuel', child: Text('Annuel')),
+                    DropdownMenuItem(value: 'custom', child: Text('Custom')),
+                  ],
+                  onChanged: (v) async {
+                    if (v == null) return;
+                    if (v != 'custom') {
+                      setState(() => _frequency = v);
+                      return;
+                    }
+                    // custom selected -> show popup to get X and UNIT
+                    final result = await showDialog<Map<String, dynamic>>(context: context, builder: (_) => AlertDialog(
+                      title: const Text('Custom'),
+                      content: Column(mainAxisSize: MainAxisSize.min, children: [
+                        TextFormField(keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'X (entier)'), onChanged: (s){}),
+                        // We'll implement inputs inline below via stateful builder
+                      ]),
+                      actions: [TextButton(onPressed: ()=> Navigator.pop(context), child: const Text('Annuler'))],
+                    ));
+                    // For simplicity show a simple two-step dialog instead
+                    if (result == null) {
+                      // open a custom input flow
+                      final custom = await showDialog<Map<String,dynamic>>(context: context, builder: (c) {
+                        int count = 1;
+                        String unit = 'jours';
+                        return AlertDialog(
+                          title: const Text('Paiement custom'),
+                          content: StatefulBuilder(builder: (ctx, setSt) => Column(mainAxisSize: MainAxisSize.min, children: [
+                            TextFormField(initialValue: '1', keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'X (entier)'), onChanged: (v) { count = int.tryParse(v) ?? 1; }),
+                            const SizedBox(height:8),
+                            DropdownButton<String>(value: unit, items: const [DropdownMenuItem(value: 'jours', child: Text('Jours')), DropdownMenuItem(value: 'semaines', child: Text('Semaines')), DropdownMenuItem(value: 'mois', child: Text('Mois'))], onChanged: (u){ if (u!=null) setSt(()=>unit=u); }),
+                          ])),
+                          actions: [TextButton(onPressed: ()=> Navigator.pop(c), child: const Text('Annuler')), TextButton(onPressed: ()=> Navigator.pop(c, {'count':count,'unit':unit}), child: const Text('OK'))],
+                        );
+                      });
+                      if (custom != null) setState(() { _frequency = 'custom'; _customFreqCount = custom['count'] as int?; _customFreqUnit = custom['unit'] as String?; });
+                    }
+                  },
+                ),
+                if (_frequency == 'custom' && _customFreqCount != null && _customFreqUnit != null) Padding(padding: const EdgeInsets.only(left:12.0), child: Text('Paiement tous les ${_customFreqCount} ${_customFreqUnit}'))
+              ]),
+            ),
             TextFormField(
               controller: _categoryC,
               decoration: const InputDecoration(labelText: 'Catégorie *'),
@@ -165,7 +226,8 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
             if (_expanded) ...[
               TextFormField(controller: _sourceC, decoration: const InputDecoration(labelText: 'Source')),
               TextFormField(controller: _destC, decoration: const InputDecoration(labelText: 'Destination')),
-              TextFormField(controller: _costsC, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Coûts')),
+              // costs should not appear for revenue mode
+              if (widget.mode != 'revenue') TextFormField(controller: _costsC, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Coûts')),
             ],
 
             CheckboxListTile(
@@ -188,16 +250,22 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final parsedAmount = double.tryParse(_amountC.text.replaceAll(',', '.')) ?? 0.0;
     final parsedCosts = double.tryParse(_costsC.text.replaceAll(',', '.')) ?? 0.0;
+    double finalAmount = parsedAmount;
+    if (widget.mode == 'revenue') finalAmount = parsedAmount.abs();
+    else if (widget.mode == 'depense') finalAmount = -parsedAmount.abs();
+
+    final parsedCostsForSave = widget.mode == 'revenue' ? 0.0 : parsedCosts;
+
     final op = Operation(
       id: widget.operation?.id ?? DateTime.now().millisecondsSinceEpoch,
       levyDate: _date,
       label: _nameC.text,
-      amount: parsedAmount,
+      amount: finalAmount,
       category: _categoryC.text,
 
       source: _sourceC.text.isEmpty ? null : _sourceC.text,
       destination: _destC.text.isEmpty ? null : _destC.text,
-      costs: parsedCosts,
+      costs: parsedCostsForSave,
       isValidate: _validated,
 
       userId: widget.operation?.userId ?? 0,
@@ -206,5 +274,14 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
       updatedAt: DateTime.now(),
     );
     Navigator.of(context).pop(op);
+  }
+
+  String _modeLabel(){
+    switch(widget.mode){
+      case 'revenue': return 'Type: Revenu (montant forcé positif)';
+      case 'depense': return 'Type: Dépense (montant forcé négatif)';
+      case 'abonnement': return 'Type: Abonnement';
+    }
+    return '';
   }
 }
