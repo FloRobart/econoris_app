@@ -87,7 +87,7 @@ class EconorisApp extends StatelessWidget {
             AppRoutes.login: (ctx) {
               final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
               final error = args?['error'] as String?;
-              return LoginPage(initialError: error);
+              return LoginPage.login(initialError: error);
             },
             AppRoutes.home: (ctx) => const HomePage(),
             AppRoutes.profile: (ctx) => const ProfilePage(),
