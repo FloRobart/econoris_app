@@ -46,8 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
     final sp = await SharedPreferences.getInstance();
     _jwt = sp.getString('jwt');
     _email = sp.getString('email');
-    _name = sp.getString('name');
-    _nameC.text = _name ?? '';
+    // We no longer store the user's name locally; the profile will be
+    // fetched from the API when available.
     if (_jwt != null) {
       final resp = await ApiService.getProfile(_jwt!);
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
@@ -72,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
         final sp = await SharedPreferences.getInstance();
         await sp.remove('jwt');
         await sp.remove('email');
-        await sp.remove('name');
+        // 'name' is no longer stored locally
         if (!mounted) return;
         Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
         return;
@@ -142,8 +142,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final newName = _nameC.text.trim();
     final resp = await ApiService.updateUser(_jwt!, _email ?? '', newName);
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
-      final sp = await SharedPreferences.getInstance();
-      await sp.setString('name', newName);
       setState(()=> _name = newName);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nom mis à jour')));
     } else {

@@ -45,7 +45,6 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
           final sp = await SharedPreferences.getInstance();
           await sp.setString('jwt', jwt);
           await sp.setString('email', email);
-          await sp.setString('name', widget.name ?? '');
           // remove temporary login token
           await sp.remove('login_token');
           if (!mounted) return;
@@ -109,13 +108,12 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
         try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
         setState(() { _error = msg; });
       } else if (resp.statusCode >= 400 && resp.statusCode < 500) {
-        // client error -> clear local creds and redirect to login with API message
+    // client error -> clear local creds and redirect to login with API message
         String msg = 'Erreur';
         try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
         final sp = await SharedPreferences.getInstance();
         await sp.remove('jwt');
         await sp.remove('email');
-        await sp.remove('name');
   if (!mounted) return;
   // navigate to login and pass the error message to display
   Navigator.of(context).pushReplacementNamed(AppRoutes.login, arguments: {'error': msg});

@@ -36,12 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     final name = _nameC.text.trim();
     final sp = await SharedPreferences.getInstance();
     await sp.setString('email', email);
-    if (_requireName) {
-      await sp.setString('name', name);
-    } else {
-      // remove any previously stored name when in login mode
-      await sp.remove('name');
-    }
+    // We no longer persist the user's name locally.
 
     // If a name was provided we treat this as the signup flow which calls
     // the register endpoint and expects a JWT back. If only the email was
@@ -54,12 +49,10 @@ class _LoginPageState extends State<LoginPage> {
         try {
           final j = jsonDecode(resp.body);
           final jwt = j['jwt'];
-          final nameResp = j['name'] ?? name;
           if (jwt != null) {
             final sp = await SharedPreferences.getInstance();
             await sp.setString('jwt', jwt);
             await sp.setString('email', email);
-            await sp.setString('name', nameResp);
             if (!mounted) return;
             Navigator.of(context).pushReplacementNamed(AppRoutes.home);
             return;
@@ -84,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
             final sp = await SharedPreferences.getInstance();
             await sp.setString('login_token', token);
             if (!mounted) return;
-            Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email, 'name': ''});
+            Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email});
             return;
           }
         } catch (e) {}
@@ -103,6 +96,27 @@ class _LoginPageState extends State<LoginPage> {
     // populate any initial error passed via navigation arguments
     _error = widget.initialError;
     _requireName = widget.requireName;
+    // Load any saved email from shared preferences to prefill the email field.
+    // This only pre-fills the text field; it does not auto-submit the form.
+    _loadSavedEmail();
+  }
+
+  Future<void> _loadSavedEmail() async {
+    try {
+      final sp = await SharedPreferences.getInstance();
+      final saved = sp.getString('email');
+      if (saved != null && saved.isNotEmpty) {
+        // Only update the controller if it's currently empty to avoid
+        // overwriting any user-typed content when returning to the page.
+        if (_emailC.text.trim().isEmpty) {
+          setState(() {
+            _emailC.text = saved;
+          });
+        }
+      }
+    } catch (e) {
+      // ignore errors reading prefs; field will stay empty
+    }
   }
 
   @override
