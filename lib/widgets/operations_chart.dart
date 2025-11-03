@@ -115,19 +115,19 @@ class OperationsChart extends StatelessWidget {
 
     Widget leftTitleWidgets(double value, TitleMeta meta) {
       // Show labels formatted as currency
-      final style = const TextStyle(fontSize: 10);
+      const style = TextStyle(fontSize: 10);
       return Padding(padding: const EdgeInsets.only(right: 6), child: Text(currencyFmt.format(value), style: style, textAlign: TextAlign.right));
     }
 
     final lineChart = LineChart(LineChartData(
-      gridData: FlGridData(show: true),
+      gridData: const FlGridData(show: true),
       titlesData: FlTitlesData(
         bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 36, getTitlesWidget: bottomTitleWidgets, interval: 1)),
         leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 56, getTitlesWidget: leftTitleWidgets)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
-      lineBarsData: [LineChartBarData(isCurved: false, spots: spots, dotData: FlDotData(show: true), belowBarData: BarAreaData(show: false))],
+      lineBarsData: [LineChartBarData(isCurved: false, spots: spots, dotData: const FlDotData(show: true), belowBarData: BarAreaData(show: false))],
       minX: 0,
       maxX: spots.isNotEmpty ? (spots.last.x) : 0,
       lineTouchData: LineTouchData(
@@ -170,7 +170,7 @@ class OperationsChart extends StatelessWidget {
     for (int i = 0; i < sorted.length; i++) {
       groups.add(BarChartGroupData(x: i, barRods: [BarChartRodData(toY: sorted[i].amount)]));
     }
-    return BarChart(BarChartData(barGroups: groups, titlesData: FlTitlesData(show: false)));
+    return BarChart(BarChartData(barGroups: groups, titlesData: const FlTitlesData(show: false)));
   }
 
   Widget _buildPie() {
