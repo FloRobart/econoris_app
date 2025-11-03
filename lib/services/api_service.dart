@@ -64,18 +64,20 @@ class ApiService {
     final url = Uri.parse('${Config.econorisServer}/operations');
   return _wrap(http.post(url,
     headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'},
-    body: jsonEncode({'operation': body})));
+    body: jsonEncode(body)));
   }
 
-  static Future<http.Response> updateOperation(String jwt, Map<String, dynamic> body) {
-    final url = Uri.parse('${Config.econorisServer}/operations');
-  return _wrap(http.put(url,
-    headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'},
-    body: jsonEncode({'operation': body})));
+  // Update an operation by id. The server expects PUT /operations/{operation_id}
+  // with the operation object as the body.
+  static Future<http.Response> updateOperation(String jwt, int operationId, Map<String, dynamic> body) {
+    final url = Uri.parse('${Config.econorisServer}/operations/$operationId');
+    return _wrap(http.put(url,
+      headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'},
+      body: jsonEncode(body)));
   }
 
   static Future<http.Response> deleteOperation(String jwt, int id) {
-    final url = Uri.parse('${Config.econorisServer}/operations/id/$id');
+    final url = Uri.parse('${Config.econorisServer}/operations/$id');
     return _wrap(http.delete(url, headers: {'Authorization': 'Bearer $jwt'}));
   }
 

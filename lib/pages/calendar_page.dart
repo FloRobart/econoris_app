@@ -22,7 +22,7 @@ class _CalendarPageState extends State<CalendarPage> {
     super.initState();
     events = {};
     for (final op in widget.operations) {
-      final day = DateTime(op.date.year, op.date.month, op.date.day);
+      final day = DateTime(op.levyDate.year, op.levyDate.month, op.levyDate.day);
       events.putIfAbsent(day, () => []).add(op);
     }
   }
@@ -49,7 +49,7 @@ class _CalendarPageState extends State<CalendarPage> {
       const SizedBox(height: 8),
       Expanded(
         child: ListView(
-          children: _getEventsForDay(_selectedDay ?? _focusedDay).map((op) => ListTile(title: Text(op.name), subtitle: Text(op.date.toIso8601String()), trailing: Text(op.amount.toStringAsFixed(2)), onTap: () => widget.onOperationTap(op))).toList(),
+      children: _getEventsForDay(_selectedDay ?? _focusedDay).map((op) => ListTile(title: Text(op.label), subtitle: Text(op.levyDate.toIso8601String()), trailing: Text(op.amount.toStringAsFixed(2)), onTap: () => widget.onOperationTap(op))).toList(),
         ),
       )
     ]);

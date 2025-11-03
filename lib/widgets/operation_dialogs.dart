@@ -18,7 +18,7 @@ class OperationDetailDialog extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Non authentifié')));
         return;
       }
-      final resp = await ApiService.deleteOperation(jwt, operation.operationsId);
+  final resp = await ApiService.deleteOperation(jwt, operation.id);
   if (resp.statusCode >= 200 && resp.statusCode < 300) {
         Navigator.of(context).pop('deleted');
       } else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){} ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
@@ -31,8 +31,8 @@ class OperationDetailDialog extends StatelessWidget {
       final sp = await SharedPreferences.getInstance();
       final jwt = sp.getString('jwt');
       if (jwt != null) {
-        final resp = await ApiService.updateOperation(jwt, edited.toJson());
-  if (resp.statusCode >= 200 && resp.statusCode < 300) Navigator.of(context).pop('updated');
+  final resp = await ApiService.updateOperation(jwt, edited.id, edited.toJson());
+        if (resp.statusCode >= 200 && resp.statusCode < 300) Navigator.of(context).pop('updated');
         else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
       }
     }
@@ -44,16 +44,16 @@ class OperationDetailDialog extends StatelessWidget {
       future: SharedPreferences.getInstance(),
       builder: (c, s) {
         return AlertDialog(
-          title: Text(operation.operationsName),
+          title: Text(operation.label),
           content: SingleChildScrollView(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Date: ${operation.operationsDate.toIso8601String()}'),
-              Text('Montant: ${operation.operationsAmount}'),
-              Text('Source: ${operation.operationsSource}'),
-              Text('Destination: ${operation.operationsDestination}'),
-              Text('Coûts: ${operation.operationsCosts}'),
-              Text('Catégorie: ${operation.operationsCategory}'),
-              Text('Validée: ${operation.operationsValidated}')
+              Text('Date: ${operation.levyDate.toIso8601String()}'),
+              Text('Montant: ${operation.amount}'),
+              Text('Source: ${operation.source ?? ''}'),
+              Text('Destination: ${operation.destination ?? ''}'),
+              Text('Coûts: ${operation.costs}'),
+              Text('Catégorie: ${operation.category}'),
+              Text('Validée: ${operation.isValidate}')
             ]),
           ),
           actions: [
@@ -90,15 +90,15 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   void initState(){
     super.initState();
     if (widget.operation!=null) {
-      final o = widget.operation!;
-      _nameC.text = o.operationsName;
-      _amountC.text = o.operationsAmount.toString();
-      _sourceC.text = o.operationsSource;
-      _destC.text = o.operationsDestination;
-      _costsC.text = o.operationsCosts.toString();
-      _categoryC.text = o.operationsCategory;
-      _date = o.operationsDate;
-      _validated = o.operationsValidated;
+  final o = widget.operation!;
+  _nameC.text = o.label;
+  _amountC.text = o.amount.toString();
+  _sourceC.text = o.source ?? '';
+  _destC.text = o.destination ?? '';
+  _costsC.text = o.costs.toString();
+  _categoryC.text = o.category;
+  _date = o.levyDate;
+  _validated = o.isValidate;
     } else {
       // For new operations, default validated to true per requirements
       _validated = true;
@@ -189,17 +189,21 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
     final parsedAmount = double.tryParse(_amountC.text.replaceAll(',', '.')) ?? 0.0;
     final parsedCosts = double.tryParse(_costsC.text.replaceAll(',', '.')) ?? 0.0;
     final op = Operation(
-      operationsId: widget.operation?.operationsId ?? DateTime.now().millisecondsSinceEpoch,
-      operationsDate: _date,
-      operationsName: _nameC.text,
-      operationsAmount: parsedAmount,
-      operationsSource: _sourceC.text,
-      operationsDestination: _destC.text,
-      operationsCosts: parsedCosts,
-      operationsCategory: _categoryC.text,
-      operationsValidated: _validated,
-      operationsRedundancy: '',
-      operationsCreatedAt: DateTime.now(),
+      id: widget.operation?.id ?? DateTime.now().millisecondsSinceEpoch,
+      levyDate: _date,
+      label: _nameC.text,
+      amount: parsedAmount,
+      category: _categoryC.text,
+
+      source: _sourceC.text.isEmpty ? null : _sourceC.text,
+      destination: _destC.text.isEmpty ? null : _destC.text,
+      costs: parsedCosts,
+      isValidate: _validated,
+
+      userId: widget.operation?.userId ?? 0,
+      subscriptionId: widget.operation?.subscriptionId,
+      createdAt: widget.operation?.createdAt ?? DateTime.now(),
+      updatedAt: DateTime.now(),
     );
     Navigator.of(context).pop(op);
   }

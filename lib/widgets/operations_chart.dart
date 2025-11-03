@@ -23,7 +23,7 @@ class OperationsChart extends StatelessWidget {
     final dateFmt = DateFormat('yyyy-MM-dd');
     final grouped = <String, double>{};
     for (final op in operations) {
-      final key = dateFmt.format(op.date);
+      final key = dateFmt.format(op.levyDate);
       grouped[key] = (grouped[key] ?? 0) + op.amount;
     }
 
@@ -165,7 +165,7 @@ class OperationsChart extends StatelessWidget {
   }
 
   Widget _buildBar() {
-    final sorted = List<Operation>.from(operations)..sort((a, b) => a.date.compareTo(b.date));
+  final sorted = List<Operation>.from(operations)..sort((a, b) => a.levyDate.compareTo(b.levyDate));
     final groups = <BarChartGroupData>[];
     for (int i = 0; i < sorted.length; i++) {
       groups.add(BarChartGroupData(x: i, barRods: [BarChartRodData(toY: sorted[i].amount)]));

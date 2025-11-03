@@ -57,15 +57,27 @@ class _HomePageState extends State<HomePage> {
     try {
       final resp = await ApiService.getOperations(_jwt!);
 
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
-       if (resp.body.isEmpty) {
+      if (resp.statusCode >= 200 && resp.statusCode < 300) {
+        if (resp.body.isEmpty) {
           setState(() { _operations = []; _loading = false; });
           return;
         }
-        final j = jsonDecode(resp.body);
-        final rows = j['rows'] as List? ?? [];
-        final ops = rows.map((e) => Operation.fromJson(e)).toList();
-        ops.sort((a, b) => b.operationsDate.compareTo(a.operationsDate));
+        final parsed = jsonDecode(resp.body);
+        List<dynamic> list;
+        if (parsed is List) {
+          list = parsed;
+        } else if (parsed is Map && parsed.containsKey('rows') && parsed['rows'] is List) {
+          list = parsed['rows'];
+        } else if (parsed is Map && parsed.containsKey('data') && parsed['data'] is List) {
+          list = parsed['data'];
+        } else if (parsed is Map && parsed.containsKey('operations') && parsed['operations'] is List) {
+          list = parsed['operations'];
+        } else {
+          // fallback: if it's a map representing a single operation, wrap it
+          if (parsed is Map) list = [parsed]; else list = [];
+        }
+        final ops = list.map((e) => Operation.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+  ops.sort((a, b) => b.levyDate.compareTo(a.levyDate));
         setState(() { _operations = ops; _loading = false; });
       } else {
         String msg = 'Erreur (${resp.statusCode})';
@@ -91,10 +103,10 @@ class _HomePageState extends State<HomePage> {
 
   List<Operation> get _filteredOperations {
     var list = _operations.where((op) {
-      if (_categoryFilter != 'Tous' && op.operationsCategory != _categoryFilter) return false;
+  if (_categoryFilter != 'Tous' && op.category != _categoryFilter) return false;
       if (_search.isNotEmpty) {
         final s = _search.toLowerCase();
-        return op.operationsName.toLowerCase().contains(s) || op.operationsSource.toLowerCase().contains(s) || op.operationsDestination.toLowerCase().contains(s);
+  return op.label.toLowerCase().contains(s) || (op.source ?? '').toLowerCase().contains(s) || (op.destination ?? '').toLowerCase().contains(s);
       }
       return true;
     }).toList();
@@ -102,11 +114,11 @@ class _HomePageState extends State<HomePage> {
     list.sort((a, b) {
       int res = 0;
       switch (_sortField) {
-        case 'operations_amount': res = a.operationsAmount.compareTo(b.operationsAmount); break;
-        case 'operations_name': res = a.operationsName.compareTo(b.operationsName); break;
-        case 'operations_date': res = a.operationsDate.compareTo(b.operationsDate); break;
-        case 'operations_id': res = a.operationsId.compareTo(b.operationsId); break;
-        default: res = a.operationsDate.compareTo(b.operationsDate);
+  case 'operations_amount': res = a.amount.compareTo(b.amount); break;
+  case 'operations_name': res = a.label.compareTo(b.label); break;
+  case 'operations_date': res = a.levyDate.compareTo(b.levyDate); break;
+  case 'operations_id': res = a.id.compareTo(b.id); break;
+  default: res = a.levyDate.compareTo(b.levyDate);
       }
       return _sortAsc ? res : -res;
     });
@@ -169,7 +181,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
   final ops = _filteredOperations;
-  final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
+  final categories = ['Tous'] + _operations.map((e) => e.category).toSet().toList();
   final theme = Theme.of(context);
 
     return AppScaffold(
@@ -297,13 +309,13 @@ class _HomePageState extends State<HomePage> {
               DataColumn(label: Text('Validé')),
             ],
             rows: pageItems.map((o) => DataRow(cells: [
-              DataCell(Text(DateFormat('yyyy-MM-dd').format(o.date)), onTap: () => _openDetail(o)),
-              DataCell(Text(o.name), onTap: () => _openDetail(o)),
+              DataCell(Text(DateFormat('yyyy-MM-dd').format(o.levyDate)), onTap: () => _openDetail(o)),
+              DataCell(Text(o.label), onTap: () => _openDetail(o)),
               DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => _openDetail(o)),
-              DataCell(Text(o.operationsSource), onTap: () => _openDetail(o)),
-              DataCell(Text(o.operationsDestination), onTap: () => _openDetail(o)),
+              DataCell(Text(o.source ?? ''), onTap: () => _openDetail(o)),
+              DataCell(Text(o.destination ?? ''), onTap: () => _openDetail(o)),
               DataCell(Text(o.category), onTap: () => _openDetail(o)),
-              DataCell(Icon(o.operationsValidated ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
+              DataCell(Icon(o.isValidate ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
             ])).toList(),
           ), // DataTable
         ), // inner horizontal SingleChildScrollView
