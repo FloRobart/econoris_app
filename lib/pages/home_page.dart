@@ -127,51 +127,7 @@ class _HomePageState extends State<HomePage> {
     return list;
   }
 
-  void _openAddModal() async {
-    final res = await showDialog<Operation>(context: context, builder: (_) => const OperationEditDialog());
-    if (res != null && _jwt != null) {
-      final body = res.toJson();
-      final resp = await ApiService.addOperation(_jwt!, body);
-    if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        try {
-          // Parse body robustly: server may wrap the created operation in
-          // {"operation": {...}} or {"rows": [...]}, or return it directly.
-          final parsed = jsonDecode(resp.body);
-          Map<String, dynamic>? opJson;
-          if (parsed is Map<String, dynamic>) {
-            if (parsed.containsKey('operation') && parsed['operation'] is Map) {
-              opJson = Map<String, dynamic>.from(parsed['operation']);
-            } else if (parsed.containsKey('rows') && parsed['rows'] is List && (parsed['rows'] as List).isNotEmpty && (parsed['rows'][0] is Map)) {
-              opJson = Map<String, dynamic>.from(parsed['rows'][0]);
-            } else if (parsed.containsKey('data') && parsed['data'] is Map) {
-              opJson = Map<String, dynamic>.from(parsed['data']);
-            } else {
-              // Maybe the response is already the operation map
-              opJson = Map<String, dynamic>.from(parsed);
-            }
-          } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
-            opJson = Map<String, dynamic>.from(parsed[0]);
-          }
-
-          if (opJson != null) {
-            final created = Operation.fromJson(opJson);
-            setState(() { _operations.insert(0, created); });
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-          } else {
-            // fallback: refresh full list
-            await _fetchOperations();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-          }
-        } catch (e) {
-          await _fetchOperations();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-        }
-      } else {
-        String m = 'Erreur'; try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (e) {}
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
-      }
-    }
-  }
+  
 
   void _openDetail(Operation op) async {
     final result = await showDialog<String>(context: context, builder: (_) => OperationDetailDialog(operation: op));
@@ -355,14 +311,11 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 12),
 
-          // Controls
+          // Controls (search and manual add button removed)
           Row(children: [
             DropdownButton<String>(value: _categoryFilter, items: categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(), onChanged: (v) => setState(() => _categoryFilter = v!)),
             const SizedBox(width: 12),
-            Expanded(child: TextField(decoration: const InputDecoration(hintText: 'Rechercher'), onChanged: (v) => setState(() => _search = v))),
-            const SizedBox(width: 12),
-            ElevatedButton(onPressed: _openAddModal, child: const Text('Ajouter une opération')),
-            const SizedBox(width: 8),
+            const Spacer(),
             ElevatedButton(onPressed: () => setState(() => _tableView = !_tableView), child: Text(_tableView ? 'Vue calendrier' : 'Vue tableau'))
           ]),
 
