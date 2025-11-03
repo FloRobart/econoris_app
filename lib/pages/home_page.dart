@@ -32,8 +32,7 @@ class _HomePageState extends State<HomePage> {
   final String _sortField = 'operations_date';
   final bool _sortAsc = false;
   String _categoryFilter = 'Tous';
-  int _perPage = 20;
-  int _page = 0;
+  // show only the 15 last operations (no pagination)
 
   @override
   void initState() {
@@ -263,10 +262,7 @@ class _HomePageState extends State<HomePage> {
             child: CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
           ),
 
-          if (_tableView) Padding(padding: const EdgeInsets.only(top:8.0), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Row(children: [const Text('Afficher par page:'), const SizedBox(width: 8), DropdownButton<int>(value: _perPage, items: [20,50,100].map((n)=>DropdownMenuItem(value: n, child: Text('$n'))).toList(), onChanged: (v)=> setState(()=>_perPage=v!))]),
-            Row(children: [IconButton(onPressed: ()=> setState(()=> _page = (_page-1).clamp(0,999)), icon: const Icon(Icons.chevron_left)), Text('Page ${_page+1}'), IconButton(onPressed: ()=> setState(()=> _page = _page+1), icon: const Icon(Icons.chevron_right))])
-          ]))
+          // pagination removed: we only show the 15 latest operations
         ]),
         ),
       ),
@@ -274,54 +270,33 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTableView(List<Operation> ops) {
-    final start = _page * _perPage;
-    final pageItems = ops.skip(start).take(_perPage).toList();
-
-    // Estimate heights to size the container dynamically.
-    // Defaults match DataTable's defaults: headingRowHeight and dataRowHeight are 56.0.
-    const double headingHeight = 56.0;
-    const double rowHeight = 56.0;
-    // Extra vertical padding inside the Card (approx)
-    const double cardVerticalPadding = 24.0;
-    final maxHeight = MediaQuery.of(context).size.height * 0.56;
-    final desiredHeight = headingHeight + (pageItems.length * rowHeight) + cardVerticalPadding;
-    // Ensure a sensible minimum height (when there are no rows) and clamp to maxHeight
-  final containerHeight = desiredHeight.clamp(120.0, maxHeight);
-
-    return SizedBox(
-      height: containerHeight,
+  // No pagination: show only the 15 most recent operations
+  final pageItems = ops.take(15).toList();
+    // Allow the Card to size itself vertically so the page (outer SingleChildScrollView)
+    // becomes scrollable. Keep horizontal scrolling for wide tables. Add a small
+    // bottom margin so the card doesn't touch the screen edge.
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
       child: Card(
-        child: Scrollbar(
-          thumbVisibility: true,
-          child: SingleChildScrollView(
-            // vertical scrolling within the fixed-height box
-            child: SingleChildScrollView(
-              // horizontal scrolling for wide tables
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
+        child: SingleChildScrollView(
+          // horizontal scrolling for wide tables
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
             columns: const [
               DataColumn(label: Text('Date')),
               DataColumn(label: Text('Nom')),
               DataColumn(label: Text('Montant'), numeric: true),
-              DataColumn(label: Text('Source')),
-              DataColumn(label: Text('Destination')),
-              DataColumn(label: Text('Catégorie')),
               DataColumn(label: Text('Validé')),
             ],
             rows: pageItems.map((o) => DataRow(cells: [
               DataCell(Text(DateFormat('yyyy-MM-dd').format(o.levyDate)), onTap: () => _openDetail(o)),
               DataCell(Text(o.label), onTap: () => _openDetail(o)),
               DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => _openDetail(o)),
-              DataCell(Text(o.source ?? ''), onTap: () => _openDetail(o)),
-              DataCell(Text(o.destination ?? ''), onTap: () => _openDetail(o)),
-              DataCell(Text(o.category), onTap: () => _openDetail(o)),
               DataCell(Icon(o.isValidate ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
             ])).toList(),
-          ), // DataTable
-        ), // inner horizontal SingleChildScrollView
-      ), // outer vertical SingleChildScrollView
-    ), // Scrollbar
-  ), // Card
-); // SizedBox
+          ), // DataTable inside horizontal SingleChildScrollView
+        ), // horizontal SingleChildScrollView
+      ), // Card with bottom padding
+    );
   }
 }
