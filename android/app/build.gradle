@@ -24,16 +24,23 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.econoris_app"
-    compileSdkVersion flutter.compileSdkVersion
+    // Force a compileSdk compatible with the applied AGP (8.1.1 is tested up to 34).
+    // Using compileSdk 34 avoids AGP creating an androidJdkImage for newer platform jars
+    // which can fail when using JDK 21.
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        // Match Kotlin jvmTarget and current JDK (17+) to avoid mismatched target compatibility errors.
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        // Use a modern jvmTarget matching current JDK targets; keep compatibility with Android toolchain.
+        // Java 17+ is typically used with newer toolchains; set to 17 to match modern Kotlin/JDK behaviour.
+        jvmTarget = '17'
+        javaParameters = true
     }
 
     sourceSets {
@@ -46,7 +53,9 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+    // Keep targetSdk reasonably aligned; force 34 to match compileSdk and avoid
+    // platform transforms that require jlink for newer platform versions.
+    targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
