@@ -12,6 +12,7 @@ import '../navigation/app_routes.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
+import '../widgets/add_operation_fab.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,8 +34,7 @@ class _HomePageState extends State<HomePage> {
   final bool _sortAsc = false;
   String _categoryFilter = 'Tous';
   // show only the 15 last operations (no pagination)
-  // FAB open state for the three small bubbles
-  bool _fabOpen = false;
+  // FAB open state for the three small bubbles (moved to reusable widget)
 
   @override
   void initState() {
@@ -144,118 +144,7 @@ class _HomePageState extends State<HomePage> {
     return AppScaffold(
       currentIndex: 0,
   onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
-      // Custom speed-dial: main FAB + 3 small bubbles that appear when opened
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // small bubble: Revenu
-          AnimatedSlide(
-            offset: _fabOpen ? const Offset(0, 0) : const Offset(0, 0.2),
-            duration: const Duration(milliseconds: 200),
-            child: AnimatedOpacity(
-              opacity: _fabOpen ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: GestureDetector(
-                  onTap: () { setState(()=> _fabOpen = false); _openAddModalWithMode('revenue'); },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Material(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(24),
-                      elevation: 2,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: () { setState(()=> _fabOpen = false); _openAddModalWithMode('revenue'); },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_downward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Revenu', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // small bubble: Dépense
-          AnimatedSlide(
-            offset: _fabOpen ? const Offset(0, 0) : const Offset(0, 0.2),
-            duration: const Duration(milliseconds: 220),
-            child: AnimatedOpacity(
-              opacity: _fabOpen ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 220),
-                child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: GestureDetector(
-                  onTap: () { setState(()=> _fabOpen = false); _openAddModalWithMode('depense'); },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Material(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(24),
-                      elevation: 2,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: () { setState(()=> _fabOpen = false); _openAddModalWithMode('depense'); },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_upward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Dépense', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // small bubble: Abonnement
-          AnimatedSlide(
-            offset: _fabOpen ? const Offset(0, 0) : const Offset(0, 0.2),
-            duration: const Duration(milliseconds: 240),
-            child: AnimatedOpacity(
-              opacity: _fabOpen ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 240),
-                child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: GestureDetector(
-                  onTap: () { setState(()=> _fabOpen = false); _openAddModalWithMode('abonnement'); },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Material(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(24),
-                      elevation: 2,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: () { setState(()=> _fabOpen = false); _openAddModalWithMode('abonnement'); },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.repeat, size: 18, color: Colors.black), SizedBox(width: 8), Text('Abonnement', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // main FAB
-          FloatingActionButton(
-            onPressed: () => setState(() => _fabOpen = !_fabOpen),
-            child: AnimatedRotation(
-              turns: _fabOpen ? 0.125 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: const Icon(Icons.add),
-            ),
-          ),
-        ],
-      ),
+      floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op))),
       body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Padding(
         padding: const EdgeInsets.all(12),
@@ -338,47 +227,7 @@ class _HomePageState extends State<HomePage> {
 
   
 
-  void _openAddModalWithMode(String mode) async {
-    final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(mode: mode));
-    if (res != null && _jwt != null) {
-      final body = res.toJson();
-      final resp = await ApiService.addOperation(_jwt!, body);
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        try {
-          final parsed = jsonDecode(resp.body);
-          Map<String, dynamic>? opJson;
-          if (parsed is Map<String, dynamic>) {
-            if (parsed.containsKey('operation') && parsed['operation'] is Map) {
-              opJson = Map<String, dynamic>.from(parsed['operation']);
-            } else if (parsed.containsKey('rows') && parsed['rows'] is List && (parsed['rows'] as List).isNotEmpty && (parsed['rows'][0] is Map)) {
-              opJson = Map<String, dynamic>.from(parsed['rows'][0]);
-            } else if (parsed.containsKey('data') && parsed['data'] is Map) {
-              opJson = Map<String, dynamic>.from(parsed['data']);
-            } else {
-              opJson = Map<String, dynamic>.from(parsed);
-            }
-          } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
-            opJson = Map<String, dynamic>.from(parsed[0]);
-          }
-
-          if (opJson != null) {
-            final created = Operation.fromJson(opJson);
-            setState(() { _operations.insert(0, created); });
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-          } else {
-            await _fetchOperations();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-          }
-        } catch (e) {
-          await _fetchOperations();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-        }
-      } else {
-        String m = 'Erreur'; try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (e) {}
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
-      }
-    }
-  }
+  
 
   Widget _buildTableView(List<Operation> ops) {
   // No pagination: show only the 15 most recent operations
