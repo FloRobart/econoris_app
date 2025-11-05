@@ -69,10 +69,12 @@ class OperationDetailDialog extends StatelessWidget {
 
 class OperationEditDialog extends StatefulWidget {
   final Operation? operation;
+  /// Optional list of all known operations (used to derive category suggestions).
+  final List<Operation>? operations;
   /// mode can be 'revenue', 'depense' or 'abonnement'. If null the dialog
   /// behaves normally.
   final String? mode;
-  const OperationEditDialog({super.key, this.operation, this.mode});
+  const OperationEditDialog({super.key, this.operation, this.mode, this.operations});
   @override
   State<OperationEditDialog> createState() => _OperationEditDialogState();
 }
@@ -84,7 +86,11 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   final _sourceC = TextEditingController();
   final _destC = TextEditingController();
   final _costsC = TextEditingController();
-  final _categoryC = TextEditingController();
+  late TextEditingController _categoryC;
+  // initial value to set on the Autocomplete controller when it's created
+  String _categoryInitial = '';
+  // derived categories from provided operations (preserve first-seen order)
+  List<String> _allCategories = [];
   DateTime _date = DateTime.now();
   bool _validated = true;
   bool _expanded = false;
@@ -103,12 +109,25 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   _sourceC.text = o.source ?? '';
   _destC.text = o.destination ?? '';
   _costsC.text = o.costs.toString();
-  _categoryC.text = o.category;
+  _categoryInitial = o.category;
   _date = o.levyDate;
   _validated = o.isValidate;
     } else {
       // For new operations, default validated to true per requirements
       _validated = true;
+    }
+    // derive categories preserving first occurrence order
+    if (widget.operations != null) {
+      final seen = <String>{};
+      final list = <String>[];
+      for (final op in widget.operations!) {
+        final c = op.category;
+        if (c.isNotEmpty && !seen.contains(c)) {
+          seen.add(c);
+          list.add(c);
+        }
+      }
+      _allCategories = list;
     }
   }
 
@@ -203,10 +222,40 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                 if (_frequency == 'custom' && _customFreqCount != null && _customFreqUnit != null) Padding(padding: const EdgeInsets.only(left:12.0), child: Text('Paiement tous les ${_customFreqCount} ${_customFreqUnit}'))
               ]),
             ),
-            TextFormField(
-              controller: _categoryC,
-              decoration: const InputDecoration(labelText: 'Catégorie *'),
-              validator: (v) { if (v == null || v.trim().isEmpty) return 'Catégorie requise'; return null; },
+            // Free-text category field with suggestions.
+            Autocomplete<String>(
+              optionsBuilder: (TextEditingValue textEditingValue) {
+                final q = textEditingValue.text;
+                if (_allCategories.isEmpty) return const Iterable<String>.empty();
+                if (q.trim().isEmpty) return _allCategories;
+                final cleaned = q.toLowerCase().replaceAll(RegExp('\\s+'), '');
+                bool fuzzyMatch(String candidate, String queryChars) {
+                  final cand = candidate.toLowerCase();
+                  for (var i = 0; i < queryChars.length; i++) {
+                    if (!cand.contains(queryChars[i])) return false;
+                  }
+                  return true;
+                }
+                return _allCategories.where((c) => fuzzyMatch(c, cleaned));
+              },
+              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                // initialize controller with existing value if any
+                if (_categoryInitial.isNotEmpty && textEditingController.text.isEmpty) {
+                  textEditingController.text = _categoryInitial;
+                }
+                // keep a reference so _save() can read the value
+                _categoryC = textEditingController;
+                return TextFormField(
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: const InputDecoration(labelText: 'Catégorie *'),
+                  validator: (v) { if (v == null || v.trim().isEmpty) return 'Catégorie requise'; return null; },
+                );
+              },
+              onSelected: (s) {
+                // ensure controller updated when user selects an option
+                _categoryC.text = s;
+              },
             ),
 
             // Toggle button to show/hide additional fields

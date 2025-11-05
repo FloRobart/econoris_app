@@ -11,7 +11,9 @@ typedef OperationCreatedCallback = void Function(Operation operation);
 /// Reusable add-operation FAB with a small speed-dial showing three choices.
 class AddOperationFab extends StatefulWidget {
   final OperationCreatedCallback? onOperationCreated;
-  const AddOperationFab({super.key, this.onOperationCreated});
+  /// Optional list of current operations to derive category suggestions.
+  final List<Operation>? operations;
+  const AddOperationFab({super.key, this.onOperationCreated, this.operations});
 
   @override
   State<AddOperationFab> createState() => _AddOperationFabState();
@@ -21,7 +23,7 @@ class _AddOperationFabState extends State<AddOperationFab> {
   bool _open = false;
 
   Future<void> _openAddModalWithMode(String mode) async {
-    final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(mode: mode));
+  final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(mode: mode, operations: widget.operations));
     if (res == null) return;
 
     final sp = await SharedPreferences.getInstance();

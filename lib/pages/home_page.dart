@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
     return AppScaffold(
       currentIndex: 0,
   onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
-      floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op))),
+  floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op)), operations: _operations),
       body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Padding(
         padding: const EdgeInsets.all(12),
