@@ -7,8 +7,9 @@ class PlaceholderPage extends StatelessWidget {
   const PlaceholderPage({super.key, required this.title});
 
   int _indexForTitle() {
-    if (title.toLowerCase().contains('prêt') || title.toLowerCase().contains('prêts')) return 1;
-    if (title.toLowerCase().contains('horaire') || title.toLowerCase().contains('horaires')) return 2;
+    if (title.toLowerCase().contains('opération') || title.toLowerCase().contains('opérations')) return 1;
+    if (title.toLowerCase().contains('prêt') || title.toLowerCase().contains('prêts')) return 2;
+    if (title.toLowerCase().contains('horaire') || title.toLowerCase().contains('horaires')) return 3;
     return 0;
   }
 
