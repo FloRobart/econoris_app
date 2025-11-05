@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   // UI state
   bool _tableView = true;
   String _chartType = 'line';
-  String _search = '';
+  final String _search = '';
   final String _sortField = 'operations_date';
   final bool _sortAsc = false;
   String _categoryFilter = 'Tous';
@@ -75,7 +75,11 @@ class _HomePageState extends State<HomePage> {
           list = parsed['operations'];
         } else {
           // fallback: if it's a map representing a single operation, wrap it
-          if (parsed is Map) list = [parsed]; else list = [];
+          if (parsed is Map) {
+            list = [parsed];
+          } else {
+            list = [];
+          }
         }
         final ops = list.map((e) => Operation.fromJson(Map<String, dynamic>.from(e as Map))).toList();
   ops.sort((a, b) => b.levyDate.compareTo(a.levyDate));
@@ -92,7 +96,8 @@ class _HomePageState extends State<HomePage> {
               msg = body;
             }
           }
-        } catch (e) {
+        } catch (e, st) {
+          debugPrint('getOperations parse error: $e\n$st');
           // keep default msg if parsing fails
         }
         setState(() { _error = msg; _loading = false; });
@@ -164,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       // use card color from theme for better integration with light/dark modes
-                      color: theme.cardColor.withOpacity(0.95),
+                      color: theme.cardColor.withAlpha((0.95 * 255).toInt()),
                       borderRadius: BorderRadius.circular(6),
                       boxShadow: [
                         BoxShadow(

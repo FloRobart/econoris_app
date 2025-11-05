@@ -48,6 +48,7 @@ class _RootRouterState extends State<RootRouter> {
           // show session expired message then redirect
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
           await Future.delayed(const Duration(milliseconds: 400));
+          if (!mounted) return;
           Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
           // reset the flag so future logins can proceed
           AuthManager.instance.sessionInvalidated.value = false;

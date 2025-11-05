@@ -57,11 +57,13 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.of(context).pushReplacementNamed(AppRoutes.home);
             return;
           }
-        } catch (e) {}
+        } catch (e, st) {
+          debugPrint('registerUser: parse error: $e\n$st');
+        }
         setState(() { _error = 'Réponse invalide du serveur'; });
       } else {
         String msg = 'Erreur';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('registerUser parse error: $e\n$st'); }
         setState(() { _error = msg; });
       }
     } else {
@@ -80,11 +82,13 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email});
             return;
           }
-        } catch (e) {}
+        } catch (e, st) {
+          debugPrint('requestLoginCode: parse error: $e\n$st');
+        }
         setState(() { _error = 'Réponse invalide du serveur'; });
       } else {
-        String msg = 'Erreur';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+  String msg = 'Erreur';
+  try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('requestLoginCode: parse error: $e\n$st'); }
         setState(() { _error = msg; });
       }
     }
@@ -114,7 +118,8 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       }
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('loadSavedEmail error: $e\n$st');
       // ignore errors reading prefs; field will stay empty
     }
   }

@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _email = j['email'];
           // API returns pseudo instead of name
           _name = j['pseudo'] ?? j['name'];
-          _nameC.text = _name!;
+          _nameC.text = _name ?? '';
           _isConnected = j['is_connected'];
           _isVerifiedEmail = j['is_verified_email'];
           _lastLogin = DateTime.parse(j['last_login']);
@@ -78,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return;
       } else if (resp.statusCode >= 500) {
         String msg = 'Erreur serveur';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('getProfile parse error: $e\n$st'); }
         setState((){ _error = msg; _loading = false; });
       } else {
         setState(()=> _loading = false);
@@ -94,8 +94,8 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final info = await PackageInfo.fromPlatform();
       setState(() { _appVersion = '${info.version}+${info.buildNumber}'; });
-    } catch (_) {
-      // ignore
+    } catch (e, st) {
+      debugPrint('PackageInfo error: $e\n$st');
     }
   }
 
@@ -113,8 +113,10 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_jwt != null) await ApiService.logout(_jwt!);
     final sp = await SharedPreferences.getInstance();
     await sp.remove('jwt');
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
     await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
   }
 
@@ -130,8 +132,10 @@ class _ProfilePageState extends State<ProfilePage> {
     await ApiService.deleteUser(_jwt!);
     final sp = await SharedPreferences.getInstance();
     await sp.clear();
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Compte supprimé, session terminée')));
     await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
   }
 
@@ -142,10 +146,12 @@ class _ProfilePageState extends State<ProfilePage> {
     final newName = _nameC.text.trim();
     final resp = await ApiService.updateUser(_jwt!, _email ?? '', newName);
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
+      if (!mounted) return;
       setState(()=> _name = newName);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nom mis à jour')));
     } else {
-      String m = 'Erreur'; try { m = jsonDecode(resp.body)['error'] ?? resp.body; } catch (e) {}
+      String m = 'Erreur'; try { m = jsonDecode(resp.body)['error'] ?? resp.body; } catch (e, st) { debugPrint('updateUser parse error: $e\n$st'); }
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
     }
   }

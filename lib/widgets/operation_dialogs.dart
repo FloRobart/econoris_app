@@ -5,35 +5,65 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/operation.dart';
 import '../services/api_service.dart';
 
-class OperationDetailDialog extends StatelessWidget {
+class OperationDetailDialog extends StatefulWidget {
   final Operation operation;
   const OperationDetailDialog({super.key, required this.operation});
 
-  Future<void> _delete(BuildContext context) async {
-    final ok = await showDialog<bool>(context: context, builder: (_) => AlertDialog(title: const Text('Confirmer'), content: const Text('Supprimer cette opération ?'), actions: [TextButton(onPressed: ()=>Navigator.pop(context,false), child: const Text('Non')), TextButton(onPressed: ()=>Navigator.pop(context,true), child: const Text('Oui'))]));
+  @override
+  State<OperationDetailDialog> createState() => _OperationDetailDialogState();
+}
+
+class _OperationDetailDialogState extends State<OperationDetailDialog> {
+  Future<void> _delete() async {
+  final ok = await showDialog<bool>(context: context, builder: (c) => AlertDialog(title: const Text('Confirmer'), content: const Text('Supprimer cette opération ?'), actions: [TextButton(onPressed: ()=>Navigator.pop(c,false), child: const Text('Non')), TextButton(onPressed: ()=>Navigator.pop(c,true), child: const Text('Oui'))]));
     if (ok == true) {
       final sp = await SharedPreferences.getInstance();
       final jwt = sp.getString('jwt');
       if (jwt == null) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Non authentifié')));
         return;
       }
-  final resp = await ApiService.deleteOperation(jwt, operation.id);
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
+
+      final resp = await ApiService.deleteOperation(jwt, widget.operation.id);
+      if (resp.statusCode >= 200 && resp.statusCode < 300) {
+        if (!mounted) return;
         Navigator.of(context).pop('deleted');
-      } else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){} ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
+      } else {
+        String m = 'Erreur';
+        try {
+          final parsed = jsonDecode(resp.body);
+          m = parsed['error'] ?? resp.body;
+        } catch (e, st) {
+          debugPrint('deleteOperation parse error: $e\n$st');
+        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+      }
     }
   }
 
-  Future<void> _edit(BuildContext context) async {
-    final edited = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(operation: operation));
+  Future<void> _edit() async {
+    final edited = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(operation: widget.operation));
     if (edited != null) {
       final sp = await SharedPreferences.getInstance();
       final jwt = sp.getString('jwt');
       if (jwt != null) {
-  final resp = await ApiService.updateOperation(jwt, edited.id, edited.toJson());
-        if (resp.statusCode >= 200 && resp.statusCode < 300) Navigator.of(context).pop('updated');
-        else { String m='Erreur'; try{ m=jsonDecode(resp.body)['error'] ?? resp.body;}catch(e){}; ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m))); }
+        final resp = await ApiService.updateOperation(jwt, edited.id, edited.toJson());
+        if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          if (!mounted) return;
+          Navigator.of(context).pop('updated');
+        } else {
+          String m = 'Erreur';
+          try {
+            final parsed = jsonDecode(resp.body);
+            m = parsed['error'] ?? resp.body;
+          } catch (e, st) {
+            debugPrint('updateOperation parse error: $e\n$st');
+          }
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+        }
       }
     }
   }
@@ -44,22 +74,22 @@ class OperationDetailDialog extends StatelessWidget {
       future: SharedPreferences.getInstance(),
       builder: (c, s) {
         return AlertDialog(
-          title: Text(operation.label),
+          title: Text(widget.operation.label),
           content: SingleChildScrollView(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Date: ${operation.levyDate.toIso8601String()}'),
-              Text('Montant: ${operation.amount}'),
-              Text('Source: ${operation.source ?? ''}'),
-              Text('Destination: ${operation.destination ?? ''}'),
-              Text('Coûts: ${operation.costs}'),
-              Text('Catégorie: ${operation.category}'),
-              Text('Validée: ${operation.isValidate}')
+              Text('Date: ${widget.operation.levyDate.toIso8601String()}'),
+              Text('Montant: ${widget.operation.amount}'),
+              Text('Source: ${widget.operation.source ?? ''}'),
+              Text('Destination: ${widget.operation.destination ?? ''}'),
+              Text('Coûts: ${widget.operation.costs}'),
+              Text('Catégorie: ${widget.operation.category}'),
+              Text('Validée: ${widget.operation.isValidate}')
             ]),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer')),
-            TextButton(onPressed: () => _edit(context), child: const Text('Modifier')),
-            TextButton(onPressed: () => _delete(context), child: const Text('Supprimer', style: TextStyle(color: Colors.red)))
+            TextButton(onPressed: () => Navigator.pop(c), child: const Text('Fermer')),
+            TextButton(onPressed: _edit, child: const Text('Modifier')),
+            TextButton(onPressed: _delete, child: const Text('Supprimer', style: TextStyle(color: Colors.red)))
           ],
         );
       }
@@ -148,7 +178,9 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
               TextButton(
                 onPressed: () async {
                   final d = await showDatePicker(context: context, initialDate: _date, firstDate: DateTime(2000), lastDate: DateTime(2100));
-                  if (d!=null) setState(()=>_date=d);
+                  if (d != null) {
+                    setState(() => _date = d);
+                  }
                 },
                 child: Text('${_date.year}-${_date.month}-${_date.day}')
               )
@@ -191,17 +223,19 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                       return;
                     }
                     // custom selected -> show popup to get X and UNIT
-                    final result = await showDialog<Map<String, dynamic>>(context: context, builder: (_) => AlertDialog(
+                    final result = await showDialog<Map<String, dynamic>>(context: context, builder: (c) => AlertDialog(
                       title: const Text('Custom'),
                       content: Column(mainAxisSize: MainAxisSize.min, children: [
                         TextFormField(keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'X (entier)'), onChanged: (s){}),
                         // We'll implement inputs inline below via stateful builder
                       ]),
-                      actions: [TextButton(onPressed: ()=> Navigator.pop(context), child: const Text('Annuler'))],
+                      actions: [TextButton(onPressed: ()=> Navigator.pop(c), child: const Text('Annuler'))],
                     ));
                     // For simplicity show a simple two-step dialog instead
                     if (result == null) {
                       // open a custom input flow
+                      if (!mounted) return;
+                      // ignore: use_build_context_synchronously
                       final custom = await showDialog<Map<String,dynamic>>(context: context, builder: (c) {
                         int count = 1;
                         String unit = 'jours';
@@ -215,11 +249,13 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                           actions: [TextButton(onPressed: ()=> Navigator.pop(c), child: const Text('Annuler')), TextButton(onPressed: ()=> Navigator.pop(c, {'count':count,'unit':unit}), child: const Text('OK'))],
                         );
                       });
-                      if (custom != null) setState(() { _frequency = 'custom'; _customFreqCount = custom['count'] as int?; _customFreqUnit = custom['unit'] as String?; });
+                      if (custom != null) {
+                        setState(() { _frequency = 'custom'; _customFreqCount = custom['count'] as int?; _customFreqUnit = custom['unit'] as String?; });
+                      }
                     }
                   },
                 ),
-                if (_frequency == 'custom' && _customFreqCount != null && _customFreqUnit != null) Padding(padding: const EdgeInsets.only(left:12.0), child: Text('Paiement tous les ${_customFreqCount} ${_customFreqUnit}'))
+                if (_frequency == 'custom' && _customFreqCount != null && _customFreqUnit != null) Padding(padding: const EdgeInsets.only(left:12.0), child: Text('Paiement tous les $_customFreqCount $_customFreqUnit')),
               ]),
             ),
             // Free-text category field with suggestions.
@@ -300,8 +336,11 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
     final parsedAmount = double.tryParse(_amountC.text.replaceAll(',', '.')) ?? 0.0;
     final parsedCosts = double.tryParse(_costsC.text.replaceAll(',', '.')) ?? 0.0;
     double finalAmount = parsedAmount;
-    if (widget.mode == 'revenue') finalAmount = parsedAmount.abs();
-    else if (widget.mode == 'depense') finalAmount = -parsedAmount.abs();
+    if (widget.mode == 'revenue') {
+      finalAmount = parsedAmount.abs();
+    } else if (widget.mode == 'depense') {
+      finalAmount = -parsedAmount.abs();
+    }
 
     final parsedCostsForSave = widget.mode == 'revenue' ? 0.0 : parsedCosts;
 

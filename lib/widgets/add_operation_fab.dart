@@ -23,12 +23,13 @@ class _AddOperationFabState extends State<AddOperationFab> {
   bool _open = false;
 
   Future<void> _openAddModalWithMode(String mode) async {
-  final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(mode: mode, operations: widget.operations));
+    final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(mode: mode, operations: widget.operations));
     if (res == null) return;
 
     final sp = await SharedPreferences.getInstance();
     final jwt = sp.getString('jwt');
     if (jwt == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Non authentifié')));
       return;
     }
@@ -56,18 +57,30 @@ class _AddOperationFabState extends State<AddOperationFab> {
         if (opJson != null) {
           final created = Operation.fromJson(opJson);
           widget.onOperationCreated?.call(created);
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
           return;
         }
-      } catch (e) {
-        // ignore and fallback
+      } catch (e, st) {
+        debugPrint('addOperation parse error: $e\n$st');
       }
       // Fallback: still notify parent to refresh
       widget.onOperationCreated?.call(res);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
     } else {
       String m = 'Erreur';
-      try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (e) {}
+      try {
+        final p = jsonDecode(resp.body);
+        if (p is Map && p.containsKey('error')) {
+          m = p['error'].toString();
+        } else {
+          m = resp.body;
+        }
+      } catch (e, st) {
+        debugPrint('addOperation parse error: $e\n$st');
+      }
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
     }
   }

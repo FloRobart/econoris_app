@@ -42,7 +42,7 @@ class AppScaffold extends StatelessWidget {
     // correctly with the current theme (light/dark). Keep a slightly faded
     // color for unselected bottom navigation items.
     final Color foreground = Theme.of(context).colorScheme.onSurface;
-    final Color unselectedForeground = foreground.withOpacity(0.7);
+  final Color unselectedForeground = foreground.withAlpha((0.7 * 255).toInt());
     final TextStyle? titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(color: foreground);
 
     return Scaffold(

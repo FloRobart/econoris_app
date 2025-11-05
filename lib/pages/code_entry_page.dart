@@ -51,13 +51,15 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
           Navigator.of(context).pushReplacementNamed(AppRoutes.home);
           return;
         }
-      } catch (e) {}
+      } catch (e, st) {
+        debugPrint('confirmLoginCode: parse error: $e\n$st');
+      }
       setState(() { _error = 'Réponse invalide du serveur'; });
-    } else {
-      String msg = 'Erreur';
-      try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
-      setState(() { _error = msg; });
-    }
+      } else {
+        String msg = 'Erreur';
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('confirmLoginCode parse error: $e\n$st'); }
+        setState(() { _error = msg; });
+      }
   }
 
   @override
@@ -99,18 +101,19 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
             String msg = 'Réponse invalide du serveur';
             setState(() { _error = msg; });
           }
-        } catch (e) {
+        } catch (e, st) {
+          debugPrint('requestLoginCode: parse error: $e\n$st');
           setState(() { _error = 'Réponse invalide du serveur'; });
         }
-      } else if (resp.statusCode >= 500) {
+        } else if (resp.statusCode >= 500) {
         // server error -> show message like LoginPage
         String msg = 'Erreur lors de l\'envoi du code';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('requestLoginCode parse error: $e\n$st'); }
         setState(() { _error = msg; });
       } else if (resp.statusCode >= 400 && resp.statusCode < 500) {
     // client error -> clear local creds and redirect to login with API message
-        String msg = 'Erreur';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e) {}
+  String msg = 'Erreur';
+  try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('requestLoginCode parse error: $e\n$st'); }
         final sp = await SharedPreferences.getInstance();
         await sp.remove('jwt');
         await sp.remove('email');
@@ -122,11 +125,12 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
         String msg = 'Erreur inconnue lors de l\'envoi du code';
         setState(() { _error = msg; });
       }
-    } catch (e) {
-      setState(() { _error = 'Erreur réseau lors de l\'envoi du code'; });
-    } finally {
-      setState(() { });
-    }
+        } catch (e, st) {
+          debugPrint('requestLoginCode: network error: $e\n$st');
+          setState(() { _error = 'Erreur réseau lors de l\'envoi du code'; });
+        } finally {
+          setState(() { });
+        }
   }
 
   @override
