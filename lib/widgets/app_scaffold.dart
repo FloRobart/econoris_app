@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/api_service.dart';
 
 import '../config.dart';
 import '../navigation/app_routes.dart';
@@ -33,7 +37,6 @@ class AppScaffold extends StatelessWidget {
     if (i == 0) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => r.isFirst);
     if (i == 1) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Prêts'});
     if (i == 2) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Horaires'});
-    if (i == 3) Navigator.of(context).pushNamed(AppRoutes.profile);
   }
 
   @override
@@ -51,21 +54,84 @@ class AppScaffold extends StatelessWidget {
         // Ensure AppBar icons and title use the foreground color for contrast
         iconTheme: IconThemeData(color: foreground),
         titleTextStyle: titleStyle,
-        title: Row(children: [Image.asset('logo/econoris_logo-512.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
+        title: InkWell(
+          onTap: () {
+            // Navigate to root (/) when tapping the logo+app name
+            Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.root, (r) => r.isFirst);
+          },
+          child: Row(children: [Image.asset('logo/econoris_logo-512.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
+        ),
+        // Show the current user's name/email and a profile icon on the right side
+        actions: [
+          // Use FutureBuilder to call the API and obtain the user's name/pseudo.
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Builder(builder: (ctx) {
+                // Small text style for name to avoid truncation in the AppBar
+                final TextStyle? nameStyle = Theme.of(ctx).textTheme.titleMedium?.copyWith(color: foreground, fontSize: 14);
+
+                final Future<String?> displayFuture = (() async {
+                  try {
+                    final sp = await SharedPreferences.getInstance();
+                    final jwt = sp.getString('jwt');
+                    if (jwt != null && jwt.isNotEmpty) {
+                      final resp = await ApiService.getProfile(jwt);
+                      if (resp.statusCode >= 200 && resp.statusCode < 300) {
+                        final j = jsonDecode(resp.body);
+                        final name = (j is Map) ? (j['pseudo'] ?? j['name']) : null;
+                        if (name != null && name is String && name.isNotEmpty) return name;
+                      }
+                    }
+                    // fallback to saved email local-part
+                    final sp2 = await SharedPreferences.getInstance();
+                    final email = sp2.getString('email') ?? '';
+                    if (email.isNotEmpty) return email.split('@').first;
+                  } catch (e) {
+                    // ignore errors, fallback will be used
+                  }
+                  return null;
+                })();
+
+                void openProfile() {
+                  if (onProfilePressed != null) {
+                    onProfilePressed!(ctx);
+                    return;
+                  }
+                  Navigator.of(ctx).pushNamed(AppRoutes.profile);
+                }
+
+                return FutureBuilder<String?>(
+                  future: displayFuture,
+                  builder: (c, snap) {
+                    final display = snap.hasData && snap.data != null ? snap.data!.trim() : '';
+                    final List<Widget> children = [];
+                    if (display.isNotEmpty) {
+                      children.add(Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Center(child: Text(display, style: nameStyle, overflow: TextOverflow.ellipsis)),
+                      ));
+                    }
+                    children.add(Icon(Icons.person, color: foreground));
+
+                    return InkWell(
+                      onTap: openProfile,
+                      borderRadius: BorderRadius.circular(24),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: children),
+                      ),
+                    );
+                  },
+                );
+              }),
+            )
+        ],
       ),
       body: body,
   floatingActionButton: floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (i) {
-          if (i == 3) {
-            if (onProfilePressed != null) {
-              onProfilePressed!(context);
-              return;
-            }
-            _defaultBottomTap(context, i);
-            return;
-          }
           if (onBottomNavTap != null) {
             onBottomNavTap!(context, i);
             return;
@@ -82,7 +148,6 @@ class AppScaffold extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
           BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'),
           BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Horaires'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
       ),
     );

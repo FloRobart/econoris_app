@@ -159,7 +159,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      currentIndex: 3,
+      // Profile is not part of the bottom navigation anymore; keep default index (0)
+      currentIndex: 0,
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

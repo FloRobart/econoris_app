@@ -154,7 +154,7 @@ class OperationsChart extends StatelessWidget {
       panEnabled: false, // disable pan to prevent moving the chart
       boundaryMargin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Padding(
-        padding: const EdgeInsets.only(top: 64, bottom: 4, left: 4, right: 32),
+        padding: const EdgeInsets.only(top: 8, bottom: 4, left: 4, right: 32),
         child: SizedBox(
           // ensure chart keeps its intrinsic height
           height: 220,
