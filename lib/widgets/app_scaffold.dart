@@ -60,7 +60,9 @@ class AppScaffold extends StatelessWidget {
             // Navigate to root (/) when tapping the logo+app name
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.root, (r) => r.isFirst);
           },
-          child: Row(children: [Image.asset('logo/econoris_logo-512.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
+          // Keep the Row to the size of its children so the tappable area
+          // doesn't expand to the full AppBar width.
+          child: Row(mainAxisSize: MainAxisSize.min, children: [Image.asset('logo/econoris_logo-512.png', width: 36), const SizedBox(width: 8), Text(Config.appName)]),
         ),
         // Show the current user's name/email and a profile icon on the right side
         actions: [
