@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
+// intl not needed here; table formatting moved to OperationsTable
 
 import '../models/operation.dart';
 import '../services/api_service.dart';
@@ -13,6 +13,7 @@ import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
 import '../widgets/add_operation_fab.dart';
+import '../widgets/operations_table.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -235,33 +236,21 @@ class _HomePageState extends State<HomePage> {
   
 
   Widget _buildTableView(List<Operation> ops) {
-  // No pagination: show only the 15 most recent operations
-  final pageItems = ops.take(15).toList();
-    // Allow the Card to size itself vertically so the page (outer SingleChildScrollView)
-    // becomes scrollable. Keep horizontal scrolling for wide tables. Add a small
-    // bottom margin so the card doesn't touch the screen edge.
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Card(
-        child: SingleChildScrollView(
-          // horizontal scrolling for wide tables
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text('Date')),
-              DataColumn(label: Text('Nom')),
-              DataColumn(label: Text('Montant'), numeric: true),
-              DataColumn(label: Text('Validé')),
-            ],
-            rows: pageItems.map((o) => DataRow(cells: [
-              DataCell(Text(DateFormat('yyyy-MM-dd').format(o.levyDate)), onTap: () => _openDetail(o)),
-              DataCell(Text(o.label), onTap: () => _openDetail(o)),
-              DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => _openDetail(o)),
-              DataCell(Icon(o.isValidate ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
-            ])).toList(),
-          ), // DataTable inside horizontal SingleChildScrollView
-        ), // horizontal SingleChildScrollView
-      ), // Card with bottom padding
-    );
+  // No pagination here: let the table widget limit rows via maxItems
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 12.0),
+    child: Card(
+      child: SingleChildScrollView(
+        // horizontal scrolling for wide tables
+        scrollDirection: Axis.horizontal,
+        child: OperationsTable(
+          operations: ops,
+          maxItems: 15,
+          columns: const ['date', 'name', 'amount', 'validated'],
+          onRowTap: (o) => _openDetail(o),
+        ),
+      ),
+    ),
+  );
   }
 }

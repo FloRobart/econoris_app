@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
+// date formatting handled by OperationsTable
 
 import '../models/operation.dart';
 import '../services/api_service.dart';
@@ -13,6 +13,7 @@ import '../widgets/operations_chart.dart';
 import 'calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
 import '../widgets/add_operation_fab.dart';
+import '../widgets/operations_table.dart';
 
 class OperationsPage extends StatefulWidget {
   const OperationsPage({super.key});
@@ -222,19 +223,11 @@ class _OperationsPageState extends State<OperationsPage> {
                     child: Center(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columns: const [
-                            DataColumn(label: Text('Date')),
-                            DataColumn(label: Text('Nom')),
-                            DataColumn(label: Text('Montant'), numeric: true),
-                            DataColumn(label: Text('Validé')),
-                          ],
-                          rows: pageItems.map((o) => DataRow(cells: [
-                            DataCell(Text(DateFormat('yyyy-MM-dd').format(o.levyDate)), onTap: () => _openDetail(o)),
-                            DataCell(Text(o.label), onTap: () => _openDetail(o)),
-                            DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => _openDetail(o)),
-                            DataCell(Icon(o.isValidate ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
-                          ])).toList(),
+                        child: OperationsTable(
+                          operations: pageItems,
+                          // pagination already applied by caller
+                          columns: const ['date', 'name', 'amount', 'validated'],
+                          onRowTap: (o) => _openDetail(o),
                         ),
                       ),
                     ),
