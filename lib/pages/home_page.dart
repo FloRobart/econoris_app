@@ -225,13 +225,7 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 12),
 
-          // content
-          // The table view adapts its height to the number of rows (pagination applied),
-          // to avoid overlapping elements below when inside a scroll view.
-          _tableView ? _buildTableView(pageItems) : SizedBox(
-            height: MediaQuery.of(context).size.height * 0.56,
-            child: CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
-          ),
+          _tableView ? _buildTableView(pageItems) : CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op), noScroll: true),
 
           // Pagination controls (like OperationsPage) - only for table view
           if (_tableView)
