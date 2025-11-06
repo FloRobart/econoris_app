@@ -219,9 +219,11 @@ class _OperationsPageState extends State<OperationsPage> {
               if (_tableView) ...[
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Card(
-                    child: Center(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Card(
                       child: SingleChildScrollView(
+                        // horizontal scrolling for wide tables; Card will now size to child
                         scrollDirection: Axis.horizontal,
                         child: OperationsTable(
                           operations: pageItems,
