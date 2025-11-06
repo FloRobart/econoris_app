@@ -68,21 +68,30 @@ class _OperationsPageState extends State<OperationsPage> {
         }
         final parsed = jsonDecode(body);
         List<dynamic> list;
-        if (parsed is List) list = parsed;
-        else if (parsed is Map && parsed['rows'] is List) list = parsed['rows'];
-        else if (parsed is Map && parsed['data'] is List) list = parsed['data'];
-        else if (parsed is Map && parsed['operations'] is List) list = parsed['operations'];
-        else if (parsed is Map) list = [parsed];
-        else list = [];
+        if (parsed is List) {
+          list = parsed;
+        } else if (parsed is Map && parsed['rows'] is List) {
+          list = parsed['rows'];
+        } else if (parsed is Map && parsed['data'] is List) {
+          list = parsed['data'];
+        } else if (parsed is Map && parsed['operations'] is List) {
+          list = parsed['operations'];
+        } else if (parsed is Map) {
+          list = [parsed];
+        } else {
+          list = [];
+        }
 
         final ops = list.map((e) => Operation.fromJson(Map<String, dynamic>.from(e as Map))).toList();
         ops.sort((a, b) => b.levyDate.compareTo(a.levyDate));
         setState(() { _operations = ops; _loading = false; _page = 1; });
-      } else {
+        } else {
         String msg = 'Erreur (${resp.statusCode})';
         try {
           final parsed = jsonDecode(resp.body);
-          if (parsed is Map && parsed.containsKey('error')) msg = parsed['error'].toString();
+          if (parsed is Map && parsed.containsKey('error')) {
+            msg = parsed['error'].toString();
+          }
         } catch (_) {}
         setState(() { _error = msg; _loading = false; });
       }
@@ -184,7 +193,7 @@ class _OperationsPageState extends State<OperationsPage> {
                 PopupMenuButton<String>(
                   tooltip: 'Tri',
                   onSelected: (v) => setState(() { _sortField = v; }),
-                  child: Row(children: const [Icon(Icons.sort), SizedBox(width:6), Text('Tri')]),
+                  child: const Row(children: [Icon(Icons.sort), SizedBox(width:6), Text('Tri')]),
                   itemBuilder: (_) => const [
                     PopupMenuItem(value: 'operations_date', child: Text('Date')),
                     PopupMenuItem(value: 'operations_name', child: Text('Nom')),

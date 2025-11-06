@@ -71,7 +71,7 @@ class OperationsTable extends StatelessWidget {
         case 'id':
           return DataCell(Text(o.id.toString()), onTap: () => onRowTap?.call(o));
         default:
-          return DataCell(Text(''), onTap: () => onRowTap?.call(o));
+          return DataCell(const Text(''), onTap: () => onRowTap?.call(o));
       }
     }).toList();
   }
