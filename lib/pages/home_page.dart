@@ -34,6 +34,9 @@ class _HomePageState extends State<HomePage> {
   final String _sortField = 'operations_date';
   final bool _sortAsc = false;
   String _categoryFilter = 'Tous';
+  // Pagination
+  int _page = 1;
+  static const int _pageSize = 15;
   // show only the 15 last operations (no pagination)
   // FAB open state for the three small bubbles (moved to reusable widget)
 
@@ -146,6 +149,8 @@ class _HomePageState extends State<HomePage> {
   final ops = _filteredOperations;
   final categories = ['Tous'] + _operations.map((e) => e.category).toSet().toList();
   final theme = Theme.of(context);
+  final totalPages = (ops.length / _pageSize).ceil().clamp(1, 9999);
+  final pageItems = ops.skip((_page - 1) * _pageSize).take(_pageSize).toList();
 
     return AppScaffold(
       currentIndex: 0,
@@ -166,31 +171,35 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Control aligned top-left of the Card (only the dropdown, no label)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      // use card color from theme for better integration with light/dark modes
-                      color: theme.cardColor.withAlpha((0.95 * 255).toInt()),
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.brightness == Brightness.light ? Colors.black12 : Colors.black26,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        )
-                      ],
+                  Row(children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        // use card color from theme for better integration with light/dark modes
+                        color: theme.cardColor.withAlpha((0.95 * 255).toInt()),
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.brightness == Brightness.light ? Colors.black12 : Colors.black26,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          )
+                        ],
+                      ),
+                      child: DropdownButton<String>(
+                        value: _chartType,
+                        dropdownColor: theme.cardColor,
+                        style: theme.textTheme.bodyMedium,
+                        underline: const SizedBox.shrink(),
+                        items: ['line', 'bar', 'pie']
+                            .map((s) => DropdownMenuItem(value: s, child: Text(s, style: theme.textTheme.bodyMedium)))
+                            .toList(),
+                        onChanged: (v) => setState(() => _chartType = v!),
+                      ),
                     ),
-                    child: DropdownButton<String>(
-                      value: _chartType,
-                      dropdownColor: theme.cardColor,
-                      style: theme.textTheme.bodyMedium,
-                      underline: const SizedBox.shrink(),
-                      items: ['line', 'bar', 'pie']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s, style: theme.textTheme.bodyMedium)))
-                          .toList(),
-                      onChanged: (v) => setState(() => _chartType = v!),
-                    ),
-                  ),
+                    const Spacer(),
+                    Text('${ops.length} opérations', style: theme.textTheme.bodyMedium),
+                  ]),
 
                   const SizedBox(height: 8),
 
@@ -208,7 +217,7 @@ class _HomePageState extends State<HomePage> {
 
           // Controls (search and manual add button removed)
           Row(children: [
-            DropdownButton<String>(value: _categoryFilter, items: categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(), onChanged: (v) => setState(() => _categoryFilter = v!)),
+            DropdownButton<String>(value: _categoryFilter, items: categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(), onChanged: (v) => setState(() { _categoryFilter = v!; _page = 1; })),
             const SizedBox(width: 12),
             const Spacer(),
             ElevatedButton(onPressed: () => setState(() => _tableView = !_tableView), child: Text(_tableView ? 'Vue calendrier' : 'Vue tableau'))
@@ -217,14 +226,20 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 12),
 
           // content
-          // The table view adapts its height to the number of rows (up to a max),
+          // The table view adapts its height to the number of rows (pagination applied),
           // to avoid overlapping elements below when inside a scroll view.
-          _tableView ? _buildTableView(ops) : SizedBox(
+          _tableView ? _buildTableView(pageItems) : SizedBox(
             height: MediaQuery.of(context).size.height * 0.56,
             child: CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
           ),
 
-          // pagination removed: we only show the 15 latest operations
+          // Pagination controls (like OperationsPage) - only for table view
+          if (_tableView)
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              IconButton(icon: const Icon(Icons.chevron_left), onPressed: _page > 1 ? () => setState(() => _page--) : null),
+              Text('Page $_page / $totalPages'),
+              IconButton(icon: const Icon(Icons.chevron_right), onPressed: _page < totalPages ? () => setState(() => _page++) : null),
+            ]),
         ]),
         ),
       ),
