@@ -36,8 +36,9 @@ class AppScaffold extends StatelessWidget {
     // to leave only the newly selected route on the stack.
     if (i == 0) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => r.isFirst);
     if (i == 1) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.operations, (r) => r.isFirst);
-    if (i == 2) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Prêts'});
-    if (i == 3) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Horaires'});
+    if (i == 2) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.subscriptions, (r) => r.isFirst);
+    if (i == 3) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Prêts'});
+    if (i == 4) Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.placeholder, (r) => r.isFirst, arguments: {'title': 'Horaires'});
   }
 
   @override
@@ -150,6 +151,7 @@ class AppScaffold extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Opérations'),
+          BottomNavigationBarItem(icon: Icon(Icons.repeat), label: 'Abonnements'),
           BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'Prêts'),
           BottomNavigationBarItem(icon: Icon(Icons.access_time), label: 'Horaires'),
         ],

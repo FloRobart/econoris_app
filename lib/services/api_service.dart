@@ -81,6 +81,31 @@ class ApiService {
     return _wrap(http.delete(url, headers: {'Authorization': 'Bearer $jwt'}));
   }
 
+  // Subscriptions endpoints
+  static Future<http.Response> getSubscriptions(String jwt) {
+    final url = Uri.parse('${Config.econorisServer}/subscriptions');
+    return _wrap(http.get(url, headers: {'Authorization': 'Bearer $jwt'}));
+  }
+
+  static Future<http.Response> addSubscription(String jwt, Map<String, dynamic> body) {
+    final url = Uri.parse('${Config.econorisServer}/subscriptions');
+    return _wrap(http.post(url,
+      headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'},
+      body: jsonEncode(body)));
+  }
+
+  static Future<http.Response> updateSubscription(String jwt, int subscriptionId, Map<String, dynamic> body) {
+    final url = Uri.parse('${Config.econorisServer}/subscriptions/$subscriptionId');
+    return _wrap(http.put(url,
+      headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'},
+      body: jsonEncode(body)));
+  }
+
+  static Future<http.Response> deleteSubscription(String jwt, int subscriptionId) {
+    final url = Uri.parse('${Config.econorisServer}/subscriptions/$subscriptionId');
+    return _wrap(http.delete(url, headers: {'Authorization': 'Bearer $jwt'}));
+  }
+
   static Future<http.Response> _wrap(Future<http.Response> future) async {
     try {
       final resp = await future;

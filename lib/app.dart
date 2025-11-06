@@ -6,6 +6,7 @@ import 'pages/code_entry_page.dart';
 import 'pages/home_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/operations_page.dart';
+import 'pages/subscriptions_page.dart';
 import 'pages/placeholder_page.dart';
 import 'routes/root_router.dart';
 import 'config.dart';
@@ -92,6 +93,7 @@ class EconorisApp extends StatelessWidget {
             },
             AppRoutes.home: (ctx) => const HomePage(),
             AppRoutes.operations: (ctx) => const OperationsPage(),
+            AppRoutes.subscriptions: (ctx) => const SubscriptionsPage(),
             AppRoutes.profile: (ctx) => const ProfilePage(),
             AppRoutes.codeEntry: (ctx) {
               final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
