@@ -128,7 +128,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   bool _recurrence = false;
   String _frequency = 'mensuel';
   final TextEditingController _customValueC = TextEditingController();
-  String _customUnit = 'semaine'; // 'semaine' | 'mois' | 'année'
+  String _customUnit = 'mois'; // 'semaine' | 'mois' | 'année'
 
   @override
   void initState(){
@@ -259,7 +259,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                   if (widget.operation == null) ElevatedButton.icon(
                     onPressed: () => setState(()=> _recurrence = !_recurrence),
                     icon: Icon(_recurrence ? Icons.check : Icons.close, color: Colors.white, size: 18),
-                    label: Text('Récurrence'),
+                    label: const Text('Récurrence'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _recurrence ? Colors.green : Colors.red,
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
