@@ -23,7 +23,7 @@ class _AddOperationFabState extends State<AddOperationFab> {
   bool _open = false;
 
   Future<void> _openAddModalWithMode(String mode) async {
-    final res = await showDialog<Operation>(context: context, builder: (_) => OperationEditDialog(mode: mode, operations: widget.operations));
+    final res = await showDialog(context: context, builder: (_) => OperationEditDialog(mode: mode, operations: widget.operations));
     if (res == null) return;
 
     final sp = await SharedPreferences.getInstance();
@@ -34,7 +34,33 @@ class _AddOperationFabState extends State<AddOperationFab> {
       return;
     }
 
-    final body = res.toJson();
+    // If the dialog returned a subscription payload, call addSubscription
+    if (res is Map && res.containsKey('subscription')) {
+      final body = res['subscription'] as Map<String, dynamic>;
+      final resp = await ApiService.addSubscription(jwt, body);
+      if (resp.statusCode >= 200 && resp.statusCode < 300) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abonnement ajouté')));
+        return;
+      } else {
+        String m = 'Erreur';
+        try {
+          final p = jsonDecode(resp.body);
+          if (p is Map && p.containsKey('error')) {
+            m = p['error'].toString();
+          } else {
+            m = resp.body;
+          }
+        } catch (e, st) {
+          debugPrint('addSubscription parse error: $e\n$st');
+        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+        return;
+      }
+    }
+
+    final body = (res as Operation).toJson();
     final resp = await ApiService.addOperation(jwt, body);
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
       try {

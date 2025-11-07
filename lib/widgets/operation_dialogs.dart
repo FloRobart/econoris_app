@@ -124,10 +124,11 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   DateTime _date = DateTime.now();
   bool _validated = true;
   bool _expanded = false;
-  // subscription fields (only used in UI for 'abonnement' mode)
+  // recurrence UI
+  bool _recurrence = false;
   String _frequency = 'mensuel';
-  int? _customFreqCount;
-  String? _customFreqUnit; // 'jours', 'semaines', 'mois'
+  final TextEditingController _customValueC = TextEditingController();
+  String _customUnit = 'semaine'; // 'semaine' | 'mois' | 'année'
 
   @override
   void initState(){
@@ -145,6 +146,10 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
     } else {
       // For new operations, default validated to true per requirements
       _validated = true;
+    }
+    // If dialog opened in abonnement mode, pre-enable recurrence
+    if (widget.mode == 'abonnement') {
+      _recurrence = true;
     }
     // derive categories preserving first occurrence order
     if (widget.operations != null) {
@@ -201,63 +206,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                 return null;
               },
             ),
-            // For 'abonnement' show frequency selector
-            if (widget.mode == 'abonnement') Padding(
-              padding: const EdgeInsets.only(top:8.0),
-              child: Row(children: [
-                const Text('Fréquence: '),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _frequency,
-                  items: const [
-                    DropdownMenuItem(value: 'mensuel', child: Text('Mensuel')),
-                    DropdownMenuItem(value: 'trimestriel', child: Text('Trimestriel')),
-                    DropdownMenuItem(value: 'semestriel', child: Text('Semestriel')),
-                    DropdownMenuItem(value: 'annuel', child: Text('Annuel')),
-                    DropdownMenuItem(value: 'custom', child: Text('Custom')),
-                  ],
-                  onChanged: (v) async {
-                    if (v == null) return;
-                    if (v != 'custom') {
-                      setState(() => _frequency = v);
-                      return;
-                    }
-                    // custom selected -> show popup to get X and UNIT
-                    final result = await showDialog<Map<String, dynamic>>(context: context, builder: (c) => AlertDialog(
-                      title: const Text('Custom'),
-                      content: Column(mainAxisSize: MainAxisSize.min, children: [
-                        TextFormField(keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'X (entier)'), onChanged: (s){}),
-                        // We'll implement inputs inline below via stateful builder
-                      ]),
-                      actions: [TextButton(onPressed: ()=> Navigator.pop(c), child: const Text('Annuler'))],
-                    ));
-                    // For simplicity show a simple two-step dialog instead
-                    if (result == null) {
-                      // open a custom input flow
-                      if (!mounted) return;
-                      // ignore: use_build_context_synchronously
-                      final custom = await showDialog<Map<String,dynamic>>(context: context, builder: (c) {
-                        int count = 1;
-                        String unit = 'jours';
-                        return AlertDialog(
-                          title: const Text('Paiement custom'),
-                          content: StatefulBuilder(builder: (ctx, setSt) => Column(mainAxisSize: MainAxisSize.min, children: [
-                            TextFormField(initialValue: '1', keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'X (entier)'), onChanged: (v) { count = int.tryParse(v) ?? 1; }),
-                            const SizedBox(height:8),
-                            DropdownButton<String>(value: unit, items: const [DropdownMenuItem(value: 'jours', child: Text('Jours')), DropdownMenuItem(value: 'semaines', child: Text('Semaines')), DropdownMenuItem(value: 'mois', child: Text('Mois'))], onChanged: (u){ if (u!=null) setSt(()=>unit=u); }),
-                          ])),
-                          actions: [TextButton(onPressed: ()=> Navigator.pop(c), child: const Text('Annuler')), TextButton(onPressed: ()=> Navigator.pop(c, {'count':count,'unit':unit}), child: const Text('OK'))],
-                        );
-                      });
-                      if (custom != null) {
-                        setState(() { _frequency = 'custom'; _customFreqCount = custom['count'] as int?; _customFreqUnit = custom['unit'] as String?; });
-                      }
-                    }
-                  },
-                ),
-                if (_frequency == 'custom' && _customFreqCount != null && _customFreqUnit != null) Padding(padding: const EdgeInsets.only(left:12.0), child: Text('Paiement tous les $_customFreqCount $_customFreqUnit')),
-              ]),
-            ),
+            
             // Free-text category field with suggestions.
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue textEditingValue) {
@@ -294,26 +243,76 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
               },
             ),
 
-            // Toggle button to show/hide additional fields
+            // Buttons: Détails and Récurrence (side-by-side)
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: OutlinedButton(
-                  onPressed: () => setState(()=>_expanded = !_expanded),
-                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
-                  child: Text(_expanded ? 'Afficher moins' : 'Afficher plus'),
-                ),
+                child: Row(children: [
+                  OutlinedButton(
+                    onPressed: () => setState(()=>_expanded = !_expanded),
+                    style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
+                    child: Text(_expanded ? 'Masquer' : 'Détails'),
+                  ),
+                  const SizedBox(width: 12),
+                  // Récurrence toggle button (only for new operations / creation)
+                  if (widget.operation == null) ElevatedButton.icon(
+                    onPressed: () => setState(()=> _recurrence = !_recurrence),
+                    icon: Icon(_recurrence ? Icons.check : Icons.close, color: Colors.white, size: 18),
+                    label: Text('Récurrence'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _recurrence ? Colors.green : Colors.red,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
+                ]),
               ),
             ),
 
-            // Hidden fields — still part of the form and will be sent on save
+            // Hidden details — still part of the form and will be sent on save
             if (_expanded) ...[
               TextFormField(controller: _sourceC, decoration: const InputDecoration(labelText: 'Source')),
               TextFormField(controller: _destC, decoration: const InputDecoration(labelText: 'Destination')),
               // costs should not appear for revenue mode
               if (widget.mode != 'revenue') TextFormField(controller: _costsC, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Coûts')),
             ],
+
+            // Recurrence fields (masked when _recurrence is false but preserved)
+            if (_recurrence) Padding(
+              padding: const EdgeInsets.only(top:8.0),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Récurrence', style: TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(height:8),
+                Row(children: [
+                  const Text('Fréquence: '),
+                  const SizedBox(width:8),
+                  DropdownButton<String>(
+                    value: _frequency,
+                    items: const [
+                      DropdownMenuItem(value: 'mensuel', child: Text('mensuel')),
+                      DropdownMenuItem(value: 'trimestriel', child: Text('trimestriel')),
+                      DropdownMenuItem(value: 'semestriel', child: Text('semestriel')),
+                      DropdownMenuItem(value: 'annuel', child: Text('annuel')),
+                      DropdownMenuItem(value: 'custom', child: Text('custom')),
+                    ],
+                    onChanged: (v) {
+                      if (v == null) return;
+                      setState(() => _frequency = v);
+                    },
+                  ),
+                ]),
+                if (_frequency == 'custom') Padding(
+                  padding: const EdgeInsets.only(top:8.0),
+                  child: Row(children: [
+                    // valeur (tous les X)
+                    Expanded(child: TextFormField(controller: _customValueC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Valeur (tous les X)'), validator: (v){ if (v==null||v.trim().isEmpty) return 'Requis'; if (int.tryParse(v)==null) return 'Entier requis'; return null; })),
+                    const SizedBox(width:12),
+                    // unité
+                    DropdownButton<String>(value: _customUnit, items: const [DropdownMenuItem(value: 'semaine', child: Text('semaine')), DropdownMenuItem(value: 'mois', child: Text('mois')), DropdownMenuItem(value: 'année', child: Text('année'))], onChanged: (v){ if (v!=null) setState(()=>_customUnit=v); }),
+                  ]),
+                ),
+              ]),
+            ),
 
             CheckboxListTile(
               value: _validated,
@@ -343,6 +342,43 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
     }
 
     final parsedCostsForSave = widget.mode == 'revenue' ? 0.0 : parsedCosts;
+    // If recurrence is enabled, return a subscription payload instead of an operation
+    if (_recurrence) {
+      int intervalValue = 1;
+      String intervalUnit = 'months';
+      switch (_frequency) {
+        case 'mensuel': intervalValue = 1; intervalUnit = 'months'; break;
+        case 'trimestriel': intervalValue = 3; intervalUnit = 'months'; break;
+        case 'semestriel': intervalValue = 6; intervalUnit = 'months'; break;
+        case 'annuel': intervalValue = 12; intervalUnit = 'months'; break;
+        case 'custom':
+          intervalValue = int.tryParse(_customValueC.text) ?? 1;
+          // map french unit to API unit tokens
+          if (_customUnit == 'semaine') intervalUnit = 'weeks';
+          else if (_customUnit == 'mois') intervalUnit = 'months';
+          else if (_customUnit == 'année') intervalUnit = 'years';
+          break;
+      }
+
+      final body = {
+        'label': _nameC.text,
+        // store positive amount for subscription
+        'amount': finalAmount.abs(),
+        'category': _categoryC.text,
+        'source': _sourceC.text.isEmpty ? null : _sourceC.text,
+        'destination': _destC.text.isEmpty ? null : _destC.text,
+        'costs': parsedCostsForSave,
+        'active': true,
+        'interval_value': intervalValue,
+        'interval_unit': intervalUnit,
+        'start_date': _date.toUtc().toIso8601String(),
+        'end_date': null,
+        'day_of_month': null,
+        'last_generated_at': null,
+      };
+      Navigator.of(context).pop({'subscription': body});
+      return;
+    }
 
     final op = Operation(
       id: widget.operation?.id ?? DateTime.now().millisecondsSinceEpoch,
