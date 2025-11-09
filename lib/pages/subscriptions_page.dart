@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 // date formatting handled by SubscriptionsTable
 
 import '../models/subscription.dart';
@@ -133,6 +134,29 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
     });
 
     final ops = subsFiltered; // alias for naming below
+
+    // Helper to convert a subscription amount to its monthly equivalent.
+    double monthlyEquivalent(Subscription s) {
+      final int interval = (s.intervalValue <= 0) ? 1 : s.intervalValue;
+      const double daysPerMonth = 30.436875; // average days per month
+      const double weeksPerMonth = 4.348125; // average weeks per month
+
+      switch (s.intervalUnit) {
+        case 'days':
+          return s.amount * (daysPerMonth / interval);
+        case 'weeks':
+          return s.amount * (weeksPerMonth / interval);
+        case 'months':
+        default:
+          return s.amount / interval;
+      }
+    }
+
+  // Only include negative subscriptions (expenses) in the total
+  final double monthlyTotal = ops
+      .where((s) => s.amount < 0)
+      .fold(0.0, (double acc, Subscription s) => acc + monthlyEquivalent(s));
+
     final categories = ['Tous'] + _subscriptions.map((e) => e.category).toSet().toList();
     final totalPages = (ops.length / _pageSize).ceil().clamp(1, 9999);
     final pageItems = ops.skip((_page - 1) * _pageSize).take(_pageSize).toList();
@@ -182,6 +206,20 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
                     ]),
                     const SizedBox(height: 8),
                     SizedBox(height: 220, child: SubscriptionsChart(subscriptions: ops, chartType: _chartType)),
+                  ]),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Total mensuel des abonnements (filtrés)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  child: Row(children: [
+                    Text('Total mensuel', style: theme.textTheme.bodyLarge),
+                    const Spacer(),
+                    Text(NumberFormat.currency(locale: 'fr_FR', symbol: '€').format(monthlyTotal), style: theme.textTheme.titleLarge),
                   ]),
                 ),
               ),
