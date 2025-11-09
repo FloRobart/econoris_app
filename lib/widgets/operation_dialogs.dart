@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/operation.dart';
+import '../models/subscription.dart';
 import '../services/api_service.dart';
 
 class OperationDetailDialog extends StatefulWidget {
@@ -101,10 +102,12 @@ class OperationEditDialog extends StatefulWidget {
   final Operation? operation;
   /// Optional list of all known operations (used to derive category suggestions).
   final List<Operation>? operations;
+  /// Optional list of subscriptions (also used to derive category suggestions).
+  final List<Subscription>? subscriptions;
   /// mode can be 'revenue', 'depense' or 'abonnement'. If null the dialog
   /// behaves normally.
   final String? mode;
-  const OperationEditDialog({super.key, this.operation, this.mode, this.operations});
+  const OperationEditDialog({super.key, this.operation, this.mode, this.operations, this.subscriptions});
   @override
   State<OperationEditDialog> createState() => _OperationEditDialogState();
 }
@@ -151,10 +154,20 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
     if (widget.mode == 'abonnement') {
       _recurrence = true;
     }
-    // derive categories preserving first occurrence order
+    // derive categories preserving first occurrence order and combining
+    // subscriptions and operations lists (subscriptions first)
+    final seen = <String>{};
+    final list = <String>[];
+    if (widget.subscriptions != null) {
+      for (final s in widget.subscriptions!) {
+        final c = s.category;
+        if (c.isNotEmpty && !seen.contains(c)) {
+          seen.add(c);
+          list.add(c);
+        }
+      }
+    }
     if (widget.operations != null) {
-      final seen = <String>{};
-      final list = <String>[];
       for (final op in widget.operations!) {
         final c = op.category;
         if (c.isNotEmpty && !seen.contains(c)) {
@@ -162,8 +175,8 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
           list.add(c);
         }
       }
-      _allCategories = list;
     }
+    _allCategories = list;
   }
 
   @override

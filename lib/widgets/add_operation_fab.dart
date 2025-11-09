@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/operation.dart';
+import '../models/subscription.dart';
 import '../services/api_service.dart';
 import 'operation_dialogs.dart';
+import 'add_operation_button.dart';
 
 typedef OperationCreatedCallback = void Function(Operation operation);
 
@@ -13,17 +15,18 @@ class AddOperationFab extends StatefulWidget {
   final OperationCreatedCallback? onOperationCreated;
   /// Optional list of current operations to derive category suggestions.
   final List<Operation>? operations;
-  const AddOperationFab({super.key, this.onOperationCreated, this.operations});
+  /// Optional list of subscriptions to also derive category suggestions from.
+  final List<Subscription>? subscriptions;
+  const AddOperationFab({super.key, this.onOperationCreated, this.operations, this.subscriptions});
 
   @override
   State<AddOperationFab> createState() => _AddOperationFabState();
 }
 
 class _AddOperationFabState extends State<AddOperationFab> {
-  bool _open = false;
 
   Future<void> _openAddModalWithMode(String mode) async {
-    final res = await showDialog(context: context, builder: (_) => OperationEditDialog(mode: mode, operations: widget.operations));
+  final res = await showDialog(context: context, builder: (_) => OperationEditDialog(mode: mode, operations: widget.operations, subscriptions: widget.subscriptions));
     if (res == null) return;
 
     final sp = await SharedPreferences.getInstance();
@@ -114,83 +117,37 @@ class _AddOperationFabState extends State<AddOperationFab> {
   @override
   Widget build(BuildContext context) {
     // final theme = Theme.of(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        AnimatedSlide(
-          offset: _open ? const Offset(0, 0) : const Offset(0, 0.2),
-          duration: const Duration(milliseconds: 200),
-          child: AnimatedOpacity(
-            opacity: _open ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: GestureDetector(
-                onTap: () { setState(() => _open = false); _openAddModalWithMode('revenue'); },
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: Material(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(24),
-                    elevation: 2,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(24),
-                      onTap: () { setState(()=> _open = false); _openAddModalWithMode('revenue'); },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_downward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Revenu', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+    // Use the new reusable AddOperationButton widget for the '+' button and
+    // its small action items. We pass the distinct list of categories available
+    // (fallback to empty list) and forward selections to the existing modal
+    // handler.
+    // combine categories from subscriptions and operations preserving first-seen order
+    final seen = <String>{};
+    final cats = <String>[];
+    if (widget.subscriptions != null) {
+      for (final s in widget.subscriptions!) {
+        try {
+          final c = (s as dynamic).category as String?;
+          if (c != null && c.isNotEmpty && !seen.contains(c)) {
+            seen.add(c);
+            cats.add(c);
+          }
+        } catch (_) {}
+      }
+    }
+    if (widget.operations != null) {
+      for (final o in widget.operations!) {
+        final c = o.category;
+        if (c.isNotEmpty && !seen.contains(c)) {
+          seen.add(c);
+          cats.add(c);
+        }
+      }
+    }
 
-        AnimatedSlide(
-          offset: _open ? const Offset(0, 0) : const Offset(0, 0.2),
-          duration: const Duration(milliseconds: 220),
-          child: AnimatedOpacity(
-            opacity: _open ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 220),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: GestureDetector(
-                onTap: () { setState(()=> _open = false); _openAddModalWithMode('depense'); },
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: Material(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(24),
-                    elevation: 2,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(24),
-                      onTap: () { setState(()=> _open = false); _openAddModalWithMode('depense'); },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_upward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Dépense', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        // (Abonnement option intentionally removed to avoid using AddOperationFab for subscriptions)
-
-        FloatingActionButton(
-          onPressed: () => setState(() => _open = !_open),
-          child: AnimatedRotation(
-            turns: _open ? 0.125 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: const Icon(Icons.add),
-          ),
-        ),
-      ],
+    return AddOperationButton(
+      categories: cats,
+      onModeSelected: (mode) => _openAddModalWithMode(mode),
     );
   }
 }

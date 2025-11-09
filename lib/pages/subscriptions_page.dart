@@ -24,7 +24,6 @@ class SubscriptionsPage extends StatefulWidget {
 
 class _SubscriptionsPageState extends State<SubscriptionsPage> {
   List<Subscription> _subscriptions = [];
-  List<Operation> _operations = [];
   String? _jwt;
   bool _loading = false;
   String? _error;
@@ -143,7 +142,15 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
     return AppScaffold(
       currentIndex: 1,
       onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
-  floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op)), operations: _operations),
+      floatingActionButton: AddOperationFab(
+        subscriptions: _subscriptions,
+        onOperationCreated: (op) {
+          // Subscriptions page does not keep a local operations list;
+          // just give quick feedback to the user when an operation is created.
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
+        },
+      ),
       body: _loading ? const Center(child: CircularProgressIndicator()) : RefreshIndicator(
         onRefresh: _fetchOperations,
         child: SingleChildScrollView(
