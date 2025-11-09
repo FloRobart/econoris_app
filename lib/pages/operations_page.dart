@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 // date formatting handled by OperationsTable
 
 import '../models/operation.dart';
@@ -135,6 +136,39 @@ class _OperationsPageState extends State<OperationsPage> {
   @override
   Widget build(BuildContext context) {
     final ops = _filteredSorted;
+    // --- Monthly totals calculation ---
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final currentMonth = now.month;
+
+    double revenueCurrent = _operations
+        .where((o) => o.levyDate.year == currentYear && o.levyDate.month == currentMonth && o.amount > 0)
+        .fold(0.0, (s, o) => s + o.amount);
+
+    double expenseCurrent = _operations
+        .where((o) => o.levyDate.year == currentYear && o.levyDate.month == currentMonth && o.amount < 0)
+        .fold(0.0, (s, o) => s + o.amount.abs());
+
+    // If current month has no revenues, display previous month revenues instead
+    int displayRevenueYear = currentYear;
+    int displayRevenueMonth = currentMonth;
+    double revenueToShow = revenueCurrent;
+    if (revenueCurrent == 0) {
+      // previous month
+      if (currentMonth == 1) {
+        displayRevenueMonth = 12;
+        displayRevenueYear = currentYear - 1;
+      } else {
+        displayRevenueMonth = currentMonth - 1;
+        displayRevenueYear = currentYear;
+      }
+      revenueToShow = _operations
+          .where((o) => o.levyDate.year == displayRevenueYear && o.levyDate.month == displayRevenueMonth && o.amount > 0)
+          .fold(0.0, (s, o) => s + o.amount);
+    }
+
+    final currency = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
+    String monthLabel(int y, int m) => DateFormat.yMMMM('fr_FR').format(DateTime(y, m));
     final categories = ['Tous'] + _operations.map((e) => e.category).toSet().toList();
     final totalPages = (ops.length / _pageSize).ceil().clamp(1, 9999);
     final pageItems = ops.skip((_page - 1) * _pageSize).take(_pageSize).toList();
@@ -152,6 +186,49 @@ class _OperationsPageState extends State<OperationsPage> {
             padding: const EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
+
+              // Totals — ligne par ligne
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(children: [
+                            Icon(Icons.arrow_upward, size: 18, color: theme.colorScheme.primary),
+                            const SizedBox(width: 8),
+                            Text('Revenu ${monthLabel(displayRevenueYear, displayRevenueMonth)}', style: theme.textTheme.bodyMedium),
+                          ]),
+                          Text(
+                            currency.format(revenueToShow),
+                            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(children: [
+                            Icon(Icons.arrow_downward, size: 18, color: expenseCurrent > revenueToShow ? Colors.red : theme.iconTheme.color),
+                            const SizedBox(width: 8),
+                            Text('Dépense ${monthLabel(currentYear, currentMonth)}', style: theme.textTheme.bodyMedium),
+                          ]),
+                          Text(
+                            currency.format(expenseCurrent),
+                            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: expenseCurrent > revenueToShow ? Colors.red : null),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               // Chart card with chart type selector
               Card(
