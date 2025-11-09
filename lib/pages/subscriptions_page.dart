@@ -6,13 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 // date formatting handled by SubscriptionsTable
 
 import '../models/subscription.dart';
+import '../models/operation.dart';
 import '../services/api_service.dart';
 import '../widgets/app_scaffold.dart';
 import '../navigation/app_routes.dart';
 import '../widgets/subscriptions_chart.dart';
 // calendar view not used for subscriptions (simple list used instead)
 import '../widgets/subscription_dialogs.dart';
-import '../widgets/add_subscription_fab.dart';
+import '../widgets/add_operation_fab.dart';
 import '../widgets/subscriptions_table.dart';
 
 class SubscriptionsPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class SubscriptionsPage extends StatefulWidget {
 
 class _SubscriptionsPageState extends State<SubscriptionsPage> {
   List<Subscription> _subscriptions = [];
+  List<Operation> _operations = [];
   String? _jwt;
   bool _loading = false;
   String? _error;
@@ -141,7 +143,7 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
     return AppScaffold(
       currentIndex: 1,
       onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
-      floatingActionButton: AddSubscriptionFab(onSubscriptionCreated: (s) => setState(()=> _subscriptions.insert(0, s))),
+  floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op)), operations: _operations),
       body: _loading ? const Center(child: CircularProgressIndicator()) : RefreshIndicator(
         onRefresh: _fetchOperations,
         child: SingleChildScrollView(
