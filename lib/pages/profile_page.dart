@@ -159,8 +159,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      // Profile is not part of the bottom navigation anymore; keep default index (0)
-      currentIndex: 0,
+      // Profile is not part of the bottom navigation anymore; indicate this
+      // by passing null so AppScaffold will highlight the profile instead
+      // of any bottom tab.
+      currentIndex: null,
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

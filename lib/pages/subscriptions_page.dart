@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 // date formatting handled by SubscriptionsTable
 
 import '../models/subscription.dart';
-import '../models/operation.dart';
 import '../services/api_service.dart';
 import '../widgets/app_scaffold.dart';
 import '../navigation/app_routes.dart';
@@ -140,7 +139,8 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
     final theme = Theme.of(context);
 
     return AppScaffold(
-      currentIndex: 1,
+      // Subscriptions tab index is 2 (0: Accueil, 1: Opérations, 2: Abonnements, 3: Prêts, 4: Horaires)
+      currentIndex: 2,
       onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
       floatingActionButton: AddOperationFab(
         subscriptions: _subscriptions,

@@ -11,7 +11,9 @@ import '../navigation/app_routes.dart';
 /// and BottomNavigationBar used across the app.
 class AppScaffold extends StatelessWidget {
   final Widget body;
-  final int currentIndex;
+  // currentIndex may be null to indicate the profile view (no bottom tab
+  // should be highlighted). When omitted, it defaults to 0.
+  final int? currentIndex;
   /// If provided, called with the BuildContext when the Profil button is tapped.
   /// Otherwise a default Navigator.pushNamed('/profile') is used.
   final void Function(BuildContext context)? onProfilePressed;
@@ -24,7 +26,7 @@ class AppScaffold extends StatelessWidget {
   const AppScaffold({
     super.key,
     required this.body,
-    this.currentIndex = 0,
+  this.currentIndex = 0,
     this.onProfilePressed,
     this.onBottomNavTap,
     this.floatingActionButton,
@@ -47,7 +49,13 @@ class AppScaffold extends StatelessWidget {
     // correctly with the current theme (light/dark). Keep a slightly faded
     // color for unselected bottom navigation items.
     final Color foreground = Theme.of(context).colorScheme.onSurface;
-  final Color unselectedForeground = foreground.withAlpha((0.7 * 255).toInt());
+    final Color unselectedForeground = foreground.withAlpha((0.7 * 255).toInt());
+    final bool isProfileSelected = currentIndex == null;
+    // When profile is selected we want the profile name/icon to be amber
+    // and no bottom navigation item should appear selected. We achieve that
+    // by using the unselected color as the BottomNavigationBar selected color
+    // so visually none stands out.
+    final Color profileHighlightColor = isProfileSelected ? Colors.amber : foreground;
     final TextStyle? titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(color: foreground);
 
     return Scaffold(
@@ -71,8 +79,9 @@ class AppScaffold extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Builder(builder: (ctx) {
-                // Small text style for name to avoid truncation in the AppBar
-                final TextStyle? nameStyle = Theme.of(ctx).textTheme.titleMedium?.copyWith(color: foreground, fontSize: 14);
+                // Small text style for name to avoid truncation in the AppBar.
+                // Use `profileHighlightColor` when the profile is the active view.
+                final TextStyle? nameStyle = Theme.of(ctx).textTheme.titleMedium?.copyWith(color: profileHighlightColor, fontSize: 14);
 
                 final Future<String?> displayFuture = (() async {
                   try {
@@ -115,7 +124,7 @@ class AppScaffold extends StatelessWidget {
                         child: Center(child: Text(display, style: nameStyle, overflow: TextOverflow.ellipsis)),
                       ));
                     }
-                    children.add(Icon(Icons.person, color: foreground));
+                    children.add(Icon(Icons.person, color: profileHighlightColor));
 
                     return InkWell(
                       onTap: openProfile,
@@ -134,7 +143,7 @@ class AppScaffold extends StatelessWidget {
       body: body,
   floatingActionButton: floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+  currentIndex: currentIndex ?? 0,
         onTap: (i) {
           if (onBottomNavTap != null) {
             onBottomNavTap!(context, i);
@@ -142,11 +151,14 @@ class AppScaffold extends StatelessWidget {
           }
           _defaultBottomTap(context, i);
         },
-        // Use the theme's surface as background and explicit colors for
-        // selected/unselected items so they remain readable in both themes.
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        selectedItemColor: foreground,
-        unselectedItemColor: unselectedForeground,
+  // Use the theme's surface as background and explicit colors for
+  // selected/unselected items so they remain readable in both themes.
+  backgroundColor: Theme.of(context).colorScheme.surface,
+  // If profile is selected (currentIndex == null) we don't want any
+  // bottom item to appear highlighted — use the unselected color as
+  // the "selected" color in that case. Otherwise highlight with amber.
+  selectedItemColor: isProfileSelected ? unselectedForeground : Colors.amber,
+  unselectedItemColor: unselectedForeground,
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
