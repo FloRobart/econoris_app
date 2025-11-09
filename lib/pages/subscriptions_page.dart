@@ -217,9 +217,9 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   child: Row(children: [
-                    Text('Total mensuel', style: theme.textTheme.bodyLarge),
+                    Text('Coût Total mensuel', style: theme.textTheme.bodyLarge),
                     const Spacer(),
-                    Text(NumberFormat.currency(locale: 'fr_FR', symbol: '€').format(monthlyTotal), style: theme.textTheme.titleLarge),
+                    Text(NumberFormat.currency(locale: 'fr_FR', symbol: '€').format(monthlyTotal.abs()), style: theme.textTheme.titleLarge),
                   ]),
                 ),
               ),
