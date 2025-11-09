@@ -15,6 +15,7 @@ import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
 import '../widgets/add_operation_fab.dart';
 import '../widgets/operations_table.dart';
+import '../widgets/monthly_totals_banner.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -182,7 +183,6 @@ class _HomePageState extends State<HomePage> {
         .fold(0.0, (s, o) => s + o.amount);
   }
 
-  final currency = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
   String monthLabel(int y, int m) => DateFormat.yMMMM('fr_FR').format(DateTime(y, m));
 
     return AppScaffold(
@@ -195,46 +195,15 @@ class _HomePageState extends State<HomePage> {
         child: Column(children: [
           // show error if present
           if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
-          // Totals — same banner as OperationsPage
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        Icon(Icons.arrow_upward, size: 18, color: theme.colorScheme.primary),
-                        const SizedBox(width: 8),
-                        Text('Revenu ${monthLabel(displayRevenueYear, displayRevenueMonth)}', style: theme.textTheme.bodyMedium),
-                      ]),
-                      Text(
-                        currency.format(revenueToShow),
-                        style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        Icon(Icons.arrow_downward, size: 18, color: expenseCurrent > revenueToShow ? Colors.red : theme.iconTheme.color),
-                        const SizedBox(width: 8),
-                        Text('Dépense ${monthLabel(currentYear, currentMonth)}', style: theme.textTheme.bodyMedium),
-                      ]),
-                      Text(
-                        currency.format(expenseCurrent),
-                        style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: expenseCurrent > revenueToShow ? Colors.red : null),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+          // Totals — réutilisable
+          MonthlyTotalsBanner(
+            revenueLabel: 'Revenu ${monthLabel(displayRevenueYear, displayRevenueMonth)}',
+            expenseLabel: 'Dépense ${monthLabel(currentYear, currentMonth)}',
+            revenueAmount: revenueToShow,
+            expenseAmount: expenseCurrent,
           ),
+
+          const SizedBox(height: 12),
 
           // Chart area
           Card(

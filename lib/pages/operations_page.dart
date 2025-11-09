@@ -15,6 +15,7 @@ import 'calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
 import '../widgets/add_operation_fab.dart';
 import '../widgets/operations_table.dart';
+import '../widgets/monthly_totals_banner.dart';
 
 class OperationsPage extends StatefulWidget {
   const OperationsPage({super.key});
@@ -167,8 +168,7 @@ class _OperationsPageState extends State<OperationsPage> {
           .fold(0.0, (s, o) => s + o.amount);
     }
 
-    final currency = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
-    String monthLabel(int y, int m) => DateFormat.yMMMM('fr_FR').format(DateTime(y, m));
+  String monthLabel(int y, int m) => DateFormat.yMMMM('fr_FR').format(DateTime(y, m));
     final categories = ['Tous'] + _operations.map((e) => e.category).toSet().toList();
     final totalPages = (ops.length / _pageSize).ceil().clamp(1, 9999);
     final pageItems = ops.skip((_page - 1) * _pageSize).take(_pageSize).toList();
@@ -187,45 +187,12 @@ class _OperationsPageState extends State<OperationsPage> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
 
-              // Totals — ligne par ligne
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(children: [
-                            Icon(Icons.arrow_upward, size: 18, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
-                            Text('Revenu ${monthLabel(displayRevenueYear, displayRevenueMonth)}', style: theme.textTheme.bodyMedium),
-                          ]),
-                          Text(
-                            currency.format(revenueToShow),
-                            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(children: [
-                            Icon(Icons.arrow_downward, size: 18, color: expenseCurrent > revenueToShow ? Colors.red : theme.iconTheme.color),
-                            const SizedBox(width: 8),
-                            Text('Dépense ${monthLabel(currentYear, currentMonth)}', style: theme.textTheme.bodyMedium),
-                          ]),
-                          Text(
-                            currency.format(expenseCurrent),
-                            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: expenseCurrent > revenueToShow ? Colors.red : null),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+              // Totals — ligne par ligne (réutilisable)
+              MonthlyTotalsBanner(
+                revenueLabel: 'Revenu ${monthLabel(displayRevenueYear, displayRevenueMonth)}',
+                expenseLabel: 'Dépense ${monthLabel(currentYear, currentMonth)}',
+                revenueAmount: revenueToShow,
+                expenseAmount: expenseCurrent,
               ),
 
               const SizedBox(height: 12),

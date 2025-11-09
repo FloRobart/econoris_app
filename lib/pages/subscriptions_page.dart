@@ -15,6 +15,7 @@ import '../widgets/subscriptions_chart.dart';
 import '../widgets/subscription_dialogs.dart';
 import '../widgets/add_operation_fab.dart';
 import '../widgets/subscriptions_table.dart';
+import '../widgets/monthly_totals_banner.dart';
 
 class SubscriptionsPage extends StatefulWidget {
   const SubscriptionsPage({super.key});
@@ -157,10 +158,47 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
       .where((s) => s.amount < 0)
       .fold(0.0, (double acc, Subscription s) => acc + monthlyEquivalent(s));
 
-    final categories = ['Tous'] + _subscriptions.map((e) => e.category).toSet().toList();
-    final totalPages = (ops.length / _pageSize).ceil().clamp(1, 9999);
-    final pageItems = ops.skip((_page - 1) * _pageSize).take(_pageSize).toList();
-    final theme = Theme.of(context);
+  // current date helpers for banner
+  final now = DateTime.now();
+  final currentYear = now.year;
+  final currentMonth = now.month;
+
+  // --- Monthly totals for subscriptions (adapted banner) ---
+  // compute monthly revenue and expense equivalents from subscriptions
+  final double revenueCurrent = ops
+      .where((s) => s.amount > 0)
+      .fold(0.0, (double acc, Subscription s) => acc + monthlyEquivalent(s));
+
+  final double expenseCurrent = ops
+      .where((s) => s.amount < 0)
+      .fold(0.0, (double acc, Subscription s) => acc + monthlyEquivalent(s).abs());
+
+  int displayRevenueYear = currentYear;
+  int displayRevenueMonth = currentMonth;
+  double revenueToShow = revenueCurrent;
+  if (revenueCurrent == 0) {
+    if (currentMonth == 1) {
+      displayRevenueMonth = 12;
+      displayRevenueYear = currentYear - 1;
+    } else {
+      displayRevenueMonth = currentMonth - 1;
+      displayRevenueYear = currentYear;
+    }
+    // for subscriptions, use same ops set but filter by month/year of startDate (approximation)
+    revenueToShow = _subscriptions
+        .where((s) => s.startDate.year == displayRevenueYear && s.startDate.month == displayRevenueMonth && s.amount > 0)
+        .fold(0.0, (double acc, Subscription s) => acc + monthlyEquivalent(s));
+  }
+
+  String monthLabel(int y, int m) => DateFormat.yMMMM('fr_FR').format(DateTime(y, m));
+  // Make Theme available for the banner and other UI parts
+  final theme = Theme.of(context);
+
+  // Use MonthlyTotalsBanner (defined in widgets) instead of local Card
+
+  final totalPages = (ops.length / _pageSize).ceil().clamp(1, 9999);
+  final pageItems = ops.skip((_page - 1) * _pageSize).take(_pageSize).toList();
+  final categories = ['Tous'] + _subscriptions.map((e) => e.category).toSet().toList();
 
     return AppScaffold(
       // Subscriptions tab index is 2 (0: Accueil, 1: Opérations, 2: Abonnements, 3: Prêts, 4: Horaires)
@@ -183,6 +221,16 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
             padding: const EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
+
+              // Banner with monthly totals (subscriptions)
+              MonthlyTotalsBanner(
+                revenueLabel: 'Revenu ${monthLabel(displayRevenueYear, displayRevenueMonth)}',
+                expenseLabel: 'Dépense ${monthLabel(currentYear, currentMonth)}',
+                revenueAmount: revenueToShow,
+                expenseAmount: expenseCurrent,
+              ),
+
+              const SizedBox(height: 12),
 
               // Chart card with chart type selector
               Card(
@@ -224,7 +272,6 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
                 ),
               ),
 
-              const SizedBox(height: 12),
 
               // Controls: search, filters, sort
               Row(children: [

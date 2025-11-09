@@ -65,7 +65,7 @@ class _AddOperationButtonState extends State<AddOperationButton> {
                       onTap: () => _selectMode('revenue'),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_downward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Revenu', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_upward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Revenu', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
                       ),
                     ),
                   ),
@@ -96,7 +96,7 @@ class _AddOperationButtonState extends State<AddOperationButton> {
                       onTap: () => _selectMode('depense'),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_upward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Dépense', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.arrow_downward, size: 18, color: Colors.black), SizedBox(width: 8), Text('Dépense', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))]),
                       ),
                     ),
                   ),
