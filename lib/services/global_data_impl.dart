@@ -172,4 +172,35 @@ class GlobalData {
       refreshNotifier.value++;
     } catch (_) {}
   }
+
+  /// Insert or update a subscription from a parsed JSON object returned
+  /// by the API. If the subscription id already exists we replace it,
+  /// otherwise we insert it and keep the list sorted by startDate desc.
+  void upsertSubscriptionFromJson(Map<String, dynamic> json) {
+    try {
+      final sub = Subscription.fromJson(Map<String, dynamic>.from(json));
+      subscriptions ??= <Subscription>[];
+      final idx = subscriptions!.indexWhere((s) => s.id == sub.id);
+      if (idx >= 0) {
+        subscriptions![idx] = sub;
+      } else {
+        subscriptions!.add(sub);
+      }
+      subscriptions!.sort((a, b) => b.startDate.compareTo(a.startDate));
+      try {
+        refreshNotifier.value++;
+      } catch (_) {}
+    } catch (_) {
+      // ignore parse errors
+    }
+  }
+
+  /// Remove a subscription by id from the in-memory store and notify.
+  void removeSubscriptionById(int id) {
+    if (subscriptions == null) return;
+    subscriptions!.removeWhere((s) => s.id == id);
+    try {
+      refreshNotifier.value++;
+    } catch (_) {}
+  }
 }

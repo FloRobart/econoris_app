@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/operation.dart';
 import '../models/subscription.dart';
 import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import 'operation_dialogs.dart';
 import 'add_operation_button.dart';
 
@@ -42,6 +43,21 @@ class AddOperationFab extends StatefulWidget {
         final id = res['id'] as int;
         final resp = await ApiService.updateSubscription(jwt, id, body);
         if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          // try to parse returned subscription and update central store
+          try {
+            final parsed = jsonDecode(resp.body);
+            Map<String, dynamic>? subJson;
+            if (parsed is Map<String, dynamic>) {
+              if (parsed.containsKey('subscription') && parsed['subscription'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['subscription']);
+              } else if (parsed.containsKey('data') && parsed['data'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['data']);
+              } else {
+                subJson = Map<String, dynamic>.from(parsed);
+              }
+            }
+            if (subJson != null) GlobalData.instance.upsertSubscriptionFromJson(subJson);
+          } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abonnement modifié')));
           }
@@ -58,6 +74,29 @@ class AddOperationFab extends StatefulWidget {
       } else {
         final resp = await ApiService.addSubscription(jwt, body);
         if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          // parse created subscription and update global store
+          try {
+            final parsed = jsonDecode(resp.body);
+            Map<String, dynamic>? subJson;
+            if (parsed is Map<String, dynamic>) {
+              if (parsed.containsKey('subscription') && parsed['subscription'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['subscription']);
+              } else if (parsed.containsKey('data') && parsed['data'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['data']);
+              } else if (parsed.containsKey('row') && parsed['row'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['row']);
+              } else if (parsed.containsKey('rows') && parsed['rows'] is List && (parsed['rows'] as List).isNotEmpty && (parsed['rows'][0] is Map)) {
+                subJson = Map<String, dynamic>.from(parsed['rows'][0]);
+              } else if (parsed.containsKey('result') && parsed['result'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['result']);
+              } else {
+                subJson = Map<String, dynamic>.from(parsed);
+              }
+            } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
+              subJson = Map<String, dynamic>.from(parsed[0]);
+            }
+            if (subJson != null) GlobalData.instance.upsertSubscriptionFromJson(subJson);
+          } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abonnement ajouté')));
           }
@@ -102,6 +141,31 @@ class _AddOperationFabState extends State<AddOperationFab> {
       final body = res['subscription'] as Map<String, dynamic>;
       final resp = await ApiService.addSubscription(jwt, body);
         if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          // parse created subscription and update global store so UI updates without a full refetch
+          try {
+            final parsed = jsonDecode(resp.body);
+            Map<String, dynamic>? subJson;
+            if (parsed is Map<String, dynamic>) {
+              if (parsed.containsKey('subscription') && parsed['subscription'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['subscription']);
+              } else if (parsed.containsKey('data') && parsed['data'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['data']);
+              } else if (parsed.containsKey('row') && parsed['row'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['row']);
+              } else if (parsed.containsKey('rows') && parsed['rows'] is List && (parsed['rows'] as List).isNotEmpty && (parsed['rows'][0] is Map)) {
+                subJson = Map<String, dynamic>.from(parsed['rows'][0]);
+              } else if (parsed.containsKey('result') && parsed['result'] is Map) {
+                subJson = Map<String, dynamic>.from(parsed['result']);
+              } else {
+                subJson = Map<String, dynamic>.from(parsed);
+              }
+            } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
+              subJson = Map<String, dynamic>.from(parsed[0]);
+            }
+            if (subJson != null) GlobalData.instance.upsertSubscriptionFromJson(subJson);
+          } catch (e, st) {
+            debugPrint('addSubscription parse error: $e\n$st');
+          }
           if (!mounted) {
             return;
           }

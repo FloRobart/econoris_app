@@ -45,6 +45,17 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
   void initState() {
     super.initState();
     _init();
+    // listen to global data refreshes so the page updates when subscriptions
+    // are added/updated locally (without re-fetching from API)
+    GlobalData.instance.refreshNotifier.addListener(_onGlobalDataRefresh);
+  }
+
+  void _onGlobalDataRefresh() {
+    if (!mounted) return;
+    setState(() {
+      _subscriptions = GlobalData.instance.subscriptions ?? [];
+      _page = 1;
+    });
   }
 
   Future<void> _init() async {
@@ -115,10 +126,7 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
       }
     }
 
-  // Only include negative subscriptions (expenses) in the total
-  final double monthlyTotal = ops
-      .where((s) => s.amount < 0)
-      .fold(0.0, (double acc, Subscription s) => acc + monthlyEquivalent(s));
+  // (monthlyTotal not used in UI here)
 
   // current date helpers for banner
   final now = DateTime.now();
@@ -314,5 +322,11 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    try { GlobalData.instance.refreshNotifier.removeListener(_onGlobalDataRefresh); } catch (_) {}
+    super.dispose();
   }
 }

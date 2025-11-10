@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/subscription.dart';
 import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import 'add_operation_fab.dart';
 
 class SubscriptionDetailDialog extends StatefulWidget {
@@ -26,6 +27,8 @@ class _SubscriptionDetailDialogState extends State<SubscriptionDetailDialog> {
     }
     final resp = await ApiService.deleteSubscription(jwt, widget.subscription.id);
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
+      // remove from central store so UI updates without refetch
+      try { GlobalData.instance.removeSubscriptionById(widget.subscription.id); } catch (_) {}
       if (!mounted) return;
       Navigator.of(context).pop('deleted');
     } else {
