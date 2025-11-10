@@ -1,13 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 // date formatting handled by SubscriptionsTable
 
 import '../models/subscription.dart';
-import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import '../widgets/app_scaffold.dart';
 import '../navigation/app_routes.dart';
 import '../widgets/subscriptions_chart.dart';
@@ -51,62 +50,25 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
   Future<void> _init() async {
     final sp = await SharedPreferences.getInstance();
     setState(() { _jwt = sp.getString('jwt'); });
-    await _fetchOperations();
-  }
-
-  Future<void> _fetchOperations() async {
-    if (_jwt == null) {
-      setState(() { _loading = false; _error = null; _subscriptions = []; });
-      return;
-    }
-    setState(() { _loading = true; _error = null; });
-    try {
-      final resp = await ApiService.getSubscriptions(_jwt!);
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        final body = resp.body;
-        if (body.isEmpty) {
-          setState(() { _subscriptions = []; _loading = false; });
-          return;
-        }
-        final parsed = jsonDecode(body);
-        List<dynamic> list;
-        if (parsed is List) {
-          list = parsed;
-        } else if (parsed is Map && parsed['rows'] is List) {
-          list = parsed['rows'];
-        } else if (parsed is Map && parsed['data'] is List) {
-          list = parsed['data'];
-        } else if (parsed is Map && parsed['operations'] is List) {
-          list = parsed['operations'];
-        } else if (parsed is Map) {
-          list = [parsed];
-        } else {
-          list = [];
-        }
-
-        final subs = list.map((e) => Subscription.fromJson(Map<String, dynamic>.from(e as Map))).toList();
-        subs.sort((a, b) => b.startDate.compareTo(a.startDate));
-        setState(() { _subscriptions = subs; _loading = false; _page = 1; });
-        } else {
-        String msg = 'Erreur (${resp.statusCode})';
-        try {
-          final parsed = jsonDecode(resp.body);
-          if (parsed is Map && parsed.containsKey('error')) {
-            msg = parsed['error'].toString();
-          }
-        } catch (_) {}
-        setState(() { _error = msg; _loading = false; });
+    if (_jwt != null) {
+      setState(() { _loading = true; _error = null; });
+      try {
+        await GlobalData.instance.ensureData(_jwt!);
+        setState(() { _subscriptions = GlobalData.instance.subscriptions ?? []; _loading = false; _page = 1; });
+      } catch (e) {
+        setState(() { _error = e.toString(); _loading = false; });
       }
-    } catch (e) {
-      setState(() { _error = e.toString(); _loading = false; });
     }
   }
+
+  // Data is fetched from GlobalData; use _init or the RefreshIndicator to
+  // refresh the central store.
 
   // no-op getter removed — filtering & sorting done in build
 
   void _openDetail(Subscription s) async {
     final result = await showDialog<String>(context: context, builder: (_) => SubscriptionDetailDialog(subscription: s));
-    if (result == 'deleted' || result == 'updated') await _fetchOperations();
+    if (result == 'deleted' || result == 'updated') await _init();
   }
 
   @override
@@ -214,7 +176,10 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
         },
       ),
       body: _loading ? const Center(child: CircularProgressIndicator()) : RefreshIndicator(
-        onRefresh: _fetchOperations,
+        onRefresh: () async {
+          await GlobalData.instance.fetchAll(_jwt ?? '');
+          setState(() { _subscriptions = GlobalData.instance.subscriptions ?? []; _page = 1; });
+        },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(

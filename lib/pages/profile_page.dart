@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import '../services/theme_manager.dart';
 import '../navigation/app_routes.dart';
 import '../widgets/app_scaffold.dart';
@@ -49,39 +50,29 @@ class _ProfilePageState extends State<ProfilePage> {
     // We no longer store the user's name locally; the profile will be
     // fetched from the API when available.
     if (_jwt != null) {
-      final resp = await ApiService.getProfile(_jwt!);
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        final j = jsonDecode(resp.body);
-        // Assume API returns a valid user object with all fields present.
-        setState((){
-          id = j['id'];
-          _email = j['email'];
-          // API returns pseudo instead of name
-          _name = j['pseudo'] ?? j['name'];
-          _nameC.text = _name ?? '';
-          _isConnected = j['is_connected'];
-          _isVerifiedEmail = j['is_verified_email'];
-          _lastLogin = DateTime.parse(j['last_login']);
-          _createdAt = DateTime.parse(j['created_at']);
-          updatedAt = DateTime.parse(j['updated_at']);
-          _error = null;
-          _loading = false;
-        });
-      } else if (resp.statusCode == 401 || resp.statusCode == 422) {
-        // Clear local credentials and force login
-        final sp = await SharedPreferences.getInstance();
-        await sp.remove('jwt');
-        await sp.remove('email');
-        // 'name' is no longer stored locally
-        if (!mounted) return;
-        Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
-        return;
-      } else if (resp.statusCode >= 500) {
-        String msg = 'Erreur serveur';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('getProfile parse error: $e\n$st'); }
-        setState((){ _error = msg; _loading = false; });
-      } else {
-        setState(()=> _loading = false);
+      try {
+        await GlobalData.instance.ensureData(_jwt!);
+        final j = GlobalData.instance.profile;
+        if (j != null) {
+          setState((){
+            id = j['id'];
+            _email = j['email'];
+            _name = j['pseudo'] ?? j['name'];
+            _nameC.text = _name ?? '';
+            _isConnected = j['is_connected'];
+            _isVerifiedEmail = j['is_verified_email'];
+            _lastLogin = j['last_login'] == null ? null : DateTime.tryParse(j['last_login']?.toString() ?? '');
+            _createdAt = j['created_at'] == null ? null : DateTime.tryParse(j['created_at']?.toString() ?? '');
+            updatedAt = j['updated_at'] == null ? null : DateTime.tryParse(j['updated_at']?.toString() ?? '');
+            _error = null;
+            _loading = false;
+          });
+        } else {
+          setState(()=> _loading = false);
+        }
+      } catch (e) {
+        // If the central fetch failed, behave as before and show error
+        setState((){ _error = e.toString(); _loading = false; });
       }
     } else {
       setState(()=> _loading = false);
@@ -113,6 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_jwt != null) await ApiService.logout(_jwt!);
     final sp = await SharedPreferences.getInstance();
     await sp.remove('jwt');
+  GlobalData.instance.clear();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
     await Future.delayed(const Duration(milliseconds: 400));
@@ -132,6 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
     await ApiService.deleteUser(_jwt!);
     final sp = await SharedPreferences.getInstance();
     await sp.clear();
+  GlobalData.instance.clear();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Compte supprimé, session terminée')));
     await Future.delayed(const Duration(milliseconds: 400));

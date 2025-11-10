@@ -1,13 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 // date formatting used for totals
 
 import '../models/operation.dart';
-import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import '../widgets/app_scaffold.dart';
 import '../navigation/app_routes.dart';
 import '../widgets/operations_chart.dart';
@@ -51,67 +50,19 @@ class _HomePageState extends State<HomePage> {
   Future<void> _init() async {
     final sp = await SharedPreferences.getInstance();
     setState(() { _jwt = sp.getString('jwt'); });
-    await _fetchOperations();
-  }
-
-  Future<void> _fetchOperations() async {
-    if (_jwt == null) {
-      // no JWT -> nothing to fetch. ensure loading is false to avoid stuck spinner.
-      setState(() { _loading = false; _error = null; });
-      return;
-    }
-    setState(() { _loading = true; _error = null; });
-    try {
-      final resp = await ApiService.getOperations(_jwt!);
-
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        if (resp.body.isEmpty) {
-          setState(() { _operations = []; _loading = false; });
-          return;
-        }
-        final parsed = jsonDecode(resp.body);
-        List<dynamic> list;
-        if (parsed is List) {
-          list = parsed;
-        } else if (parsed is Map && parsed.containsKey('rows') && parsed['rows'] is List) {
-          list = parsed['rows'];
-        } else if (parsed is Map && parsed.containsKey('data') && parsed['data'] is List) {
-          list = parsed['data'];
-        } else if (parsed is Map && parsed.containsKey('operations') && parsed['operations'] is List) {
-          list = parsed['operations'];
-        } else {
-          // fallback: if it's a map representing a single operation, wrap it
-          if (parsed is Map) {
-            list = [parsed];
-          } else {
-            list = [];
-          }
-        }
-        final ops = list.map((e) => Operation.fromJson(Map<String, dynamic>.from(e as Map))).toList();
-  ops.sort((a, b) => b.levyDate.compareTo(a.levyDate));
-        setState(() { _operations = ops; _loading = false; });
-      } else {
-        String msg = 'Erreur (${resp.statusCode})';
-        try {
-          final body = resp.body;
-          if (body.isNotEmpty) {
-            final parsed = jsonDecode(body);
-            if (parsed is Map && parsed.containsKey('error')) {
-              msg = parsed['error'].toString();
-            } else {
-              msg = body;
-            }
-          }
-        } catch (e, st) {
-          debugPrint('getOperations parse error: $e\n$st');
-          // keep default msg if parsing fails
-        }
-        setState(() { _error = msg; _loading = false; });
+    if (_jwt != null) {
+      setState(() { _loading = true; _error = null; });
+      try {
+        await GlobalData.instance.ensureData(_jwt!);
+        setState(() { _operations = GlobalData.instance.operations ?? []; _loading = false; });
+      } catch (e) {
+        setState(() { _error = e.toString(); _loading = false; });
       }
-    } catch (e) {
-      setState(() { _error = e.toString(); _loading = false; });
     }
   }
+  
+  // If an operation was modified/deleted we re-init the page to refresh
+  // data from the central store.
 
   List<Operation> get _filteredOperations {
     var list = _operations.where((op) {
@@ -142,7 +93,7 @@ class _HomePageState extends State<HomePage> {
 
   void _openDetail(Operation op) async {
     final result = await showDialog<String>(context: context, builder: (_) => OperationDetailDialog(operation: op));
-    if (result == 'deleted' || result == 'updated') await _fetchOperations();
+    if (result == 'deleted' || result == 'updated') await _init();
   }
 
 

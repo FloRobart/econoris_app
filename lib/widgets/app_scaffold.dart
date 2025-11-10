@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 
 import '../config.dart';
 import '../navigation/app_routes.dart';
@@ -88,12 +86,10 @@ class AppScaffold extends StatelessWidget {
                     final sp = await SharedPreferences.getInstance();
                     final jwt = sp.getString('jwt');
                     if (jwt != null && jwt.isNotEmpty) {
-                      final resp = await ApiService.getProfile(jwt);
-                      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-                        final j = jsonDecode(resp.body);
-                        final name = (j is Map) ? (j['pseudo'] ?? j['name']) : null;
-                        if (name != null && name is String && name.isNotEmpty) return name;
-                      }
+                      await GlobalData.instance.ensureData(jwt);
+                      final p = GlobalData.instance.profile;
+                      final name = p != null ? (p['pseudo'] ?? p['name']) : null;
+                      if (name != null && name is String && name.isNotEmpty) return name;
                     }
                     // fallback to saved email local-part
                     final sp2 = await SharedPreferences.getInstance();

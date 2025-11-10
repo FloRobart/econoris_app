@@ -1,13 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 // date formatting handled by OperationsTable
 
 import '../models/operation.dart';
-import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import '../widgets/app_scaffold.dart';
 import '../navigation/app_routes.dart';
 import '../widgets/operations_chart.dart';
@@ -51,56 +50,18 @@ class _OperationsPageState extends State<OperationsPage> {
   Future<void> _init() async {
     final sp = await SharedPreferences.getInstance();
     setState(() { _jwt = sp.getString('jwt'); });
-    await _fetchOperations();
-  }
-
-  Future<void> _fetchOperations() async {
-    if (_jwt == null) {
-      setState(() { _loading = false; _error = null; _operations = []; });
-      return;
-    }
-    setState(() { _loading = true; _error = null; });
-    try {
-      final resp = await ApiService.getOperations(_jwt!);
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        final body = resp.body;
-        if (body.isEmpty) {
-          setState(() { _operations = []; _loading = false; });
-          return;
-        }
-        final parsed = jsonDecode(body);
-        List<dynamic> list;
-        if (parsed is List) {
-          list = parsed;
-        } else if (parsed is Map && parsed['rows'] is List) {
-          list = parsed['rows'];
-        } else if (parsed is Map && parsed['data'] is List) {
-          list = parsed['data'];
-        } else if (parsed is Map && parsed['operations'] is List) {
-          list = parsed['operations'];
-        } else if (parsed is Map) {
-          list = [parsed];
-        } else {
-          list = [];
-        }
-
-        final ops = list.map((e) => Operation.fromJson(Map<String, dynamic>.from(e as Map))).toList();
-        ops.sort((a, b) => b.levyDate.compareTo(a.levyDate));
-        setState(() { _operations = ops; _loading = false; _page = 1; });
-        } else {
-        String msg = 'Erreur (${resp.statusCode})';
-        try {
-          final parsed = jsonDecode(resp.body);
-          if (parsed is Map && parsed.containsKey('error')) {
-            msg = parsed['error'].toString();
-          }
-        } catch (_) {}
-        setState(() { _error = msg; _loading = false; });
+    if (_jwt != null) {
+      setState(() { _loading = true; _error = null; });
+      try {
+        await GlobalData.instance.ensureData(_jwt!);
+        setState(() { _operations = GlobalData.instance.operations ?? []; _loading = false; _page = 1; });
+      } catch (e) {
+        setState(() { _error = e.toString(); _loading = false; });
       }
-    } catch (e) {
-      setState(() { _error = e.toString(); _loading = false; });
     }
   }
+  
+  // Use central GlobalData; refresh is done by re-calling _init
 
   List<Operation> get _filteredSorted {
     var list = _operations.where((op) {
@@ -131,7 +92,7 @@ class _OperationsPageState extends State<OperationsPage> {
 
   void _openDetail(Operation op) async {
     final result = await showDialog<String>(context: context, builder: (_) => OperationDetailDialog(operation: op));
-    if (result == 'deleted' || result == 'updated') await _fetchOperations();
+    if (result == 'deleted' || result == 'updated') await _init();
   }
 
   @override
@@ -179,7 +140,10 @@ class _OperationsPageState extends State<OperationsPage> {
       onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
       floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op)), operations: _operations),
       body: _loading ? const Center(child: CircularProgressIndicator()) : RefreshIndicator(
-        onRefresh: _fetchOperations,
+        onRefresh: () async {
+          await GlobalData.instance.fetchAll(_jwt ?? '');
+          setState(() { _operations = GlobalData.instance.operations ?? []; _page = 1; });
+        },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
