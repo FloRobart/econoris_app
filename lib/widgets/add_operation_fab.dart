@@ -19,6 +19,64 @@ class AddOperationFab extends StatefulWidget {
   final List<Subscription>? subscriptions;
   const AddOperationFab({super.key, this.onOperationCreated, this.operations, this.subscriptions});
 
+  /// Helper to open the subscription editor (create or edit) using the
+  /// same UI/logic as the add-operation FAB. Returns true when the
+  /// subscription was created/updated successfully.
+  static Future<bool> showSubscriptionEditor(BuildContext context, {Subscription? subscription, List<Operation>? operations, List<Subscription>? subscriptions, VoidCallback? onUpdated}) async {
+    final res = await showDialog(context: context, builder: (_) => OperationEditDialog(mode: 'abonnement', subscription: subscription, operations: operations, subscriptions: subscriptions));
+    if (res == null) return false;
+
+    final sp = await SharedPreferences.getInstance();
+    final jwt = sp.getString('jwt');
+    if (jwt == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Non authentifié')));
+      }
+      return false;
+    }
+
+    if (res is Map && res.containsKey('subscription')) {
+      final body = res['subscription'] as Map<String, dynamic>;
+      // If an id is present -> update, else create
+      if (res.containsKey('id')) {
+        final id = res['id'] as int;
+        final resp = await ApiService.updateSubscription(jwt, id, body);
+        if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abonnement modifié')));
+          }
+          try { onUpdated?.call(); } catch (_) {}
+          return true;
+        } else {
+          String m = 'Erreur';
+          try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (_) {}
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+          }
+          return false;
+        }
+      } else {
+        final resp = await ApiService.addSubscription(jwt, body);
+        if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abonnement ajouté')));
+          }
+          try { onUpdated?.call(); } catch (_) {}
+          return true;
+        } else {
+          String m = 'Erreur';
+          try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (_) {}
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+          }
+          return false;
+        }
+      }
+    }
+
+    return false;
+  }
+
   @override
   State<AddOperationFab> createState() => _AddOperationFabState();
 }
@@ -32,7 +90,9 @@ class _AddOperationFabState extends State<AddOperationFab> {
     final sp = await SharedPreferences.getInstance();
     final jwt = sp.getString('jwt');
     if (jwt == null) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Non authentifié')));
       return;
     }
@@ -41,11 +101,13 @@ class _AddOperationFabState extends State<AddOperationFab> {
     if (res is Map && res.containsKey('subscription')) {
       final body = res['subscription'] as Map<String, dynamic>;
       final resp = await ApiService.addSubscription(jwt, body);
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abonnement ajouté')));
-        return;
-      } else {
+        if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          if (!mounted) {
+            return;
+          }
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Abonnement ajouté')));
+          return;
+        } else {
         String m = 'Erreur';
         try {
           final p = jsonDecode(resp.body);
@@ -57,16 +119,20 @@ class _AddOperationFabState extends State<AddOperationFab> {
         } catch (e, st) {
           debugPrint('addSubscription parse error: $e\n$st');
         }
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
         return;
       }
     }
 
+    
+
     final body = (res as Operation).toJson();
     final resp = await ApiService.addOperation(jwt, body);
-    if (resp.statusCode >= 200 && resp.statusCode < 300) {
-      try {
+        if (resp.statusCode >= 200 && resp.statusCode < 300) {
+          try {
         final parsed = jsonDecode(resp.body);
         Map<String, dynamic>? opJson;
         if (parsed is Map<String, dynamic>) {
@@ -86,7 +152,9 @@ class _AddOperationFabState extends State<AddOperationFab> {
         if (opJson != null) {
           final created = Operation.fromJson(opJson);
           widget.onOperationCreated?.call(created);
-          if (!mounted) return;
+          if (!mounted) {
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
           return;
         }
@@ -95,7 +163,9 @@ class _AddOperationFabState extends State<AddOperationFab> {
       }
       // Fallback: still notify parent to refresh
       widget.onOperationCreated?.call(res);
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
     } else {
       String m = 'Erreur';
@@ -109,7 +179,9 @@ class _AddOperationFabState extends State<AddOperationFab> {
       } catch (e, st) {
         debugPrint('addOperation parse error: $e\n$st');
       }
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
     }
   }

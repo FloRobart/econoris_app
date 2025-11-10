@@ -125,6 +125,11 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
 class OperationEditDialog extends StatefulWidget {
   final Operation? operation;
 
+  /// Optional subscription to edit. When provided the dialog will be
+  /// initialised with the subscription values and will return a
+  /// subscription payload when saved.
+  final Subscription? subscription;
+
   /// Optional list of all known operations (used to derive category suggestions).
   final List<Operation>? operations;
 
@@ -137,6 +142,7 @@ class OperationEditDialog extends StatefulWidget {
   const OperationEditDialog(
       {super.key,
       this.operation,
+      this.subscription,
       this.mode,
       this.operations,
       this.subscriptions});
@@ -178,6 +184,30 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
       _categoryInitial = o.category;
       _date = o.levyDate;
       _validated = o.isValidate;
+    } else if (widget.subscription != null) {
+      // Editing a subscription: prefill values and enable recurrence UI
+      final s = widget.subscription!;
+      _nameC.text = s.label;
+      _amountC.text = s.amount.toString();
+      _sourceC.text = s.source ?? '';
+      _destC.text = s.destination ?? '';
+      _costsC.text = s.costs.toString();
+      _categoryInitial = s.category;
+      _date = s.startDate;
+      _recurrence = true;
+      _frequency = 'custom';
+      _customValueC.text = s.intervalValue.toString();
+      // map api unit token to local unit labels
+      if (s.intervalUnit == 'weeks') {
+        _customUnit = 'semaine';
+      } else if (s.intervalUnit == 'months') {
+        _customUnit = 'mois';
+      } else if (s.intervalUnit == 'years') {
+        _customUnit = 'année';
+      } else {
+        _customUnit = 'mois';
+      }
+      _validated = true;
     } else {
       // For new operations, default validated to true per requirements
       _validated = true;
@@ -527,7 +557,13 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
         'day_of_month': null,
         'last_generated_at': null,
       };
-      Navigator.of(context).pop({'subscription': body});
+      // If editing an existing subscription, include its id so callers
+      // can perform an update instead of a create.
+      if (widget.subscription != null) {
+        Navigator.of(context).pop({'subscription': body, 'id': widget.subscription!.id});
+      } else {
+        Navigator.of(context).pop({'subscription': body});
+      }
       return;
     }
 

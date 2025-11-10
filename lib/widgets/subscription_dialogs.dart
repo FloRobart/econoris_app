@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/subscription.dart';
 import '../services/api_service.dart';
+import 'add_operation_fab.dart';
 
 class SubscriptionDetailDialog extends StatefulWidget {
   final Subscription subscription;
@@ -51,7 +52,14 @@ class _SubscriptionDetailDialogState extends State<SubscriptionDetailDialog> {
         Text('Fréquence: ${s.intervalValue} ${s.intervalUnit}'),
         Text('Actif: ${s.active}'),
       ])),
-      actions: [TextButton(onPressed: ()=> Navigator.pop(context), child: const Text('Fermer')), TextButton(onPressed: _delete, child: const Text('Supprimer', style: TextStyle(color: Colors.red)))],
+      actions: [
+        TextButton(onPressed: ()=> Navigator.pop(context), child: const Text('Fermer')),
+        // Edit using the centralized FAB editor so add/update logic is reused
+        TextButton(onPressed: () async {
+            final ok = await AddOperationFab.showSubscriptionEditor(context, subscription: widget.subscription, subscriptions: null, operations: null, onUpdated: (){});
+            if (ok && context.mounted) Navigator.pop(context, 'updated');
+          }, child: const Text('Modifier')),
+        TextButton(onPressed: _delete, child: const Text('Supprimer', style: TextStyle(color: Colors.red)))],
     );
   }
 }
