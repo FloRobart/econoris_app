@@ -203,4 +203,35 @@ class GlobalData {
       refreshNotifier.value++;
     } catch (_) {}
   }
+
+  /// Insert or update an operation from a parsed JSON object returned by
+  /// the API. If the operation id already exists we replace it, otherwise
+  /// we insert it and keep the list sorted by levyDate desc.
+  void upsertOperationFromJson(Map<String, dynamic> json) {
+    try {
+      final op = Operation.fromJson(Map<String, dynamic>.from(json));
+      operations ??= <Operation>[];
+      final idx = operations!.indexWhere((o) => o.id == op.id);
+      if (idx >= 0) {
+        operations![idx] = op;
+      } else {
+        operations!.add(op);
+      }
+      operations!.sort((a, b) => b.levyDate.compareTo(a.levyDate));
+      try {
+        refreshNotifier.value++;
+      } catch (_) {}
+    } catch (_) {
+      // ignore parse errors
+    }
+  }
+
+  /// Remove an operation by id from the in-memory store and notify.
+  void removeOperationById(int id) {
+    if (operations == null) return;
+    operations!.removeWhere((o) => o.id == id);
+    try {
+      refreshNotifier.value++;
+    } catch (_) {}
+  }
 }

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/operation.dart';
 import '../models/subscription.dart';
 import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 
 class OperationDetailDialog extends StatefulWidget {
   final Operation operation;
@@ -41,6 +42,8 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
 
       final resp = await ApiService.deleteOperation(jwt, widget.operation.id);
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
+        // remove from central store so UI updates immediately
+        try { GlobalData.instance.removeOperationById(widget.operation.id); } catch (_) {}
         if (!mounted) return;
         Navigator.of(context).pop('deleted');
       } else {
@@ -68,8 +71,33 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
         final resp =
             await ApiService.updateOperation(jwt, edited.id, edited.toJson());
         if (resp.statusCode >= 200 && resp.statusCode < 300) {
-          if (!mounted) return;
-          Navigator.of(context).pop('updated');
+            // try to parse returned operation and upsert into central store
+            try {
+              final parsed = jsonDecode(resp.body);
+              Map<String, dynamic>? opJson;
+              if (parsed is Map<String, dynamic>) {
+                if (parsed.containsKey('operation') && parsed['operation'] is Map) {
+                  opJson = Map<String, dynamic>.from(parsed['operation']);
+                } else if (parsed.containsKey('data') && parsed['data'] is Map) {
+                  opJson = Map<String, dynamic>.from(parsed['data']);
+                } else if (parsed.containsKey('row') && parsed['row'] is Map) {
+                  opJson = Map<String, dynamic>.from(parsed['row']);
+                } else if (parsed.containsKey('rows') && parsed['rows'] is List && (parsed['rows'] as List).isNotEmpty && (parsed['rows'][0] is Map)) {
+                  opJson = Map<String, dynamic>.from(parsed['rows'][0]);
+                } else if (parsed.containsKey('result') && parsed['result'] is Map) {
+                  opJson = Map<String, dynamic>.from(parsed['result']);
+                } else {
+                  opJson = Map<String, dynamic>.from(parsed);
+                }
+              } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
+                opJson = Map<String, dynamic>.from(parsed[0]);
+              }
+              if (opJson != null) GlobalData.instance.upsertOperationFromJson(opJson);
+            } catch (e, st) {
+              debugPrint('updateOperation parse error: $e\n$st');
+            }
+            if (!mounted) return;
+            Navigator.of(context).pop('updated');
         } else {
           String m = 'Erreur';
           try {

@@ -215,6 +215,8 @@ class _AddOperationFabState extends State<AddOperationFab> {
 
         if (opJson != null) {
           final created = Operation.fromJson(opJson);
+          // update central store so UI updates without needing a full refetch
+          try { GlobalData.instance.upsertOperationFromJson(opJson); } catch (_) {}
           widget.onOperationCreated?.call(created);
           if (!mounted) {
             return;
