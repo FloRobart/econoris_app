@@ -225,19 +225,6 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
 
               const SizedBox(height: 12),
 
-              // Total mensuel des abonnements (filtrés)
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  child: Row(children: [
-                    Text('Coût Total mensuel', style: theme.textTheme.bodyLarge),
-                    const Spacer(),
-                    Text(NumberFormat.currency(locale: 'fr_FR', symbol: '€').format(monthlyTotal.abs()), style: theme.textTheme.titleLarge),
-                  ]),
-                ),
-              ),
-
-
               // Controls: search, filters, sort
               Row(children: [
                 Expanded(
