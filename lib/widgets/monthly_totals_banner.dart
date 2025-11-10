@@ -10,14 +10,14 @@ class MonthlyTotalsBanner extends StatelessWidget {
   final String currencySymbol;
 
   const MonthlyTotalsBanner({
-    Key? key,
+    super.key,
     required this.revenueLabel,
     required this.expenseLabel,
     required this.revenueAmount,
     required this.expenseAmount,
     this.locale = 'fr_FR',
     this.currencySymbol = '€',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

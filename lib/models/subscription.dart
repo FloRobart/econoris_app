@@ -98,10 +98,10 @@ class Subscription {
       'active': active,
       'interval_value': intervalValue,
       'interval_unit': intervalUnit,
-      'start_date': startDate.toUtc().toIso8601String(),
-      'end_date': endDate?.toUtc().toIso8601String(),
+      'start_date': startDate.toIso8601String(),
+      'end_date': endDate?.toIso8601String(),
       'day_of_month': dayOfMonth,
-      'last_generated_at': lastGeneratedAt?.toUtc().toIso8601String(),
+      'last_generated_at': lastGeneratedAt?.toIso8601String(),
     };
   }
 }
