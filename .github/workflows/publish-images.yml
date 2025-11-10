@@ -23,6 +23,12 @@ jobs:
           version=$(grep '^version:' pubspec.yaml | head -n1 | sed 's/version:[[:space:]]*//; s/[+ ].*$//')
           echo "version=$version" >> $GITHUB_OUTPUT
 
+      - name: Get repo owner (lowercase)
+        id: repo_owner_lc
+        run: |
+          repo_owner_lc=$(echo "${GITHUB_REPOSITORY%/*}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_owner_lc=$repo_owner_lc" >> $GITHUB_OUTPUT
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
