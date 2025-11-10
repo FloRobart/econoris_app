@@ -98,7 +98,7 @@ class Subscription {
       'active': active,
       'interval_value': intervalValue,
       'interval_unit': intervalUnit,
-      'start_date': startDate.toIso8601String(),
+      'start_date': "${startDate.year.toString().padLeft(4, '0')}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}",
       'end_date': endDate?.toIso8601String(),
       'day_of_month': dayOfMonth,
       'last_generated_at': lastGeneratedAt?.toIso8601String(),
