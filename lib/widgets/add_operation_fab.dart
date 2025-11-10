@@ -65,7 +65,11 @@ class AddOperationFab extends StatefulWidget {
           return true;
         } else {
           String m = 'Erreur';
-          try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (_) {}
+          try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) {
+            m = p['error'].toString();
+          } else {
+            m = resp.body;
+          } } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
           }
@@ -104,7 +108,11 @@ class AddOperationFab extends StatefulWidget {
           return true;
         } else {
           String m = 'Erreur';
-          try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (_) {}
+          try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) {
+            m = p['error'].toString();
+          } else {
+            m = resp.body;
+          } } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
           }
