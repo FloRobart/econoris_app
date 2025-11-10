@@ -18,16 +18,10 @@ jobs:
       - name: Get app version from pubspec
         id: vars
         run: |
-          # extract version from pubspec.yaml (format: "version: X.Y.Z+build")
-          # keep only the semantic version part before any +build metadata
-          version=$(grep '^version:' pubspec.yaml | head -n1 | sed 's/version:[[:space:]]*//; s/[+ ].*$//')
-          echo "version=$version" >> $GITHUB_OUTPUT
-
-      - name: Get repo owner (lowercase)
-        id: repo_owner_lc
-        run: |
-          repo_owner_lc=$(echo "${GITHUB_REPOSITORY%/*}" | tr '[:upper:]' '[:lower:]')
-          echo "repo_owner_lc=$repo_owner_lc" >> $GITHUB_OUTPUT
+         # Extraction robuste de la version depuis pubspec.yaml (format : "version: X.Y.Z+build")
+         # On récupère la ligne version, on retire tout ce qui précède le numéro, puis on ne garde que la partie X.Y.Z
+         version=$(grep '^version:' pubspec.yaml | head -n1 | sed -E 's/^version:[[:space:]]*([0-9]+\.[0-9]+\.[0-9]+).*$/\1/')
+         echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
