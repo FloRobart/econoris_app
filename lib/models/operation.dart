@@ -1,28 +1,36 @@
 class Operation {
-  final int operationsId;
-  DateTime operationsDate;
-  String operationsName;
-  double operationsAmount;
-  String operationsSource;
-  String operationsDestination;
-  double operationsCosts;
-  String operationsCategory;
-  bool operationsValidated;
-  String operationsRedundancy;
-  DateTime operationsCreatedAt;
+  final int id;
+  DateTime levyDate;
+  String label;
+  double amount;
+  String category;
+
+  String? source;
+  String? destination;
+  double costs;
+  bool isValidate;
+
+  final int userId;
+  int? subscriptionId;
+  DateTime createdAt;
+  DateTime updatedAt;
 
   Operation({
-    required this.operationsId,
-    required this.operationsDate,
-    required this.operationsName,
-    required this.operationsAmount,
-    required this.operationsSource,
-    required this.operationsDestination,
-    required this.operationsCosts,
-    required this.operationsCategory,
-    required this.operationsValidated,
-    required this.operationsRedundancy,
-    required this.operationsCreatedAt,
+    required this.id,
+    required this.levyDate,
+    required this.label,
+    required this.amount,
+    required this.category,
+
+    this.source,
+    this.destination,
+    required this.costs,
+    required this.isValidate,
+
+    required this.userId,
+    this.subscriptionId,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory Operation.fromJson(Map<String, dynamic> j) {
@@ -51,41 +59,39 @@ class Operation {
       return s == 'true' || s == '1';
     }
 
-    final dateStr = j['operations_date'] ?? j['date'];
-    final createdAtStr = j['operations_createdat'] ?? j['operations_created_at'] ?? j['operations_date'];
+    final dateStr = j['levy_date'];
+    final createdAtStr = j['created_at'];
+    final updatedAtStr = j['updated_at'];
 
     return Operation(
-      operationsId: parseId(j['operations_id'] ?? 0),
-      operationsDate: parseDate(dateStr),
-      operationsName: j['operations_name'] ?? '',
-      operationsAmount: parseDouble(j['operations_amount'] ?? j['amount'] ?? 0),
-      operationsSource: j['operations_source'] ?? '',
-      operationsDestination: j['operations_destination'] ?? '',
-      operationsCosts: parseDouble(j['operations_costs'] ?? j['costs'] ?? 0),
-      operationsCategory: j['operations_category'] ?? '',
-      operationsValidated: parseBool(j['operations_validated'] ?? j['validated'] ?? false),
-      operationsRedundancy: j['operations_redundancy'] ?? '',
-      operationsCreatedAt: parseDate(createdAtStr, DateTime.now()),
+      id: parseId(j['id']),
+      levyDate: parseDate(dateStr),
+      label: j['label'],
+      amount: parseDouble(j['amount']),
+      category: j['category'],
+
+      source: j['source'],
+      destination: j['destination'],
+      costs: parseDouble(j['costs']),
+      isValidate: parseBool(j['is_validate']),
+
+      userId: parseId(j['user_id']),
+      subscriptionId: j['subscription_id'] == null ? null : parseId(j['subscription_id']),
+      createdAt: parseDate(createdAtStr, DateTime.now()),
+      updatedAt: parseDate(updatedAtStr, DateTime.now()),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'operations_id': operationsId,
-      'operations_date': operationsDate.toUtc().toIso8601String(),
-      'operations_name': operationsName,
-      'operations_amount': operationsAmount,
-      'operations_source': operationsSource,
-      'operations_destination': operationsDestination,
-      'operations_costs': operationsCosts,
-      'operations_category': operationsCategory,
-      'operations_validated': operationsValidated,
+      'levy_date': levyDate.toIso8601String(),
+      'label': label,
+      'amount': amount,
+      'category': category,
+      'source': source,
+      'destination': destination,
+      'costs': costs,
+      'is_validate': isValidate,
     };
   }
-
-  // convenience getters for charts/ui
-  double get amount => operationsAmount;
-  DateTime get date => operationsDate;
-  String get name => operationsName;
-  String get category => operationsCategory;
 }

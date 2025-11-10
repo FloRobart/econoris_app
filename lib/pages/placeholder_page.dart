@@ -7,8 +7,11 @@ class PlaceholderPage extends StatelessWidget {
   const PlaceholderPage({super.key, required this.title});
 
   int _indexForTitle() {
-    if (title.toLowerCase().contains('prêt') || title.toLowerCase().contains('prêts')) return 1;
-    if (title.toLowerCase().contains('horaire') || title.toLowerCase().contains('horaires')) return 2;
+    if (title.toLowerCase().contains('opération') || title.toLowerCase().contains('opérations')) return 1;
+    // Map titles to the BottomNavigationBar indices:
+    // 0: Accueil, 1: Opérations, 2: Abonnements, 3: Prêts, 4: Horaires
+    if (title.toLowerCase().contains('prêt') || title.toLowerCase().contains('prêts')) return 3;
+    if (title.toLowerCase().contains('horaire') || title.toLowerCase().contains('horaires')) return 4;
     return 0;
   }
 

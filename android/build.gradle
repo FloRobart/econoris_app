@@ -1,5 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    // Bump Kotlin Gradle plugin to match Kotlin stdlib/metadata used by plugins (e.g. kotlin 2.2.x)
+    // The package_info_plus plugin pulled kotlin-stdlib with metadata version 2.2.0,
+    // so the project needs a matching Kotlin compiler version to avoid "incompatible classes".
+    ext.kotlin_version = '2.2.0'
     repositories {
         google()
         mavenCentral()
@@ -23,6 +26,59 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+}
+
+// Workaround: ensure Kotlin compilation across included builds/plugins
+// ignores metadata-version mismatches when third-party plugins bring a
+// newer Kotlin stdlib than the project's compiler. This adds the
+// -Xskip-metadata-version-check flag to Kotlin compiler arguments.
+// Note: this is a migration workaround — ideally upgrade the Kotlin
+// compiler/plugin for the whole build. Keep this until plugin ecosystem
+// stabilizes on a single Kotlin major version.
+subprojects {
+    // Configure KotlinCompile tasks directly (avoid afterEvaluate which fails when
+    // the project is already evaluated). This attempts to add the temporary
+    // '-Xskip-metadata-version-check' flag for projects that have Kotlin
+    // compilation tasks. If no KotlinCompile tasks exist for a subproject,
+    // this is a no-op.
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { kt ->
+        def args = kt.kotlinOptions.freeCompilerArgs as List
+        if (!args.contains('-Xskip-metadata-version-check')) {
+            kt.kotlinOptions.freeCompilerArgs += ['-Xskip-metadata-version-check']
+        }
+    }
+
+    // Force all Kotlin-related artifacts to a single version to avoid mixed
+    // metadata on the classpath which can trigger protobuf parsing errors.
+    configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.jetbrains.kotlin') {
+                details.useVersion '2.2.0'
+                details.because 'unify Kotlin artifacts to 2.2.0 to match compiler'
+            }
+        }
+
+        // Also force common kotlin artifacts
+        resolutionStrategy.force(
+            'org.jetbrains.kotlin:kotlin-stdlib:2.2.0',
+            'org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0',
+            'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0',
+            'org.jetbrains.kotlin:kotlin-reflect:2.2.0'
+        )
+    }
+
+    // Ensure kotlin-stdlib:2.2.0 is provided to subprojects that apply Kotlin
+    // so module mapping and metadata resolution see a consistent stdlib.
+    plugins.withId('org.jetbrains.kotlin.jvm') {
+        dependencies {
+            add('implementation', "org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
+        }
+    }
+    plugins.withId('org.jetbrains.kotlin.android') {
+        dependencies {
+            add('implementation', "org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
+        }
+    }
 }
 
 tasks.register("clean", Delete) {

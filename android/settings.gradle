@@ -19,11 +19,36 @@ pluginManagement {
     plugins {
         id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
     }
+
+    // Provide Kotlin plugin versions so included builds / plugins that apply
+    // the Kotlin plugin without a version will use this one (avoids metadata
+    // version mismatch between kotlin stdlib and compiler).
+    plugins {
+        id "org.jetbrains.kotlin.jvm" version "2.2.0" apply false
+        id "org.jetbrains.kotlin.android" version "2.2.0" apply false
+        id "org.jetbrains.kotlin.kapt" version "2.2.0" apply false
+    }
+
+    // Fallback resolution: if any plugin requests a Kotlin plugin by any id
+    // (short id like 'kotlin-android' or full 'org.jetbrains.kotlin.android'),
+    // force using the kotlin-gradle-plugin module version 2.2.0 so the
+    // compiler/stdlib metadata versions align with dependencies.
+    resolutionStrategy {
+        eachPlugin { details ->
+            // details.requested is the requested plugin id; convert to string
+            def requestedId = details.requested.id.toString()
+            if (requestedId.startsWith('kotlin') || requestedId.startsWith('org.jetbrains.kotlin')) {
+                details.useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0")
+            }
+        }
+    }
 }
 
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version "7.3.0" apply false
+    // Bump AGP to a newer release that includes improved JDK 21/jlink handling.
+    // Using 8.3.2 which is compatible with Gradle 8.13 in this workspace.
+    id "com.android.application" version "8.3.2" apply false
 }
 
 include ":app"

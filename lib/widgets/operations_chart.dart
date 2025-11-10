@@ -23,7 +23,7 @@ class OperationsChart extends StatelessWidget {
     final dateFmt = DateFormat('yyyy-MM-dd');
     final grouped = <String, double>{};
     for (final op in operations) {
-      final key = dateFmt.format(op.date);
+      final key = dateFmt.format(op.levyDate);
       grouped[key] = (grouped[key] ?? 0) + op.amount;
     }
 
@@ -115,19 +115,19 @@ class OperationsChart extends StatelessWidget {
 
     Widget leftTitleWidgets(double value, TitleMeta meta) {
       // Show labels formatted as currency
-      final style = const TextStyle(fontSize: 10);
+      const style = TextStyle(fontSize: 10);
       return Padding(padding: const EdgeInsets.only(right: 6), child: Text(currencyFmt.format(value), style: style, textAlign: TextAlign.right));
     }
 
     final lineChart = LineChart(LineChartData(
-      gridData: FlGridData(show: true),
+      gridData: const FlGridData(show: true),
       titlesData: FlTitlesData(
         bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 36, getTitlesWidget: bottomTitleWidgets, interval: 1)),
         leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 56, getTitlesWidget: leftTitleWidgets)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
-      lineBarsData: [LineChartBarData(isCurved: false, spots: spots, dotData: FlDotData(show: true), belowBarData: BarAreaData(show: false))],
+      lineBarsData: [LineChartBarData(isCurved: false, spots: spots, dotData: const FlDotData(show: true), belowBarData: BarAreaData(show: false))],
       minX: 0,
       maxX: spots.isNotEmpty ? (spots.last.x) : 0,
       lineTouchData: LineTouchData(
@@ -154,7 +154,7 @@ class OperationsChart extends StatelessWidget {
       panEnabled: false, // disable pan to prevent moving the chart
       boundaryMargin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Padding(
-        padding: const EdgeInsets.only(top: 64, bottom: 4, left: 4, right: 32),
+        padding: const EdgeInsets.only(top: 8, bottom: 4, left: 4, right: 32),
         child: SizedBox(
           // ensure chart keeps its intrinsic height
           height: 220,
@@ -165,12 +165,12 @@ class OperationsChart extends StatelessWidget {
   }
 
   Widget _buildBar() {
-    final sorted = List<Operation>.from(operations)..sort((a, b) => a.date.compareTo(b.date));
+  final sorted = List<Operation>.from(operations)..sort((a, b) => a.levyDate.compareTo(b.levyDate));
     final groups = <BarChartGroupData>[];
     for (int i = 0; i < sorted.length; i++) {
       groups.add(BarChartGroupData(x: i, barRods: [BarChartRodData(toY: sorted[i].amount)]));
     }
-    return BarChart(BarChartData(barGroups: groups, titlesData: FlTitlesData(show: false)));
+    return BarChart(BarChartData(barGroups: groups, titlesData: const FlTitlesData(show: false)));
   }
 
   Widget _buildPie() {

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import '../services/theme_manager.dart';
 import '../navigation/app_routes.dart';
 import '../widgets/app_scaffold.dart';
@@ -18,6 +19,13 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _jwt;
   String? _email;
   String? _name;
+  String? _error;
+  int? id;
+  bool? _isConnected;
+  bool? _isVerifiedEmail;
+  DateTime? _lastLogin;
+  DateTime? _createdAt;
+  DateTime? updatedAt;
   String? _appVersion;
   bool _loading = true;
   final _nameC = TextEditingController();
@@ -39,14 +47,32 @@ class _ProfilePageState extends State<ProfilePage> {
     final sp = await SharedPreferences.getInstance();
     _jwt = sp.getString('jwt');
     _email = sp.getString('email');
-    _name = sp.getString('name');
-    _nameC.text = _name ?? '';
+    // We no longer store the user's name locally; the profile will be
+    // fetched from the API when available.
     if (_jwt != null) {
-      final resp = await ApiService.getProfile(_jwt!);
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        try { final j = jsonDecode(resp.body); setState((){ _email = j['email'] ?? _email; _name = j['name'] ?? _name; _nameC.text = _name ?? ''; _loading = false; }); } catch (e) { setState(()=> _loading = false); }
-      } else {
-        setState(()=> _loading = false);
+      try {
+        await GlobalData.instance.ensureData(_jwt!);
+        final j = GlobalData.instance.profile;
+        if (j != null) {
+          setState((){
+            id = j['id'];
+            _email = j['email'];
+            _name = j['pseudo'] ?? j['name'];
+            _nameC.text = _name ?? '';
+            _isConnected = j['is_connected'];
+            _isVerifiedEmail = j['is_verified_email'];
+            _lastLogin = j['last_login'] == null ? null : DateTime.tryParse(j['last_login']?.toString() ?? '');
+            _createdAt = j['created_at'] == null ? null : DateTime.tryParse(j['created_at']?.toString() ?? '');
+            updatedAt = j['updated_at'] == null ? null : DateTime.tryParse(j['updated_at']?.toString() ?? '');
+            _error = null;
+            _loading = false;
+          });
+        } else {
+          setState(()=> _loading = false);
+        }
+      } catch (e) {
+        // If the central fetch failed, behave as before and show error
+        setState((){ _error = e.toString(); _loading = false; });
       }
     } else {
       setState(()=> _loading = false);
@@ -59,8 +85,8 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final info = await PackageInfo.fromPlatform();
       setState(() { _appVersion = '${info.version}+${info.buildNumber}'; });
-    } catch (_) {
-      // ignore
+    } catch (e, st) {
+      debugPrint('PackageInfo error: $e\n$st');
     }
   }
 
@@ -78,8 +104,11 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_jwt != null) await ApiService.logout(_jwt!);
     final sp = await SharedPreferences.getInstance();
     await sp.remove('jwt');
+  GlobalData.instance.clear();
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
     await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
   }
 
@@ -95,8 +124,11 @@ class _ProfilePageState extends State<ProfilePage> {
     await ApiService.deleteUser(_jwt!);
     final sp = await SharedPreferences.getInstance();
     await sp.clear();
+  GlobalData.instance.clear();
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Compte supprimé, session terminée')));
     await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
   }
 
@@ -107,12 +139,12 @@ class _ProfilePageState extends State<ProfilePage> {
     final newName = _nameC.text.trim();
     final resp = await ApiService.updateUser(_jwt!, _email ?? '', newName);
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
-      final sp = await SharedPreferences.getInstance();
-      await sp.setString('name', newName);
+      if (!mounted) return;
       setState(()=> _name = newName);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nom mis à jour')));
     } else {
-      String m = 'Erreur'; try { m = jsonDecode(resp.body)['error'] ?? resp.body; } catch (e) {}
+      String m = 'Erreur'; try { m = jsonDecode(resp.body)['error'] ?? resp.body; } catch (e, st) { debugPrint('updateUser parse error: $e\n$st'); }
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
     }
   }
@@ -120,7 +152,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      currentIndex: 3,
+      // Profile is not part of the bottom navigation anymore; indicate this
+      // by passing null so AppScaffold will highlight the profile instead
+      // of any bottom tab.
+      currentIndex: null,
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -156,7 +191,35 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 12),
+
+                    // Show API error if any
+                    if (_error != null) Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(child: Text(_error!, style: const TextStyle(color: Colors.red))),
+                    ),
+
+                    // Account status summary (from API)
+                    if (_isConnected != null || _isVerifiedEmail != null || _lastLogin != null || _createdAt != null)
+                      Card(
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            const Text('Statut du compte', style: TextStyle(fontWeight: FontWeight.w600)),
+                            const SizedBox(height: 8),
+                            if (_isConnected != null) Row(children: [const Icon(Icons.link), const SizedBox(width: 8), Text('Connecté : ${_isConnected! ? 'Oui' : 'Non'}'),]),
+                            if (_isConnected != null) const SizedBox(height: 6),
+                            if (_isVerifiedEmail != null) Row(children: [const Icon(Icons.email), const SizedBox(width: 8), Text('Email vérifié : ${_isVerifiedEmail! ? 'Oui' : 'Non'}'),]),
+                            if (_isVerifiedEmail != null) const SizedBox(height: 6),
+                            if (_lastLogin != null) Row(children: [const Icon(Icons.access_time), const SizedBox(width: 8), Text('Dernière connexion : ${_lastLogin != null ? _lastLogin!.toLocal().toString() : ''}'),]),
+                            if (_createdAt != null) Row(children: [const Icon(Icons.calendar_today), const SizedBox(width: 8), Text('Créé le : ${_createdAt != null ? _createdAt!.toLocal().toString().split('.').first : ''}'),]),
+                          ]),
+                        ),
+                      ),
+
+                    const SizedBox(height: 16),
 
                   // Form card
                   Card(

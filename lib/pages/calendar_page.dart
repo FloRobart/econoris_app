@@ -5,8 +5,12 @@ import '../models/operation.dart';
 class CalendarPage extends StatefulWidget {
   final List<Operation> operations;
   final ValueChanged<Operation> onOperationTap;
+  /// When true the list of operations under the calendar is rendered as a
+  /// non-scrollable Column so the parent scroll view can handle scrolling.
+  /// Default false keeps the previous behavior (internal ListView).
+  final bool noScroll;
 
-  const CalendarPage({super.key, required this.operations, required this.onOperationTap});
+  const CalendarPage({super.key, required this.operations, required this.onOperationTap, this.noScroll = false});
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();
@@ -22,7 +26,7 @@ class _CalendarPageState extends State<CalendarPage> {
     super.initState();
     events = {};
     for (final op in widget.operations) {
-      final day = DateTime(op.date.year, op.date.month, op.date.day);
+      final day = DateTime(op.levyDate.year, op.levyDate.month, op.levyDate.day);
       events.putIfAbsent(day, () => []).add(op);
     }
   }
@@ -47,11 +51,19 @@ class _CalendarPageState extends State<CalendarPage> {
         calendarStyle: const CalendarStyle(markerDecoration: BoxDecoration(color: Colors.green, shape: BoxShape.circle)),
       ),
       const SizedBox(height: 8),
-      Expanded(
-        child: ListView(
-          children: _getEventsForDay(_selectedDay ?? _focusedDay).map((op) => ListTile(title: Text(op.name), subtitle: Text(op.date.toIso8601String()), trailing: Text(op.amount.toStringAsFixed(2)), onTap: () => widget.onOperationTap(op))).toList(),
-        ),
-      )
+      widget.noScroll
+          ? Column(
+              children: _getEventsForDay(_selectedDay ?? _focusedDay)
+                  .map((op) => ListTile(title: Text(op.label), subtitle: Text(op.levyDate.toIso8601String()), trailing: Text(op.amount.toStringAsFixed(2)), onTap: () => widget.onOperationTap(op)))
+                  .toList(),
+            )
+          : Expanded(
+              child: ListView(
+                children: _getEventsForDay(_selectedDay ?? _focusedDay)
+                    .map((op) => ListTile(title: Text(op.label), subtitle: Text(op.levyDate.toIso8601String()), trailing: Text(op.amount.toStringAsFixed(2)), onTap: () => widget.onOperationTap(op)))
+                    .toList(),
+              ),
+            )
     ]);
   }
 }

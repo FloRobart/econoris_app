@@ -1,17 +1,20 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+// date formatting used for totals
 
 import '../models/operation.dart';
-import '../services/api_service.dart';
+import '../services/global_data_impl.dart';
 import '../widgets/app_scaffold.dart';
 import '../navigation/app_routes.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
+import '../widgets/add_operation_fab.dart';
+import '../widgets/operations_table.dart';
+import '../widgets/monthly_totals_banner.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,12 +31,15 @@ class _HomePageState extends State<HomePage> {
   // UI state
   bool _tableView = true;
   String _chartType = 'line';
-  String _search = '';
+  final String _search = '';
   final String _sortField = 'operations_date';
   final bool _sortAsc = false;
   String _categoryFilter = 'Tous';
-  int _perPage = 20;
-  int _page = 0;
+  // Pagination
+  int _page = 1;
+  static const int _pageSize = 15;
+  // show only the 15 last operations (no pagination)
+  // FAB open state for the three small bubbles (moved to reusable widget)
 
   @override
   void initState() {
@@ -44,57 +50,26 @@ class _HomePageState extends State<HomePage> {
   Future<void> _init() async {
     final sp = await SharedPreferences.getInstance();
     setState(() { _jwt = sp.getString('jwt'); });
-    await _fetchOperations();
-  }
-
-  Future<void> _fetchOperations() async {
-    if (_jwt == null) {
-      // no JWT -> nothing to fetch. ensure loading is false to avoid stuck spinner.
-      setState(() { _loading = false; _error = null; });
-      return;
-    }
-    setState(() { _loading = true; _error = null; });
-    try {
-      final resp = await ApiService.getOperations(_jwt!);
-
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
-       if (resp.body.isEmpty) {
-          setState(() { _operations = []; _loading = false; });
-          return;
-        }
-        final j = jsonDecode(resp.body);
-        final rows = j['rows'] as List? ?? [];
-        final ops = rows.map((e) => Operation.fromJson(e)).toList();
-        ops.sort((a, b) => b.operationsDate.compareTo(a.operationsDate));
-        setState(() { _operations = ops; _loading = false; });
-      } else {
-        String msg = 'Erreur (${resp.statusCode})';
-        try {
-          final body = resp.body;
-          if (body.isNotEmpty) {
-            final parsed = jsonDecode(body);
-            if (parsed is Map && parsed.containsKey('error')) {
-              msg = parsed['error'].toString();
-            } else {
-              msg = body;
-            }
-          }
-        } catch (e) {
-          // keep default msg if parsing fails
-        }
-        setState(() { _error = msg; _loading = false; });
+    if (_jwt != null) {
+      setState(() { _loading = true; _error = null; });
+      try {
+        await GlobalData.instance.ensureData(_jwt!);
+        setState(() { _operations = GlobalData.instance.operations ?? []; _loading = false; });
+      } catch (e) {
+        setState(() { _error = e.toString(); _loading = false; });
       }
-    } catch (e) {
-      setState(() { _error = e.toString(); _loading = false; });
     }
   }
+  
+  // If an operation was modified/deleted we re-init the page to refresh
+  // data from the central store.
 
   List<Operation> get _filteredOperations {
     var list = _operations.where((op) {
-      if (_categoryFilter != 'Tous' && op.operationsCategory != _categoryFilter) return false;
+  if (_categoryFilter != 'Tous' && op.category != _categoryFilter) return false;
       if (_search.isNotEmpty) {
         final s = _search.toLowerCase();
-        return op.operationsName.toLowerCase().contains(s) || op.operationsSource.toLowerCase().contains(s) || op.operationsDestination.toLowerCase().contains(s);
+  return op.label.toLowerCase().contains(s) || (op.source ?? '').toLowerCase().contains(s) || (op.destination ?? '').toLowerCase().contains(s);
       }
       return true;
     }).toList();
@@ -102,11 +77,11 @@ class _HomePageState extends State<HomePage> {
     list.sort((a, b) {
       int res = 0;
       switch (_sortField) {
-        case 'operations_amount': res = a.operationsAmount.compareTo(b.operationsAmount); break;
-        case 'operations_name': res = a.operationsName.compareTo(b.operationsName); break;
-        case 'operations_date': res = a.operationsDate.compareTo(b.operationsDate); break;
-        case 'operations_id': res = a.operationsId.compareTo(b.operationsId); break;
-        default: res = a.operationsDate.compareTo(b.operationsDate);
+  case 'operations_amount': res = a.amount.compareTo(b.amount); break;
+  case 'operations_name': res = a.label.compareTo(b.label); break;
+  case 'operations_date': res = a.levyDate.compareTo(b.levyDate); break;
+  case 'operations_id': res = a.id.compareTo(b.id); break;
+  default: res = a.levyDate.compareTo(b.levyDate);
       }
       return _sortAsc ? res : -res;
     });
@@ -114,73 +89,72 @@ class _HomePageState extends State<HomePage> {
     return list;
   }
 
-  void _openAddModal() async {
-    final res = await showDialog<Operation>(context: context, builder: (_) => const OperationEditDialog());
-    if (res != null && _jwt != null) {
-      final body = res.toJson();
-      final resp = await ApiService.addOperation(_jwt!, body);
-    if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        try {
-          // Parse body robustly: server may wrap the created operation in
-          // {"operation": {...}} or {"rows": [...]}, or return it directly.
-          final parsed = jsonDecode(resp.body);
-          Map<String, dynamic>? opJson;
-          if (parsed is Map<String, dynamic>) {
-            if (parsed.containsKey('operation') && parsed['operation'] is Map) {
-              opJson = Map<String, dynamic>.from(parsed['operation']);
-            } else if (parsed.containsKey('rows') && parsed['rows'] is List && (parsed['rows'] as List).isNotEmpty && (parsed['rows'][0] is Map)) {
-              opJson = Map<String, dynamic>.from(parsed['rows'][0]);
-            } else if (parsed.containsKey('data') && parsed['data'] is Map) {
-              opJson = Map<String, dynamic>.from(parsed['data']);
-            } else {
-              // Maybe the response is already the operation map
-              opJson = Map<String, dynamic>.from(parsed);
-            }
-          } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
-            opJson = Map<String, dynamic>.from(parsed[0]);
-          }
-
-          if (opJson != null) {
-            final created = Operation.fromJson(opJson);
-            setState(() { _operations.insert(0, created); });
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-          } else {
-            // fallback: refresh full list
-            await _fetchOperations();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-          }
-        } catch (e) {
-          await _fetchOperations();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opération ajoutée')));
-        }
-      } else {
-        String m = 'Erreur'; try { final p = jsonDecode(resp.body); if (p is Map && p.containsKey('error')) m = p['error'].toString(); else m = resp.body; } catch (e) {}
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
-      }
-    }
-  }
+  
 
   void _openDetail(Operation op) async {
     final result = await showDialog<String>(context: context, builder: (_) => OperationDetailDialog(operation: op));
-    if (result == 'deleted' || result == 'updated') await _fetchOperations();
+    if (result == 'deleted' || result == 'updated') await _init();
   }
 
 
   @override
   Widget build(BuildContext context) {
   final ops = _filteredOperations;
-  final categories = ['Tous'] + _operations.map((e) => e.operationsCategory).toSet().toList();
+  final categories = ['Tous'] + _operations.map((e) => e.category).toSet().toList();
   final theme = Theme.of(context);
+  final totalPages = (ops.length / _pageSize).ceil().clamp(1, 9999);
+  final pageItems = ops.skip((_page - 1) * _pageSize).take(_pageSize).toList();
+
+  // --- Monthly totals calculation (same banner as OperationsPage) ---
+  final now = DateTime.now();
+  final currentYear = now.year;
+  final currentMonth = now.month;
+
+  double revenueCurrent = _operations
+      .where((o) => o.levyDate.year == currentYear && o.levyDate.month == currentMonth && o.amount > 0)
+      .fold(0.0, (s, o) => s + o.amount);
+
+  double expenseCurrent = _operations
+      .where((o) => o.levyDate.year == currentYear && o.levyDate.month == currentMonth && o.amount < 0)
+      .fold(0.0, (s, o) => s + o.amount.abs());
+
+  int displayRevenueYear = currentYear;
+  int displayRevenueMonth = currentMonth;
+  double revenueToShow = revenueCurrent;
+  if (revenueCurrent == 0) {
+    if (currentMonth == 1) {
+      displayRevenueMonth = 12;
+      displayRevenueYear = currentYear - 1;
+    } else {
+      displayRevenueMonth = currentMonth - 1;
+      displayRevenueYear = currentYear;
+    }
+    revenueToShow = _operations
+        .where((o) => o.levyDate.year == displayRevenueYear && o.levyDate.month == displayRevenueMonth && o.amount > 0)
+        .fold(0.0, (s, o) => s + o.amount);
+  }
+
+  String monthLabel(int y, int m) => DateFormat.yMMMM('fr_FR').format(DateTime(y, m));
 
     return AppScaffold(
       currentIndex: 0,
   onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
+  floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op)), operations: _operations),
       body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(children: [
           // show error if present
           if (_error != null) Padding(padding: const EdgeInsets.only(bottom:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
+          // Totals — réutilisable
+          MonthlyTotalsBanner(
+            revenueLabel: 'Revenu ${monthLabel(displayRevenueYear, displayRevenueMonth)}',
+            expenseLabel: 'Dépense ${monthLabel(currentYear, currentMonth)}',
+            revenueAmount: revenueToShow,
+            expenseAmount: expenseCurrent,
+          ),
+
+          const SizedBox(height: 12),
 
           // Chart area
           Card(
@@ -190,31 +164,35 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Control aligned top-left of the Card (only the dropdown, no label)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      // use card color from theme for better integration with light/dark modes
-                      color: theme.cardColor.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.brightness == Brightness.light ? Colors.black12 : Colors.black26,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        )
-                      ],
+                  Row(children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        // use card color from theme for better integration with light/dark modes
+                        color: theme.cardColor.withAlpha((0.95 * 255).toInt()),
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.brightness == Brightness.light ? Colors.black12 : Colors.black26,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          )
+                        ],
+                      ),
+                      child: DropdownButton<String>(
+                        value: _chartType,
+                        dropdownColor: theme.cardColor,
+                        style: theme.textTheme.bodyMedium,
+                        underline: const SizedBox.shrink(),
+                        items: ['line', 'bar', 'pie']
+                            .map((s) => DropdownMenuItem(value: s, child: Text(s, style: theme.textTheme.bodyMedium)))
+                            .toList(),
+                        onChanged: (v) => setState(() => _chartType = v!),
+                      ),
                     ),
-                    child: DropdownButton<String>(
-                      value: _chartType,
-                      dropdownColor: theme.cardColor,
-                      style: theme.textTheme.bodyMedium,
-                      underline: const SizedBox.shrink(),
-                      items: ['line', 'bar', 'pie']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s, style: theme.textTheme.bodyMedium)))
-                          .toList(),
-                      onChanged: (v) => setState(() => _chartType = v!),
-                    ),
-                  ),
+                    const Spacer(),
+                    Text('${ops.length} opérations', style: theme.textTheme.bodyMedium),
+                  ]),
 
                   const SizedBox(height: 8),
 
@@ -230,86 +208,51 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 12),
 
-          // Controls
+          // Controls (search and manual add button removed)
           Row(children: [
-            DropdownButton<String>(value: _categoryFilter, items: categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(), onChanged: (v) => setState(() => _categoryFilter = v!)),
+            DropdownButton<String>(value: _categoryFilter, items: categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(), onChanged: (v) => setState(() { _categoryFilter = v!; _page = 1; })),
             const SizedBox(width: 12),
-            Expanded(child: TextField(decoration: const InputDecoration(hintText: 'Rechercher'), onChanged: (v) => setState(() => _search = v))),
-            const SizedBox(width: 12),
-            ElevatedButton(onPressed: _openAddModal, child: const Text('Ajouter une opération')),
-            const SizedBox(width: 8),
+            const Spacer(),
             ElevatedButton(onPressed: () => setState(() => _tableView = !_tableView), child: Text(_tableView ? 'Vue calendrier' : 'Vue tableau'))
           ]),
 
           const SizedBox(height: 12),
 
-          // content
-          // The table view adapts its height to the number of rows (up to a max),
-          // to avoid overlapping elements below when inside a scroll view.
-          _tableView ? _buildTableView(ops) : SizedBox(
-            height: MediaQuery.of(context).size.height * 0.56,
-            child: CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op)),
-          ),
+          _tableView ? _buildTableView(pageItems) : CalendarPage(operations: ops, onOperationTap: (op) => _openDetail(op), noScroll: true),
 
-          if (_tableView) Padding(padding: const EdgeInsets.only(top:8.0), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Row(children: [const Text('Afficher par page:'), const SizedBox(width: 8), DropdownButton<int>(value: _perPage, items: [20,50,100].map((n)=>DropdownMenuItem(value: n, child: Text('$n'))).toList(), onChanged: (v)=> setState(()=>_perPage=v!))]),
-            Row(children: [IconButton(onPressed: ()=> setState(()=> _page = (_page-1).clamp(0,999)), icon: const Icon(Icons.chevron_left)), Text('Page ${_page+1}'), IconButton(onPressed: ()=> setState(()=> _page = _page+1), icon: const Icon(Icons.chevron_right))])
-          ]))
+          // Pagination controls (like OperationsPage) - only for table view
+          if (_tableView)
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              IconButton(icon: const Icon(Icons.chevron_left), onPressed: _page > 1 ? () => setState(() => _page--) : null),
+              Text('Page $_page / $totalPages'),
+              IconButton(icon: const Icon(Icons.chevron_right), onPressed: _page < totalPages ? () => setState(() => _page++) : null),
+            ]),
         ]),
         ),
       ),
     );
   }
 
+  
+
+  
+
   Widget _buildTableView(List<Operation> ops) {
-    final start = _page * _perPage;
-    final pageItems = ops.skip(start).take(_perPage).toList();
-
-    // Estimate heights to size the container dynamically.
-    // Defaults match DataTable's defaults: headingRowHeight and dataRowHeight are 56.0.
-    const double headingHeight = 56.0;
-    const double rowHeight = 56.0;
-    // Extra vertical padding inside the Card (approx)
-    const double cardVerticalPadding = 24.0;
-    final maxHeight = MediaQuery.of(context).size.height * 0.56;
-    final desiredHeight = headingHeight + (pageItems.length * rowHeight) + cardVerticalPadding;
-    // Ensure a sensible minimum height (when there are no rows) and clamp to maxHeight
-  final containerHeight = desiredHeight.clamp(120.0, maxHeight);
-
-    return SizedBox(
-      height: containerHeight,
-      child: Card(
-        child: Scrollbar(
-          thumbVisibility: true,
-          child: SingleChildScrollView(
-            // vertical scrolling within the fixed-height box
-            child: SingleChildScrollView(
-              // horizontal scrolling for wide tables
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-            columns: const [
-              DataColumn(label: Text('Date')),
-              DataColumn(label: Text('Nom')),
-              DataColumn(label: Text('Montant'), numeric: true),
-              DataColumn(label: Text('Source')),
-              DataColumn(label: Text('Destination')),
-              DataColumn(label: Text('Catégorie')),
-              DataColumn(label: Text('Validé')),
-            ],
-            rows: pageItems.map((o) => DataRow(cells: [
-              DataCell(Text(DateFormat('yyyy-MM-dd').format(o.date)), onTap: () => _openDetail(o)),
-              DataCell(Text(o.name), onTap: () => _openDetail(o)),
-              DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => _openDetail(o)),
-              DataCell(Text(o.operationsSource), onTap: () => _openDetail(o)),
-              DataCell(Text(o.operationsDestination), onTap: () => _openDetail(o)),
-              DataCell(Text(o.category), onTap: () => _openDetail(o)),
-              DataCell(Icon(o.operationsValidated ? Icons.check_circle : Icons.remove_circle), onTap: () => _openDetail(o)),
-            ])).toList(),
-          ), // DataTable
-        ), // inner horizontal SingleChildScrollView
-      ), // outer vertical SingleChildScrollView
-    ), // Scrollbar
-  ), // Card
-); // SizedBox
+  // No pagination here: let the table widget limit rows via maxItems
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 12.0),
+    child: Card(
+      child: SingleChildScrollView(
+        // horizontal scrolling for wide tables
+        scrollDirection: Axis.horizontal,
+        child: OperationsTable(
+          operations: ops,
+          maxItems: 15,
+          columns: const ['date', 'name', 'amount', 'validated'],
+          onRowTap: (o) => _openDetail(o),
+        ),
+      ),
+    ),
+  );
   }
 }
