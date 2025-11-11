@@ -389,21 +389,19 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                       child: Text(_expanded ? 'Masquer' : 'Détails'),
                     ),
                     const SizedBox(width: 12),
-                    // Récurrence toggle button (only for new operations / creation)
-                    if (widget.operation == null)
-                      ElevatedButton.icon(
-                        onPressed: () =>
-                            setState(() => _recurrence = !_recurrence),
-                        icon: Icon(_recurrence ? Icons.check : Icons.close,
-                            color: Colors.white, size: 18),
-                        label: const Text('Récurrence'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              _recurrence ? Colors.green : Colors.red,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                        ),
+                    // Récurrence toggle button — affichée pour création et édition
+                    ElevatedButton.icon(
+                      onPressed: () => setState(() => _recurrence = !_recurrence),
+                      icon: Icon(_recurrence ? Icons.check : Icons.close,
+                          color: Colors.white, size: 18),
+                      label: const Text('Récurrence'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            _recurrence ? Colors.green : Colors.red,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
+                    ),
                   ]),
                 ),
               ),
