@@ -139,7 +139,22 @@ class _HomePageState extends State<HomePage> {
     return AppScaffold(
       currentIndex: 0,
   onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
-  floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op)), operations: _operations),
+      floatingActionButton: AddOperationFab(
+        onOperationCreated: (op) => setState(() {
+          // avoid duplicate insertion: the AddOperationFab also updates
+          // GlobalData which may already contain the created operation.
+          // Check by id when available, otherwise fallback to a
+          // heuristic (same date+label+amount).
+          final existsById = op.id != 0 && _operations.any((o) => o.id == op.id);
+          final existsByFields = _operations.any((o) =>
+            o.levyDate == op.levyDate && o.label == op.label && o.amount == op.amount
+          );
+          if (!existsById && !existsByFields) {
+            _operations.insert(0, op);
+          }
+        }),
+        operations: _operations,
+      ),
       body: _loading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Padding(
         padding: const EdgeInsets.all(12),

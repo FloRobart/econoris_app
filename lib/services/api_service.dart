@@ -24,10 +24,10 @@ class ApiService {
 
   // Register a user by email. The server is expected to return a JWT on
   // successful registration so the client can log the user in immediately.
-  static Future<http.Response> registerUser(String email, [String? name]) {
-    final url = Uri.parse('${Config.floraccessServer}/users/register');
+  static Future<http.Response> registerUser(String email, [String? pseudo]) {
+    final url = Uri.parse('${Config.floraccessServer}/users');
     final body = <String, dynamic>{'email': email};
-    if (name != null && name.isNotEmpty) body['name'] = name;
+    if (pseudo != null && pseudo.isNotEmpty) body['pseudo'] = pseudo;
     return http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body));

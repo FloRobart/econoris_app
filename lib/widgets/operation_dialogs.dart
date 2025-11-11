@@ -271,24 +271,26 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
 
   @override
   Widget build(BuildContext context) {
+    // determine noun/article for dialog title based on mode
+    final noun = widget.mode != null ? _modeLabel() : 'opération';
+    final article = (widget.mode == 'depense' || widget.mode == null) ? 'une' : 'un';
     return AlertDialog(
       title: Text(widget.operation == null
-          ? 'Ajouter une opération'
-          : 'Modifier une opération'),
+          ? 'Ajouter $article $noun'
+          : 'Modifier $article $noun'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.mode != null)
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Text(_modeLabel(),
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w600)))),
+        if (widget.mode != null)
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            // text removed as requested
+            child: SizedBox.shrink())),
               // Only show Date, Nom, Montant et Catégorie initially
               Row(children: [
                 const Text('Date: ', style: TextStyle(fontSize: 16)),
@@ -387,21 +389,19 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
                       child: Text(_expanded ? 'Masquer' : 'Détails'),
                     ),
                     const SizedBox(width: 12),
-                    // Récurrence toggle button (only for new operations / creation)
-                    if (widget.operation == null)
-                      ElevatedButton.icon(
-                        onPressed: () =>
-                            setState(() => _recurrence = !_recurrence),
-                        icon: Icon(_recurrence ? Icons.check : Icons.close,
-                            color: Colors.white, size: 18),
-                        label: const Text('Récurrence'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              _recurrence ? Colors.green : Colors.red,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                        ),
+                    // Récurrence toggle button — affichée pour création et édition
+                    ElevatedButton.icon(
+                      onPressed: () => setState(() => _recurrence = !_recurrence),
+                      icon: Icon(_recurrence ? Icons.check : Icons.close,
+                          color: Colors.white, size: 18),
+                      label: const Text('Récurrence'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            _recurrence ? Colors.green : Colors.red,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
+                    ),
                   ]),
                 ),
               ),
@@ -616,12 +616,12 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
   String _modeLabel() {
     switch (widget.mode) {
       case 'revenue':
-        return 'Type: Revenu (montant forcé positif)';
+        return 'Revenu';
       case 'depense':
-        return 'Type: Dépense (montant forcé négatif)';
+        return 'Dépense';
       case 'abonnement':
-        return 'Type: Abonnement';
+        return 'Abonnement';
     }
-    return '';
+    return 'opération';
   }
 }

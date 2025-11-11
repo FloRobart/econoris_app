@@ -44,7 +44,27 @@ class _OperationsPageState extends State<OperationsPage> {
   @override
   void initState() {
     super.initState();
+    // Subscribe to GlobalData updates so this page uses GlobalData as the
+    // single source of truth for operations. When GlobalData notifies we
+    // refresh the local view from it.
+    GlobalData.instance.refreshNotifier.addListener(_onGlobalDataRefresh);
     _init();
+  }
+
+  void _onGlobalDataRefresh() {
+    if (!mounted) return;
+    setState(() {
+      _operations = GlobalData.instance.operations ?? [];
+      _page = 1;
+    });
+  }
+
+  @override
+  void dispose() {
+    try {
+      GlobalData.instance.refreshNotifier.removeListener(_onGlobalDataRefresh);
+    } catch (_) {}
+    super.dispose();
   }
 
   Future<void> _init() async {
@@ -138,7 +158,7 @@ class _OperationsPageState extends State<OperationsPage> {
     return AppScaffold(
       currentIndex: 1,
       onProfilePressed: (ctx) => Navigator.of(ctx).pushNamed(AppRoutes.profile).then((_) => _init()),
-      floatingActionButton: AddOperationFab(onOperationCreated: (op) => setState(()=> _operations.insert(0, op)), operations: _operations),
+      floatingActionButton: AddOperationFab(operations: _operations),
       body: _loading ? const Center(child: CircularProgressIndicator()) : RefreshIndicator(
         onRefresh: () async {
           await GlobalData.instance.fetchAll(_jwt ?? '');
