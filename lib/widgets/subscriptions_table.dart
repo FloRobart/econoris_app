@@ -44,9 +44,22 @@ class SubscriptionsTable extends StatelessWidget {
         case 'name':
           return DataCell(Text(s.label), onTap: () => onRowTap?.call(s));
         case 'amount':
-          return DataCell(Text(s.amount.toStringAsFixed(2)), onTap: () => onRowTap?.call(s));
+          Color? amountColor = s.amount > 0 ? Colors.green : (s.amount < 0 ? Colors.red : null);
+          return DataCell(
+            Text(
+              s.amount.toStringAsFixed(2),
+              style: amountColor != null ? TextStyle(color: amountColor) : null,
+            ),
+            onTap: () => onRowTap?.call(s),
+          );
         case 'active':
-          return DataCell(Icon(s.active ? Icons.check_circle : Icons.remove_circle), onTap: () => onRowTap?.call(s));
+          return DataCell(
+            Icon(
+              s.active ? Icons.check_circle : Icons.remove_circle,
+              color: s.active ? Colors.green : Colors.red,
+            ),
+            onTap: () => onRowTap?.call(s)
+          );
         case 'category':
           return DataCell(Text(s.category), onTap: () => onRowTap?.call(s));
         case 'interval':
