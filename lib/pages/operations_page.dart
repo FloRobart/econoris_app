@@ -119,34 +119,46 @@ class _OperationsPageState extends State<OperationsPage> {
   Widget build(BuildContext context) {
     final ops = _filteredSorted;
     // --- Monthly totals calculation ---
+    // Revenue: sliding 1-month window (from same day previous month until today).
+    // Expenses: keep calendar month (1st -> end of month).
     final now = DateTime.now();
     final currentYear = now.year;
     final currentMonth = now.month;
 
-    double revenueCurrent = _operations
-        .where((o) => o.levyDate.year == currentYear && o.levyDate.month == currentMonth && o.amount > 0)
+    DateTime startOfSlidingMonth(DateTime ref) {
+      final int d = ref.day;
+      DateTime candidate = DateTime(ref.year, ref.month - 1, d);
+      if (candidate.month == ref.month) {
+        candidate = DateTime(ref.year, ref.month, 0);
+      }
+      return candidate;
+    }
+
+    final DateTime slidingStart = startOfSlidingMonth(now);
+    double revenueSliding = _operations
+        .where((o) => o.amount > 0)
+        .where((o) => (o.levyDate.isAfter(slidingStart) || o.levyDate.isAtSameMomentAs(slidingStart))
+            && (o.levyDate.isBefore(now) || o.levyDate.isAtSameMomentAs(now)))
         .fold(0.0, (s, o) => s + o.amount);
 
     double expenseCurrent = _operations
         .where((o) => o.levyDate.year == currentYear && o.levyDate.month == currentMonth && o.amount < 0)
         .fold(0.0, (s, o) => s + o.amount.abs());
 
-    // If current month has no revenues, display previous month revenues instead
     int displayRevenueYear = currentYear;
     int displayRevenueMonth = currentMonth;
-    double revenueToShow = revenueCurrent;
-    if (revenueCurrent == 0) {
-      // previous month
-      if (currentMonth == 1) {
-        displayRevenueMonth = 12;
-        displayRevenueYear = currentYear - 1;
-      } else {
-        displayRevenueMonth = currentMonth - 1;
-        displayRevenueYear = currentYear;
-      }
+    double revenueToShow = revenueSliding;
+    if (revenueSliding == 0) {
+      final DateTime prevEnd = slidingStart;
+      final DateTime prevStart = startOfSlidingMonth(prevEnd);
       revenueToShow = _operations
-          .where((o) => o.levyDate.year == displayRevenueYear && o.levyDate.month == displayRevenueMonth && o.amount > 0)
+          .where((o) => o.amount > 0)
+          .where((o) => (o.levyDate.isAfter(prevStart) || o.levyDate.isAtSameMomentAs(prevStart))
+              && (o.levyDate.isBefore(prevEnd) || o.levyDate.isAtSameMomentAs(prevEnd)))
           .fold(0.0, (s, o) => s + o.amount);
+
+      displayRevenueYear = prevEnd.year;
+      displayRevenueMonth = prevEnd.month;
     }
 
   String monthLabel(int y, int m) => DateFormat.yMMMM('fr_FR').format(DateTime(y, m));

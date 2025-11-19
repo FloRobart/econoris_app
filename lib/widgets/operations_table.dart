@@ -59,9 +59,22 @@ class OperationsTable extends StatelessWidget {
         case 'name':
           return DataCell(Text(o.label), onTap: () => onRowTap?.call(o));
         case 'amount':
-          return DataCell(Text(o.amount.toStringAsFixed(2)), onTap: () => onRowTap?.call(o));
+          Color? amountColor = o.amount > 0 ? Colors.green : (o.amount < 0 ? Colors.red : null);
+          return DataCell(
+            Text(
+              o.amount.toStringAsFixed(2),
+              style: amountColor != null ? TextStyle(color: amountColor) : null,
+            ),
+            onTap: () => onRowTap?.call(o),
+          );
         case 'validated':
-          return DataCell(Icon(o.isValidate ? Icons.check_circle : Icons.remove_circle), onTap: () => onRowTap?.call(o));
+          return DataCell(
+            Icon(
+              o.isValidate ? Icons.check_circle : Icons.remove_circle,
+              color: o.isValidate ? Colors.green : Colors.blue,
+            ),
+            onTap: () => onRowTap?.call(o),
+          );
         case 'category':
           return DataCell(Text(o.category), onTap: () => onRowTap?.call(o));
         case 'source':

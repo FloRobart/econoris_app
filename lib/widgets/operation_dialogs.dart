@@ -571,8 +571,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
 
       final body = {
         'label': _nameC.text,
-        // store positive amount for subscription
-        'amount': finalAmount.abs(),
+        'amount': finalAmount,
         'category': _categoryC.text,
         'source': _sourceC.text.isEmpty ? null : _sourceC.text,
         'destination': _destC.text.isEmpty ? null : _destC.text,
