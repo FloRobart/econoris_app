@@ -23,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int? id;
   bool? _isConnected;
   bool? _isVerifiedEmail;
-  DateTime? _lastLogin;
+  DateTime? _lastLogout;
   DateTime? _createdAt;
   DateTime? updatedAt;
   String? _appVersion;
@@ -61,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
             _nameC.text = _name ?? '';
             _isConnected = j['is_connected'];
             _isVerifiedEmail = j['is_verified_email'];
-            _lastLogin = j['last_login'] == null ? null : DateTime.tryParse(j['last_login']?.toString() ?? '');
+            _lastLogout = j['last_logout_at'] == null ? null : DateTime.tryParse(j['last_logout_at']?.toString() ?? '');
             _createdAt = j['created_at'] == null ? null : DateTime.tryParse(j['created_at']?.toString() ?? '');
             updatedAt = j['updated_at'] == null ? null : DateTime.tryParse(j['updated_at']?.toString() ?? '');
             _error = null;
@@ -200,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
 
                     // Account status summary (from API)
-                    if (_isConnected != null || _isVerifiedEmail != null || _lastLogin != null || _createdAt != null)
+                    if (_isConnected != null || _isVerifiedEmail != null || _createdAt != null)
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -213,7 +213,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             if (_isConnected != null) const SizedBox(height: 6),
                             if (_isVerifiedEmail != null) Row(children: [const Icon(Icons.email), const SizedBox(width: 8), Text('Email vérifié : ${_isVerifiedEmail! ? 'Oui' : 'Non'}'),]),
                             if (_isVerifiedEmail != null) const SizedBox(height: 6),
-                            if (_lastLogin != null) Row(children: [const Icon(Icons.access_time), const SizedBox(width: 8), Text('Dernière connexion : ${_lastLogin != null ? _lastLogin!.toLocal().toString() : ''}'),]),
                             if (_createdAt != null) Row(children: [const Icon(Icons.calendar_today), const SizedBox(width: 8), Text('Créé le : ${_createdAt != null ? _createdAt!.toLocal().toString().split('.').first : ''}'),]),
                           ]),
                         ),
