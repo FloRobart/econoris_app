@@ -25,7 +25,6 @@ class _ProfilePageState extends State<ProfilePage> {
   bool? _isVerifiedEmail;
   DateTime? _lastLogout;
   DateTime? _createdAt;
-  DateTime? updatedAt;
   String? _appVersion;
   bool _loading = true;
   final _nameC = TextEditingController();
@@ -63,7 +62,6 @@ class _ProfilePageState extends State<ProfilePage> {
             _isVerifiedEmail = j['is_verified_email'];
             _lastLogout = j['last_logout_at'] == null ? null : DateTime.tryParse(j['last_logout_at']?.toString() ?? '');
             _createdAt = j['created_at'] == null ? null : DateTime.tryParse(j['created_at']?.toString() ?? '');
-            updatedAt = j['updated_at'] == null ? null : DateTime.tryParse(j['updated_at']?.toString() ?? '');
             _error = null;
             _loading = false;
           });
