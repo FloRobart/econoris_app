@@ -89,6 +89,7 @@ class Subscription {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'label': label,
       'amount': amount,
       'category': category,

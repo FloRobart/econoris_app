@@ -84,6 +84,7 @@ class Operation {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'levy_date': levyDate.toIso8601String(),
       'label': label,
       'amount': amount,
