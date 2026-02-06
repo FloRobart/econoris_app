@@ -570,6 +570,7 @@ class _OperationEditDialogState extends State<OperationEditDialog> {
       }
 
       final body = {
+        'id': widget.subscription?.id,
         'label': _nameC.text,
         'amount': finalAmount,
         'category': _categoryC.text,
