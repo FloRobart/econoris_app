@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                   Image.asset('logo/econoris_logo-512.png',
                       width: 48, height: 48),
                   const SizedBox(width: 8),
-                  Text(Config.appName, style: const TextStyle(fontSize: 22))
+                  Text(AppConfig.appName, style: const TextStyle(fontSize: 22))
                 ]),
                 const SizedBox(height: 12),
                 TextField(

@@ -25,7 +25,7 @@ class EconorisApp extends ConsumerWidget {
     final themeMode = themeModeAsync.value ?? ThemeMode.system;
 
     return MaterialApp(
-      title: Config.appName,
+      title: AppConfig.appName,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,

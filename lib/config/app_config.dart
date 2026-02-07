@@ -7,7 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 /// a la compilation. Ici nous utilisons `late final` : les champs sont assignes
 /// une seule fois (immutables ensuite) mais doivent etre initialises au runtime
 /// apres l'appel a `dotenv.load(...)`.
-class Config {
+class AppConfig {
   static late final String appName;
   static late final String econorisServer;
   static late final String floraccessServer;

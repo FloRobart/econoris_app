@@ -96,7 +96,7 @@ class AppScaffold extends StatelessWidget {
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Image.asset('logo/econoris_logo-512.png', width: 36),
             const SizedBox(width: 8),
-            Text(Config.appName)
+            Text(AppConfig.appName)
           ]),
         ),
         // Show the current user's name/email and a profile icon on the right side

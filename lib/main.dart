@@ -13,7 +13,7 @@ void main() async {
   await dotenv.load(fileName: '.env');
 
   // Initialize immutable Config values from dotenv
-  Config.load();
+  AppConfig.load();
 
   // Initialize intl locale data for formatting dates/numbers (French)
   await initializeDateFormatting('fr_FR');
