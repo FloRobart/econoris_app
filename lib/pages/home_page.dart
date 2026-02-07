@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import '../models/operation.dart';
 import '../services/global_data_impl.dart';
 import '../widgets/app_scaffold.dart';
-import '../navigation/app_routes.dart';
+import '../routing/app_routes.dart';
 import '../widgets/operations_chart.dart';
 import '../pages/calendar_page.dart';
 import '../widgets/operation_dialogs.dart';
@@ -77,8 +77,9 @@ class _HomePageState extends State<HomePage> {
 
   List<Operation> get _filteredOperations {
     var list = _operations.where((op) {
-      if (_categoryFilter != 'Tous' && op.category != _categoryFilter)
+      if (_categoryFilter != 'Tous' && op.category != _categoryFilter) {
         return false;
+      }
       if (_search.isNotEmpty) {
         final s = _search.toLowerCase();
         return op.label.toLowerCase().contains(s) ||

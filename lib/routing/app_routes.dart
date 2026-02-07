@@ -1,3 +1,4 @@
+/// Definition centralisee des routes de l'application.
 class AppRoutes {
   AppRoutes._();
 

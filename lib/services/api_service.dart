@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../config.dart';
+import '../config/app_config.dart';
 import 'auth_manager.dart';
 
 class ApiService {

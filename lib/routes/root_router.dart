@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
- 
+
 import '../services/auth_manager.dart';
-import '../navigation/app_routes.dart';
+import '../routing/app_routes.dart';
 // code_entry_page import removed: root router no longer auto-redirects to code entry
 import '../pages/home_page.dart';
 import '../pages/login_page.dart';
@@ -26,13 +26,20 @@ class _RootRouterState extends State<RootRouter> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(future: _loadLocal(), builder: (context, snap) {
-      if (!snap.hasData) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-      final data = snap.data!;
-      if (data['jwt'] != null && data['jwt'].toString().isNotEmpty) return const HomePage();
-      // Default when not authenticated: show the login page (no name required)
-      return const LoginPage.login();
-    });
+    return FutureBuilder<Map<String, dynamic>>(
+        future: _loadLocal(),
+        builder: (context, snap) {
+          if (!snap.hasData) {
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator()));
+          }
+          final data = snap.data!;
+          if (data['jwt'] != null && data['jwt'].toString().isNotEmpty) {
+            return const HomePage();
+          }
+          // Default when not authenticated: show the login page (no name required)
+          return const LoginPage.login();
+        });
   }
 
   @override
@@ -46,10 +53,12 @@ class _RootRouterState extends State<RootRouter> {
           await sp.remove('jwt');
           if (!mounted) return;
           // show session expired message then redirect
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session expirée')));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Session expirée')));
           await Future.delayed(const Duration(milliseconds: 400));
           if (!mounted) return;
-          Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(AppRoutes.login, (r) => false);
           // reset the flag so future logins can proceed
           AuthManager.instance.sessionInvalidated.value = false;
         });

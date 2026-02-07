@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/api_service.dart';
-import '../navigation/app_routes.dart';
+import '../routing/app_routes.dart';
 
 class CodeEntryPage extends StatefulWidget {
   final String? email;
@@ -20,24 +20,38 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
   String? _resolvedEmail;
 
   Future<void> _submit() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     final code = _codeC.text.trim().replaceAll(' ', '');
-    final email = (widget.email != null && widget.email!.isNotEmpty) ? widget.email! : (_resolvedEmail ?? '');
+    final email = (widget.email != null && widget.email!.isNotEmpty)
+        ? widget.email!
+        : (_resolvedEmail ?? '');
     if (email.isEmpty) {
-      setState(() { _loading = false; _error = 'Aucun email disponible pour confirmer le code'; });
+      setState(() {
+        _loading = false;
+        _error = 'Aucun email disponible pour confirmer le code';
+      });
       return;
     }
     // retrieve the login token stored after the initial requestLoginCode call
     final sp = await SharedPreferences.getInstance();
     final token = sp.getString('login_token') ?? '';
     if (token.isEmpty) {
-      setState(() { _loading = false; _error = 'Aucun token trouvé pour confirmer la connexion. Veuillez renvoyer le code.'; });
+      setState(() {
+        _loading = false;
+        _error =
+            'Aucun token trouvé pour confirmer la connexion. Veuillez renvoyer le code.';
+      });
       return;
     }
 
     final resp = await ApiService.confirmLoginCode(email, token, code);
-    setState(() { _loading = false; });
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
+    setState(() {
+      _loading = false;
+    });
+    if (resp.statusCode >= 200 && resp.statusCode < 300) {
       try {
         final j = jsonDecode(resp.body);
         final jwt = j['jwt'];
@@ -54,12 +68,21 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
       } catch (e, st) {
         debugPrint('confirmLoginCode: parse error: $e\n$st');
       }
-      setState(() { _error = 'Réponse invalide du serveur'; });
-      } else {
-        String msg = 'Erreur';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('confirmLoginCode parse error: $e\n$st'); }
-        setState(() { _error = msg; });
+      setState(() {
+        _error = 'Réponse invalide du serveur';
+      });
+    } else {
+      String msg = 'Erreur';
+      try {
+        final j = jsonDecode(resp.body);
+        msg = j['error'] ?? resp.body;
+      } catch (e, st) {
+        debugPrint('confirmLoginCode parse error: $e\n$st');
       }
+      setState(() {
+        _error = msg;
+      });
+    }
   }
 
   @override
@@ -79,17 +102,22 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
     final sp = await SharedPreferences.getInstance();
     final email = sp.getString('email') ?? '';
     if (email.isEmpty) {
-      setState(() { _error = 'Aucun email trouvé en local. Veuillez vous reconnecter.'; });
+      setState(() {
+        _error = 'Aucun email trouvé en local. Veuillez vous reconnecter.';
+      });
       // navigate back to login after a short delay
       await Future.delayed(const Duration(seconds: 2));
-  if (!mounted) return;
-  Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       return;
     }
-    setState(() { _error = null; _resolvedEmail = email; });
+    setState(() {
+      _error = null;
+      _resolvedEmail = email;
+    });
     try {
       final resp = await ApiService.requestLoginCode(email);
-  if (resp.statusCode >= 200 && resp.statusCode < 300) {
+      if (resp.statusCode >= 200 && resp.statusCode < 300) {
         // success - expect a token in response body
         try {
           final j = jsonDecode(resp.body);
@@ -99,47 +127,66 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
             setState(() {});
           } else {
             String msg = 'Réponse invalide du serveur';
-            setState(() { _error = msg; });
+            setState(() {
+              _error = msg;
+            });
           }
         } catch (e, st) {
           debugPrint('requestLoginCode: parse error: $e\n$st');
-          setState(() { _error = 'Réponse invalide du serveur'; });
+          setState(() {
+            _error = 'Réponse invalide du serveur';
+          });
         }
-        } else if (resp.statusCode >= 500) {
+      } else if (resp.statusCode >= 500) {
         // server error -> show message like LoginPage
         String msg = 'Erreur lors de l\'envoi du code';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('requestLoginCode parse error: $e\n$st'); }
-        setState(() { _error = msg; });
+        try {
+          final j = jsonDecode(resp.body);
+          msg = j['error'] ?? resp.body;
+        } catch (e, st) {
+          debugPrint('requestLoginCode parse error: $e\n$st');
+        }
+        setState(() {
+          _error = msg;
+        });
       } else if (resp.statusCode >= 400 && resp.statusCode < 500) {
-    // client error -> clear local creds and redirect to login with API message
-  String msg = 'Erreur';
-  try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('requestLoginCode parse error: $e\n$st'); }
+        // client error -> clear local creds and redirect to login with API message
+        String msg = 'Erreur';
+        try {
+          final j = jsonDecode(resp.body);
+          msg = j['error'] ?? resp.body;
+        } catch (e, st) {
+          debugPrint('requestLoginCode parse error: $e\n$st');
+        }
         final sp = await SharedPreferences.getInstance();
         await sp.remove('jwt');
         await sp.remove('email');
-  if (!mounted) return;
-  // navigate to login and pass the error message to display
-  Navigator.of(context).pushReplacementNamed(AppRoutes.login, arguments: {'error': msg});
+        if (!mounted) return;
+        // navigate to login and pass the error message to display
+        Navigator.of(context)
+            .pushReplacementNamed(AppRoutes.login, arguments: {'error': msg});
         return;
       } else {
         String msg = 'Erreur inconnue lors de l\'envoi du code';
-        setState(() { _error = msg; });
+        setState(() {
+          _error = msg;
+        });
       }
-        } catch (e, st) {
-          debugPrint('requestLoginCode: network error: $e\n$st');
-          setState(() { _error = 'Erreur réseau lors de l\'envoi du code'; });
-        } finally {
-          setState(() { });
-        }
+    } catch (e, st) {
+      debugPrint('requestLoginCode: network error: $e\n$st');
+      setState(() {
+        _error = 'Erreur réseau lors de l\'envoi du code';
+      });
+    } finally {
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Vérification')
-      ),
+          automaticallyImplyLeading: false, title: const Text('Vérification')),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -150,10 +197,19 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Text('Un code à 6 chiffres a été envoyé à ${widget.email}'),
                 const SizedBox(height: 8),
-                TextField(controller: _codeC, decoration: const InputDecoration(labelText: 'Code (6 chiffres)')),
-                if (_error != null) Padding(padding: const EdgeInsets.only(top:8.0), child: Text(_error!, style: const TextStyle(color: Colors.red))),
+                TextField(
+                    controller: _codeC,
+                    decoration:
+                        const InputDecoration(labelText: 'Code (6 chiffres)')),
+                if (_error != null)
+                  Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(_error!,
+                          style: const TextStyle(color: Colors.red))),
                 const SizedBox(height: 8),
-                ElevatedButton(onPressed: _loading ? null : _submit, child: const Text('Valider'))
+                ElevatedButton(
+                    onPressed: _loading ? null : _submit,
+                    child: const Text('Valider'))
               ]),
             ),
           ),

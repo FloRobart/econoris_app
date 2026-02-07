@@ -2,22 +2,25 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../config.dart';
+import '../config/app_config.dart';
 import '../services/api_service.dart';
-import '../navigation/app_routes.dart';
+import '../routing/app_routes.dart';
 
 class LoginPage extends StatefulWidget {
   final String? initialError;
+
   /// When true the page will ask for the user's name (used for signup).
   /// When false the name field is hidden and the button text becomes "Se connecter".
   final bool requireName;
   const LoginPage({super.key, this.initialError, this.requireName = true});
 
   /// Convenience constructor for the login (no name required).
-  const LoginPage.login({Key? key, String? initialError}) : this(key: key, initialError: initialError, requireName: false);
+  const LoginPage.login({Key? key, String? initialError})
+      : this(key: key, initialError: initialError, requireName: false);
 
   /// Convenience constructor for the signup (name required).
-  const LoginPage.signup({Key? key, String? initialError}) : this(key: key, initialError: initialError, requireName: true);
+  const LoginPage.signup({Key? key, String? initialError})
+      : this(key: key, initialError: initialError, requireName: true);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -31,7 +34,10 @@ class _LoginPageState extends State<LoginPage> {
   late bool _requireName;
 
   Future<void> _submit() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     final email = _emailC.text.trim();
     final name = _nameC.text.trim();
     final sp = await SharedPreferences.getInstance();
@@ -44,7 +50,9 @@ class _LoginPageState extends State<LoginPage> {
     if (_requireName && name.isNotEmpty) {
       // Signup -> registerUser (expect immediate JWT)
       final resp = await ApiService.registerUser(email, name);
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
         try {
           final j = jsonDecode(resp.body);
@@ -60,16 +68,27 @@ class _LoginPageState extends State<LoginPage> {
         } catch (e, st) {
           debugPrint('registerUser: parse error: $e\n$st');
         }
-        setState(() { _error = 'Réponse invalide du serveur'; });
+        setState(() {
+          _error = 'Réponse invalide du serveur';
+        });
       } else {
         String msg = 'Erreur';
-        try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('registerUser parse error: $e\n$st'); }
-        setState(() { _error = msg; });
+        try {
+          final j = jsonDecode(resp.body);
+          msg = j['error'] ?? resp.body;
+        } catch (e, st) {
+          debugPrint('registerUser parse error: $e\n$st');
+        }
+        setState(() {
+          _error = msg;
+        });
       }
     } else {
       // Login -> requestLoginCode and go to code entry
       final resp = await ApiService.requestLoginCode(email);
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
         // Expect the server to return a token to be used when confirming the code
         try {
@@ -79,17 +98,27 @@ class _LoginPageState extends State<LoginPage> {
             final sp = await SharedPreferences.getInstance();
             await sp.setString('login_token', token);
             if (!mounted) return;
-            Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry, arguments: {'email': email});
+            Navigator.of(context).pushReplacementNamed(AppRoutes.codeEntry,
+                arguments: {'email': email});
             return;
           }
         } catch (e, st) {
           debugPrint('requestLoginCode: parse error: $e\n$st');
         }
-        setState(() { _error = 'Réponse invalide du serveur'; });
+        setState(() {
+          _error = 'Réponse invalide du serveur';
+        });
       } else {
-  String msg = 'Erreur';
-  try { final j = jsonDecode(resp.body); msg = j['error'] ?? resp.body; } catch (e, st) { debugPrint('requestLoginCode: parse error: $e\n$st'); }
-        setState(() { _error = msg; });
+        String msg = 'Erreur';
+        try {
+          final j = jsonDecode(resp.body);
+          msg = j['error'] ?? resp.body;
+        } catch (e, st) {
+          debugPrint('requestLoginCode: parse error: $e\n$st');
+        }
+        setState(() {
+          _error = msg;
+        });
       }
     }
   }
@@ -136,26 +165,42 @@ class _LoginPageState extends State<LoginPage> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Row(children: [Image.asset('logo/econoris_logo-512.png', width: 48, height: 48), const SizedBox(width: 8), Text(Config.appName, style: const TextStyle(fontSize: 22))]),
+                Row(children: [
+                  Image.asset('logo/econoris_logo-512.png',
+                      width: 48, height: 48),
+                  const SizedBox(width: 8),
+                  Text(Config.appName, style: const TextStyle(fontSize: 22))
+                ]),
                 const SizedBox(height: 12),
-                TextField(controller: _emailC, decoration: const InputDecoration(labelText: 'Email')),
+                TextField(
+                    controller: _emailC,
+                    decoration: const InputDecoration(labelText: 'Email')),
                 const SizedBox(height: 8),
                 if (_requireName) ...[
-                  TextField(controller: _nameC, decoration: const InputDecoration(labelText: 'Prenom')),
+                  TextField(
+                      controller: _nameC,
+                      decoration: const InputDecoration(labelText: 'Prenom')),
                   const SizedBox(height: 12),
                 ],
-                if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
+                if (_error != null)
+                  Text(_error!, style: const TextStyle(color: Colors.red)),
                 // add a bit more space above the toggle
                 const SizedBox(height: 14),
                 // Toggle between signup and login
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(_requireName ? 'Déjà un compte ?' : "Pas encore de compte ?"),
-                  TextButton(onPressed: _loading ? null : () {
-                    setState(() {
-                      _requireName = !_requireName;
-                      if (!_requireName) _nameC.text = '';
-                    });
-                  }, child: Text(_requireName ? 'Se connecter' : "S'inscrire"))
+                  Text(_requireName
+                      ? 'Déjà un compte ?'
+                      : "Pas encore de compte ?"),
+                  TextButton(
+                      onPressed: _loading
+                          ? null
+                          : () {
+                              setState(() {
+                                _requireName = !_requireName;
+                                if (!_requireName) _nameC.text = '';
+                              });
+                            },
+                      child: Text(_requireName ? 'Se connecter' : "S'inscrire"))
                 ]),
                 // add a bit more space below the toggle
                 const SizedBox(height: 18),
@@ -163,13 +208,18 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                      textStyle: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.w600),
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       minimumSize: const Size.fromHeight(56),
                     ),
                     onPressed: _loading ? null : _submit,
                     child: _loading
-                        ? const SizedBox(width: 26, height: 26, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        ? const SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2))
                         : Text(_requireName ? "S'inscrire" : 'Se connecter'),
                   ),
                 )

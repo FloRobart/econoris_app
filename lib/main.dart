@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'app.dart';
-import 'config.dart';
-import 'services/theme_manager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+
+import 'app/econoris_app.dart';
+import 'config/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +15,8 @@ void main() async {
   // Initialize immutable Config values from dotenv
   Config.load();
 
-  await ThemeManager.instance.load();
-  // initialize notifier with loaded value
-  ThemeManager.instance.notifier.value = ThemeManager.instance.mode;
   // Initialize intl locale data for formatting dates/numbers (French)
   await initializeDateFormatting('fr_FR');
   Intl.defaultLocale = 'fr_FR';
-  runApp(const EconorisApp());
+  runApp(const ProviderScope(child: EconorisApp()));
 }
