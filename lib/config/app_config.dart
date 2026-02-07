@@ -17,10 +17,14 @@ class AppConfig {
   /// Charge les valeurs depuis `dotenv`. Appeler apres `await dotenv.load(...)`.
   static void load() {
     appName = dotenv.get('APP_NAME', fallback: 'Econoris');
-    floraccessServer =
-        dotenv.get('FLORACCESS_SERVER', fallback: 'http://localhost:26001');
-    econorisServer =
-        dotenv.get('ECONORIS_SERVER', fallback: 'http://localhost:26002');
+    floraccessServer = dotenv.get(
+      'FLORACCESS_SERVER',
+      fallback: 'http://localhost:26001',
+    );
+    econorisServer = dotenv.get(
+      'ECONORIS_SERVER',
+      fallback: 'http://localhost:26002',
+    );
     defaultLanguage = dotenv.get('DEFAULT_LANGUAGE', fallback: 'fr_FR');
     defaultCurrency = dotenv.get('DEFAULT_CURRENCY', fallback: 'EUR');
   }
