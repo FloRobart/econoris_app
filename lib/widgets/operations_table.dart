@@ -1,4 +1,3 @@
-// Reusable operations table widget
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -35,7 +34,12 @@ class OperationsTable extends StatelessWidget {
         case 'amount':
           return const DataColumn(label: Text('Montant'), numeric: true);
         case 'validated':
-          return const DataColumn(label: Text('Validé'));
+          return const DataColumn(
+            label: Tooltip(
+              message: 'Prélevé',
+              child: Text('P'),
+            ),
+          );
         case 'category':
           return const DataColumn(label: Text('Catégorie'));
         case 'source':
@@ -50,39 +54,61 @@ class OperationsTable extends StatelessWidget {
     }).toList();
   }
 
-  List<DataCell> _buildCells(Operation o) {
-    final df = DateFormat('yyyy-MM-dd');
+  List<DataCell> _buildCells(Operation o, double colMaxWidth) {
+    final df = DateFormat('dd-MM-yyyy');
+    Widget truncated(String text, {TextStyle? style}) {
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: colMaxWidth),
+        child: Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          softWrap: false,
+          style: style,
+        ),
+      );
+    }
+
     return columns.map((c) {
       switch (c) {
         case 'date':
-          return DataCell(Text(df.format(o.levyDate)), onTap: () => onRowTap?.call(o));
+          return DataCell(truncated(df.format(o.levyDate)), onTap: () => onRowTap?.call(o));
         case 'name':
-          return DataCell(Text(o.label), onTap: () => onRowTap?.call(o));
+          return DataCell(truncated(o.label), onTap: () => onRowTap?.call(o));
         case 'amount':
           Color? amountColor = o.amount > 0 ? Colors.green : (o.amount < 0 ? Colors.red : null);
           return DataCell(
-            Text(
-              o.amount.toStringAsFixed(2),
-              style: amountColor != null ? TextStyle(color: amountColor) : null,
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: colMaxWidth),
+              child: Text(
+                o.amount.toStringAsFixed(2),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: false,
+                style: amountColor != null ? TextStyle(color: amountColor) : null,
+              ),
             ),
             onTap: () => onRowTap?.call(o),
           );
         case 'validated':
           return DataCell(
-            Icon(
-              o.isValidate ? Icons.check_circle : Icons.remove_circle,
-              color: o.isValidate ? Colors.green : Colors.blue,
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: colMaxWidth),
+              child: Icon(
+                o.isValidate ? Icons.check_circle : Icons.remove_circle,
+                color: o.isValidate ? Colors.green : Colors.blue,
+              ),
             ),
             onTap: () => onRowTap?.call(o),
           );
         case 'category':
-          return DataCell(Text(o.category), onTap: () => onRowTap?.call(o));
+          return DataCell(truncated(o.category), onTap: () => onRowTap?.call(o));
         case 'source':
-          return DataCell(Text(o.source ?? ''), onTap: () => onRowTap?.call(o));
+          return DataCell(truncated(o.source ?? ''), onTap: () => onRowTap?.call(o));
         case 'destination':
-          return DataCell(Text(o.destination ?? ''), onTap: () => onRowTap?.call(o));
+          return DataCell(truncated(o.destination ?? ''), onTap: () => onRowTap?.call(o));
         case 'id':
-          return DataCell(Text(o.id.toString()), onTap: () => onRowTap?.call(o));
+          return DataCell(truncated(o.id.toString()), onTap: () => onRowTap?.call(o));
         default:
           return DataCell(const Text(''), onTap: () => onRowTap?.call(o));
       }
@@ -93,9 +119,28 @@ class OperationsTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = (maxItems != null) ? operations.take(maxItems!).toList() : operations;
 
-    return DataTable(
-      columns: _buildColumns(context),
-      rows: items.map((o) => DataRow(cells: _buildCells(o))).toList(),
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      // If inside a horizontal scroll view, constraints.maxWidth can be infinite.
+      final double availableWidth = constraints.maxWidth.isFinite
+          ? constraints.maxWidth
+          : MediaQuery.of(context).size.width;
+
+      // Reserve some space for margins and column spacing, then divide among columns.
+      final double reserved = 40.0 + (columns.length - 1) * 20.0;
+      final double rawColWidth = (availableWidth - reserved) / columns.length;
+      final double colMaxWidth = rawColWidth.clamp(120, 1800);
+
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: availableWidth),
+        child: DataTable(
+          columns: _buildColumns(context),
+          rows: items
+              .map((o) => DataRow(cells: _buildCells(o, colMaxWidth)))
+              .toList(),
+          columnSpacing: 20,
+          horizontalMargin: 10,
+        ),
+      );
+    });
   }
 }
