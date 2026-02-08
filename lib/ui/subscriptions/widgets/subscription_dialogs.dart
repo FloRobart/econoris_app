@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:econoris_app/data/services/api/subscriptions_api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../data/services/api/api_client.dart';
+import '../../../data/services/api/operations_api_client.dart';
 import '../../../data/services/global_data.dart';
 import '../../../domain/models/subscriptions/subscription.dart';
 import '../../operations/widgets/add_operation_fab.dart';
@@ -44,8 +45,7 @@ class _SubscriptionDetailDialogState extends State<SubscriptionDetailDialog> {
       ).showSnackBar(const SnackBar(content: Text('Non authentifié')));
       return;
     }
-    final resp = await ApiClient.deleteSubscription(
-      jwt,
+    final resp = await SubscriptionsApiClient.deleteSubscription(
       widget.subscription.id,
     );
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
