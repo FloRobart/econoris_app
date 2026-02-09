@@ -121,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
     if (confirm != true) return;
-    if (_jwt != null) await AuthApiClient.logout(_jwt!);
+    if (_jwt != null) await AuthApiClient.logout();
     final sp = await SharedPreferences.getInstance();
     await sp.remove('jwt');
     GlobalData.instance.clear();
@@ -159,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
     if (confirm != true) return;
     // attempt delete and clear local state
-    await AuthApiClient.deleteUser(_jwt!);
+    await AuthApiClient.deleteUser();
     final sp = await SharedPreferences.getInstance();
     await sp.clear();
     GlobalData.instance.clear();
@@ -179,22 +179,15 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
     final newName = _nameC.text.trim();
-    final resp = await AuthApiClient.updateUser(_jwt!, _email ?? '', newName);
-    if (resp.statusCode >= 200 && resp.statusCode < 300) {
+    try {
+      await AuthApiClient.updateUser(_email ?? '', newName);
+    } catch (e, st) {
+      debugPrint('updateUser error: $e\n$st');
       if (!mounted) return;
-      setState(() => _name = newName);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Nom mis à jour')));
-    } else {
-      String m = 'Erreur';
-      try {
-        m = jsonDecode(resp.body)['error'] ?? resp.body;
-      } catch (e, st) {
-        debugPrint('updateUser parse error: $e\n$st');
-      }
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur lors de la mise à jour du nom')),
+      );
+      return;
     }
   }
 

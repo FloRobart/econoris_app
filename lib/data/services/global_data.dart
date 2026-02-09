@@ -62,14 +62,14 @@ class GlobalData {
 
     // Start the fetch and keep the Future in _ongoingFetch so concurrent
     // callers reuse it.
-    _ongoingFetch = _doFetch(jwt);
+    _ongoingFetch = _doFetch();
     return _ongoingFetch!;
   }
 
-  Future<void> _doFetch(String jwt) async {
+  Future<void> _doFetch() async {
     try {
       final futs = <Future<dynamic>>[
-        AuthApiClient.getProfile(jwt),
+        AuthApiClient.getProfile(),
         OperationsApiClient.getOperations(),
         SubscriptionsApiClient.getSubscriptions(),
       ];

@@ -1,3 +1,5 @@
+import 'package:econoris_app/data/models/auth/profile_dto.dart';
+import 'package:econoris_app/domain/models/auth/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,5 +42,21 @@ class AuthManager {
     await localStorage.remove('jwt');
     _jwt = null;
     sessionInvalidated.value = true;
+  }
+
+  Future<String?> saveProfile(Profile profile) async {
+    final localStorage = await SharedPreferences.getInstance();
+    // TODO: implement saveProfile
+    // await localStorage.setString('profile', profile.toJson());
+    _jwt = localStorage.getString('jwt');
+    return _jwt;
+  }
+
+  Future<Profile?> loadProfile() async {
+    final localStorage = await SharedPreferences.getInstance();
+    // TODO: implement loadProfile
+    // final String? profileJson = localStorage.getString('profile');
+    _jwt = localStorage.getString('jwt');
+    return null;
   }
 }

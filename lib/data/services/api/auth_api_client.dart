@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:econoris_app/data/services/api/api_client.dart';
 import 'package:http/http.dart' as http;
 
@@ -5,84 +7,105 @@ import 'package:econoris_app/config/app_config.dart';
 
 /// Auth-specific API wrapper using the shared [DataApiClient] transport.
 class AuthApiClient {
-  static final String _baseUrl = AppConfig.authUrl;
+  static final String _baseUrl = '${AppConfig.authUrl}/users';
 
   /// Request a login code to be sent to the given email. The server is expected
-  static Future<http.Response> requestLoginCode(String email) {
+  /// Return the token associated with the login code, which will be used in the next step of the login process.
+  static Future<String> requestLoginCode(String email) async {
     final body = {'email': email};
 
-    return ApiClient.request(
+    final http.Response response = await ApiClient.request(
       HttpMethod.post,
-      '$_baseUrl/users/login/request',
+      '$_baseUrl/login/request',
       false,
       body,
     );
+
+    return jsonDecode(response.body)['token'];
   }
 
   /// Confirm the login code by sending the email, token, and secret.
   /// The server is expected to return a JWT on successful confirmation.
-  static Future<http.Response> confirmLoginCode(String email, String token, String secret) {
+  /// Return the JWT token if the login is successful. Otherwise, an exception is thrown.
+  static Future<String> confirmLoginCode(String email, String token, String secret) async {
     final body = {'email': email, 'token': token, 'secret': secret};
 
-    return ApiClient.request(
+    final http.Response response = await ApiClient.request(
       HttpMethod.post,
-      '$_baseUrl/users/login/confirm',
+      '$_baseUrl/login/confirm',
       false,
       body,
     );
+
+    return jsonDecode(response.body)['jwt'];
   }
 
   /// Logout the user
-  static Future<http.Response> logout(String jwt) {
-    return ApiClient.request(
+  static Future<void> logout() async {
+    final http.Response response = await ApiClient.request(
       HttpMethod.post,
-      '$_baseUrl/users/logout',
+      '$_baseUrl/logout',
       true,
     );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Failed to logout');
+    }
   }
 
   /// Register a new user with the given email and pseudo.
   /// The server is expected to return a JWT on successful registration.
-  static Future<http.Response> registerUser(String email, String pseudo) {
+  /// Return the JWT token if the registration is successful. Otherwise, an exception is thrown.
+  static Future<String> registerUser(String email, String pseudo) async {
     final body = {'email': email, 'pseudo': pseudo};
 
-    return ApiClient.request(
+    final http.Response response = await ApiClient.request(
       HttpMethod.post,
-      '$_baseUrl/users',
+      _baseUrl,
       false,
       body,
     );
+
+    return jsonDecode(response.body)['jwt'];
   }
 
   /// Get the current user's profile information.
   /// The server is expected to return the user's profile data if the JWT is valid.
-  static Future<http.Response> getProfile(String jwt) {
-    return ApiClient.request(
+  static Future<Map<String, String>> getProfile() async {
+    final http.Response response = await ApiClient.request(
       HttpMethod.get,
-      '$_baseUrl/users',
+      _baseUrl,
       true,
     );
+
+    return jsonDecode(response.body);
   }
 
   /// Update the current user's profile information.
   /// The server is expected to update the user's profile and return the new JWT.
-  static Future<http.Response> updateUser(String jwt, String email, String name) {
+  static Future<String> updateUser(String email, String name) async {
     final body = {'email': email, 'name': name};
-    return ApiClient.request(
+    final http.Response response = await ApiClient.request(
       HttpMethod.put,
-      '$_baseUrl/users',
+      _baseUrl,
       true,
       body,
     );
+
+    return jsonDecode(response.body)['jwt'];
   }
 
   /// Delete the current user's account.
   /// The server is expected to delete the user's account if the JWT is valid.
-  static Future<http.Response> deleteUser(String jwt) {
-    return ApiClient.request(
+  static Future<void> deleteUser() async {
+    final http.Response response = await ApiClient.request(
       HttpMethod.delete,
-      '$_baseUrl/users',
+      _baseUrl,
       true,
     );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Failed to delete user');
+    }
   }
 }

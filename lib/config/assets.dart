@@ -1,3 +1,3 @@
 class Assets {
-  static const logo = 'assets/images/logo.png';
+  static const logo = 'logo/econoris_logo-512.png';
 }

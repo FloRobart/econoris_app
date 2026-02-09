@@ -60,7 +60,8 @@ class App extends ConsumerWidget {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
           final error = args?['error'] as String?;
-          return LoginPage.login(initialError: error);
+          debugPrint('Navigating to LoginPage with error: $error');
+          return LoginPage(key: const Key('LoginPage'));
         },
 
         /* Écrans principaux simples sans arguments. */
