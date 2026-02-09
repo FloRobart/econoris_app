@@ -1,6 +1,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:econoris_app/config/dependencies.dart';
+import 'package:econoris_app/providers/auth/auth_repository_provider.dart';
 import 'login_state.dart';
 
 class LoginViewModel extends Notifier<LoginState> {
@@ -52,7 +52,6 @@ class LoginViewModel extends Notifier<LoginState> {
   }
 }
 
-final loginViewModelProvider =
-    NotifierProvider<LoginViewModel, LoginState>(
+final loginViewModelProvider = NotifierProvider<LoginViewModel, LoginState>(
   LoginViewModel.new,
 );
