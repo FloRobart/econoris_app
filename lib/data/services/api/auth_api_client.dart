@@ -27,7 +27,11 @@ class AuthApiClient {
   /// Confirm the login code by sending the email, token, and secret.
   /// The server is expected to return a JWT on successful confirmation.
   /// Return the JWT token if the login is successful. Otherwise, an exception is thrown.
-  static Future<String> confirmLoginCode(String email, String token, String secret) async {
+  static Future<String> confirmLoginCode(
+    String email,
+    String token,
+    String secret,
+  ) async {
     final body = {'email': email, 'token': token, 'secret': secret};
 
     final http.Response response = await ApiClient.request(

@@ -1,4 +1,3 @@
-import 'package:econoris_app/data/models/auth/profile_dto.dart';
 import 'package:econoris_app/domain/models/auth/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';

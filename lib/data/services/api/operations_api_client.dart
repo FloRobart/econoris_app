@@ -21,7 +21,10 @@ class OperationsApiClient {
 
   /// Update an existing operation by id.
   /// The server is expected to return the updated operation if the JWT is valid and the request body is correct.
-  static Future<http.Response> updateOperation(int id, Map<String, dynamic> body) {
+  static Future<http.Response> updateOperation(
+    int id,
+    Map<String, dynamic> body,
+  ) {
     return ApiClient.request(HttpMethod.put, '$_baseUrl/$id', true, body);
   }
 

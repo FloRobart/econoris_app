@@ -8,16 +8,19 @@ class PlaceholderPage extends StatelessWidget {
 
   int _indexForTitle() {
     if (title.toLowerCase().contains('opération') ||
-        title.toLowerCase().contains('opérations'))
+        title.toLowerCase().contains('opérations')) {
       return 1;
+    }
     // Map titles to the BottomNavigationBar indices:
     // 0: Accueil, 1: Opérations, 2: Abonnements, 3: Prêts, 4: Horaires
     if (title.toLowerCase().contains('prêt') ||
-        title.toLowerCase().contains('prêts'))
+        title.toLowerCase().contains('prêts')) {
       return 3;
+    }
     if (title.toLowerCase().contains('horaire') ||
-        title.toLowerCase().contains('horaires'))
+        title.toLowerCase().contains('horaires')) {
       return 4;
+    }
     return 0;
   }
 

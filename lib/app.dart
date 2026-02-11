@@ -58,7 +58,8 @@ class App extends ConsumerWidget {
         /* Route de connexion : peut recevoir un argument `error` pour afficher un message d'erreur initial. */
         AppRoutes.login: (context) {
           final args =
-              ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+              ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>?;
           final error = args?['error'] as String?;
           debugPrint('Navigating to LoginPage with error: $error');
           return LoginPage(key: const Key('LoginPage'));
@@ -73,7 +74,8 @@ class App extends ConsumerWidget {
         /* Écran pour saisie de code : attend `email` et `name` optionnels. */
         AppRoutes.codeEntry: (context) {
           final args =
-              ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+              ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>?;
           final email = args?['email'] as String?;
           final name = args?['name'] as String?;
           return CodeEntryPage(email: email, name: name);
@@ -82,7 +84,8 @@ class App extends ConsumerWidget {
         /* Page générique de placeholder : permet d'afficher un titre. */
         AppRoutes.placeholder: (context) {
           final args =
-              ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+              ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>?;
           final title = args?['title'] as String? ?? 'Placeholder';
           return PlaceholderPage(title: title);
         },

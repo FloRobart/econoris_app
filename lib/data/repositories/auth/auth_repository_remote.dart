@@ -10,7 +10,11 @@ class AuthRepositoryRemote {
 
   /// Confirms the login code and retrieves the JWT token.
   /// Returns the JWT token if the login is successful.
-  Future<String> confirmLoginCode(String email, String token, String secret) async {
+  Future<String> confirmLoginCode(
+    String email,
+    String token,
+    String secret,
+  ) async {
     return await AuthApiClient.confirmLoginCode(email, token, secret);
   }
 

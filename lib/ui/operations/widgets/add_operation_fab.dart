@@ -81,8 +81,9 @@ class AddOperationFab extends StatefulWidget {
                 subJson = Map<String, dynamic>.from(parsed);
               }
             }
-            if (subJson != null)
+            if (subJson != null) {
               GlobalData.instance.upsertSubscriptionFromJson(subJson);
+            }
           } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(
@@ -141,8 +142,9 @@ class AddOperationFab extends StatefulWidget {
                 parsed[0] is Map) {
               subJson = Map<String, dynamic>.from(parsed[0]);
             }
-            if (subJson != null)
+            if (subJson != null) {
               GlobalData.instance.upsertSubscriptionFromJson(subJson);
+            }
           } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(
@@ -235,8 +237,9 @@ class _AddOperationFabState extends State<AddOperationFab> {
           } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
             subJson = Map<String, dynamic>.from(parsed[0]);
           }
-          if (subJson != null)
+          if (subJson != null) {
             GlobalData.instance.upsertSubscriptionFromJson(subJson);
+          }
         } catch (e, st) {
           debugPrint('addSubscription parse error: $e\n$st');
         }

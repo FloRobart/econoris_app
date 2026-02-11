@@ -15,8 +15,9 @@ class OperationsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (operations.isEmpty)
+    if (operations.isEmpty) {
       return const Center(child: Text('Pas d\'opérations'));
+    }
 
     if (chartType == 'line') return _buildLine();
     if (chartType == 'bar') return _buildBar();
@@ -112,8 +113,9 @@ class OperationsChart extends StatelessWidget {
     // Axis title builder: show a few date labels to avoid crowding.
     Widget bottomTitleWidgets(double value, TitleMeta meta) {
       final intIndex = value.round();
-      if (intIndex < 0 || intIndex >= labels.length)
+      if (intIndex < 0 || intIndex >= labels.length) {
         return const SizedBox.shrink();
+      }
 
       // Show at most 5 labels (first, last and intermediates) depending on length.
       if (labels.length <= 5) {

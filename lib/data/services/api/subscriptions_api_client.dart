@@ -18,7 +18,10 @@ class SubscriptionsApiClient {
   }
 
   /// Update an existing subscription by id.
-  static Future<http.Response> updateSubscription(int id, Map<String, dynamic> body) {
+  static Future<http.Response> updateSubscription(
+    int id,
+    Map<String, dynamic> body,
+  ) {
     return ApiClient.request(HttpMethod.put, '$_baseUrl/$id', true, body);
   }
 

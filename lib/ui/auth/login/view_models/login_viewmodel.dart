@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:econoris_app/providers/auth/auth_repository_provider.dart';
 import 'login_state.dart';
@@ -36,10 +35,7 @@ class LoginViewModel extends Notifier<LoginState> {
   Future<void> requestLoginCode(String email) async {
     final requireName = state is LoginEnterEmailAndName;
 
-    state = LoginState.submitting(
-      requireName: requireName,
-      email: email,
-    );
+    state = LoginState.submitting(requireName: requireName, email: email);
 
     try {
       final repo = await ref.read(authRepositoryProvider.future);

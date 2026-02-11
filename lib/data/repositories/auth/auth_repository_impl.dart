@@ -75,7 +75,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return profile;
     } catch (_) {
-      final Profile profile = await local.getProfile() ?? (throw Exception('Failed to get profile'));
+      final Profile profile =
+          await local.getProfile() ??
+          (throw Exception('Failed to get profile'));
       return profile;
     }
   }

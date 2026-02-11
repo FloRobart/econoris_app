@@ -77,4 +77,6 @@ class CodeEntryViewModel extends ChangeNotifier {
   }
 }
 
-final codeEntryViewModelProvider = ChangeNotifierProvider<CodeEntryViewModel>((ref) => CodeEntryViewModel(ref));
+final codeEntryViewModelProvider = ChangeNotifierProvider<CodeEntryViewModel>(
+  (ref) => CodeEntryViewModel(ref),
+);

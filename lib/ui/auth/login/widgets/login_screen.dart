@@ -1,5 +1,3 @@
-
-
 import 'package:econoris_app/ui/auth/login/view_models/login_state.dart';
 import 'package:econoris_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:econoris_app/ui/auth/login/widgets/code_entry_screen.dart';
@@ -18,15 +16,10 @@ class LoginPage extends ConsumerWidget {
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
 
-        enterEmail: (email) => LoginForm(
-          email: email,
-          requireName: false,
-        ),
+        enterEmail: (email) => LoginForm(email: email, requireName: false),
 
-        enterEmailAndName: (email) => LoginForm(
-          email: email,
-          requireName: true,
-        ),
+        enterEmailAndName: (email) =>
+            LoginForm(email: email, requireName: true),
 
         submitting: (_, _) => const Center(child: CircularProgressIndicator()),
 

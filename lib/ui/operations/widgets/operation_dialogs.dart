@@ -45,7 +45,9 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
         return;
       }
 
-      final resp = await OperationsApiClient.deleteOperation(widget.operation.id);
+      final resp = await OperationsApiClient.deleteOperation(
+        widget.operation.id,
+      );
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
         // remove from central store so UI updates immediately
         try {
@@ -109,8 +111,9 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
                 parsed[0] is Map) {
               opJson = Map<String, dynamic>.from(parsed[0]);
             }
-            if (opJson != null)
+            if (opJson != null) {
               GlobalData.instance.upsertOperationFromJson(opJson);
+            }
           } catch (e, st) {
             debugPrint('updateOperation parse error: $e\n$st');
           }

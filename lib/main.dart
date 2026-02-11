@@ -11,7 +11,7 @@ import 'config/app_config.dart';
 void main() async {
   /* Assure que les widgets Flutter sont initialisés avant d'exécuter le reste du code */
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   /* Charge les variables d'environnement */
   await dotenv.load(fileName: '.env');
 

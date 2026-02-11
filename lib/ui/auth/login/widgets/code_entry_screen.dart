@@ -13,7 +13,7 @@ class CodeEntryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(codeEntryViewModelProvider);
     // create controller locally (acceptable for this simple form)
-    final _codeC = TextEditingController();
+    final codeC = TextEditingController();
 
     // trigger auto-send once; viewmodel internals avoid double-send
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -35,10 +35,12 @@ class CodeEntryPage extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Un code à 6 chiffres a été envoyé à ${vm.resolvedEmail ?? email ?? ''}'),
+                  Text(
+                    'Un code à 6 chiffres a été envoyé à ${vm.resolvedEmail ?? email ?? ''}',
+                  ),
                   const SizedBox(height: 8),
                   TextField(
-                    controller: _codeC,
+                    controller: codeC,
                     decoration: const InputDecoration(
                       labelText: 'Code (6 chiffres)',
                     ),
@@ -56,14 +58,25 @@ class CodeEntryPage extends ConsumerWidget {
                     onPressed: vm.loading
                         ? null
                         : () async {
-                            final code = _codeC.text.trim().replaceAll(' ', '');
-                            final success = await vm.submit(code, email: vm.resolvedEmail ?? email);
+                            final code = codeC.text.trim().replaceAll(' ', '');
+                            final success = await vm.submit(
+                              code,
+                              email: vm.resolvedEmail ?? email,
+                            );
                             if (success) {
                               if (!context.mounted) return;
-                              Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+                              Navigator.of(
+                                context,
+                              ).pushReplacementNamed(AppRoutes.home);
                             }
                           },
-                    child: vm.loading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Valider'),
+                    child: vm.loading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Valider'),
                   ),
                 ],
               ),
