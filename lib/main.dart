@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-import 'ui/core/ui/econoris_app.dart';
+import 'econoris_app.dart';
 import 'config/app_config.dart';
 
 void main() async {
