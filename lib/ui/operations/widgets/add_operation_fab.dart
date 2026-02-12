@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:econoris_app/data/services/api/operations_api_client.dart';
+import 'package:econoris_app/data/services/api/subscriptions_api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../data/services/api/api_client.dart';
 import '../../../data/services/global_data.dart';
 import '../../../domain/models/operations/operation.dart';
 import '../../../domain/models/subscriptions/subscription.dart';
@@ -64,7 +65,7 @@ class AddOperationFab extends StatefulWidget {
       // If an id is present -> update, else create
       if (res.containsKey('id')) {
         final id = res['id'] as int;
-        final resp = await ApiClient.updateSubscription(jwt, id, body);
+        final resp = await SubscriptionsApiClient.updateSubscription(id, body);
         if (resp.statusCode >= 200 && resp.statusCode < 300) {
           // try to parse returned subscription and update central store
           try {
@@ -80,8 +81,9 @@ class AddOperationFab extends StatefulWidget {
                 subJson = Map<String, dynamic>.from(parsed);
               }
             }
-            if (subJson != null)
+            if (subJson != null) {
               GlobalData.instance.upsertSubscriptionFromJson(subJson);
+            }
           } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(
@@ -110,7 +112,7 @@ class AddOperationFab extends StatefulWidget {
           return false;
         }
       } else {
-        final resp = await ApiClient.addSubscription(jwt, body);
+        final resp = await SubscriptionsApiClient.addSubscription(body);
         if (resp.statusCode >= 200 && resp.statusCode < 300) {
           // parse created subscription and update global store
           try {
@@ -140,8 +142,9 @@ class AddOperationFab extends StatefulWidget {
                 parsed[0] is Map) {
               subJson = Map<String, dynamic>.from(parsed[0]);
             }
-            if (subJson != null)
+            if (subJson != null) {
               GlobalData.instance.upsertSubscriptionFromJson(subJson);
+            }
           } catch (_) {}
           if (context.mounted) {
             ScaffoldMessenger.of(
@@ -206,7 +209,7 @@ class _AddOperationFabState extends State<AddOperationFab> {
     // If the dialog returned a subscription payload, call addSubscription
     if (res is Map && res.containsKey('subscription')) {
       final body = res['subscription'] as Map<String, dynamic>;
-      final resp = await ApiClient.addSubscription(jwt, body);
+      final resp = await SubscriptionsApiClient.addSubscription(body);
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
         // parse created subscription and update global store so UI updates without a full refetch
         try {
@@ -234,8 +237,9 @@ class _AddOperationFabState extends State<AddOperationFab> {
           } else if (parsed is List && parsed.isNotEmpty && parsed[0] is Map) {
             subJson = Map<String, dynamic>.from(parsed[0]);
           }
-          if (subJson != null)
+          if (subJson != null) {
             GlobalData.instance.upsertSubscriptionFromJson(subJson);
+          }
         } catch (e, st) {
           debugPrint('addSubscription parse error: $e\n$st');
         }
@@ -267,7 +271,7 @@ class _AddOperationFabState extends State<AddOperationFab> {
     }
 
     final body = (res as Operation).toJson();
-    final resp = await ApiClient.addOperation(jwt, body);
+    final resp = await OperationsApiClient.addOperation(body);
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
       try {
         final parsed = jsonDecode(resp.body);

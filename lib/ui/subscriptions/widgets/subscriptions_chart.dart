@@ -15,8 +15,9 @@ class SubscriptionsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (subscriptions.isEmpty)
+    if (subscriptions.isEmpty) {
       return const Center(child: Text('Pas d\'abonnements'));
+    }
     if (chartType == 'line') return _buildLine();
     if (chartType == 'bar') return _buildBar();
     return _buildPie();

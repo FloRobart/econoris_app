@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'package:econoris_app/data/services/api/operations_api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../data/services/api/api_client.dart';
 import '../../../data/services/global_data.dart';
 import '../../../domain/models/operations/operation.dart';
 import '../../../domain/models/subscriptions/subscription.dart';
@@ -45,7 +45,7 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
         return;
       }
 
-      final resp = await ApiClient.deleteOperation(jwt, widget.operation.id);
+      final resp = await OperationsApiClient.deleteOperation(widget.operation.id);
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
         // remove from central store so UI updates immediately
         try {
@@ -76,8 +76,7 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
       final sp = await SharedPreferences.getInstance();
       final jwt = sp.getString('jwt');
       if (jwt != null) {
-        final resp = await ApiClient.updateOperation(
-          jwt,
+        final resp = await OperationsApiClient.updateOperation(
           edited.id,
           edited.toJson(),
         );
@@ -110,8 +109,9 @@ class _OperationDetailDialogState extends State<OperationDetailDialog> {
                 parsed[0] is Map) {
               opJson = Map<String, dynamic>.from(parsed[0]);
             }
-            if (opJson != null)
+            if (opJson != null) {
               GlobalData.instance.upsertOperationFromJson(opJson);
+            }
           } catch (e, st) {
             debugPrint('updateOperation parse error: $e\n$st');
           }
