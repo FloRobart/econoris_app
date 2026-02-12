@@ -7,19 +7,12 @@ import 'config/app_config.dart';
 import 'routing/routes.dart';
 
 // Pages / écrans de l'application
-import 'ui/auth/login/widgets/code_entry_screen.dart';
-import 'ui/auth/login/widgets/login_screen.dart';
-import 'ui/home/widgets/home_screen.dart';
-import 'ui/operations/widgets/operations_screen.dart';
-import 'ui/profile/widgets/profile_screen.dart';
-import 'ui/subscriptions/widgets/subscriptions_screen.dart';
-
 // Thèmes et contrôleur de thème
 import 'ui/core/themes/theme.dart';
 import 'ui/core/themes/theme_controller.dart';
 
-// Écran générique de repli (placeholder)
-import 'ui/core/ui/placeholder_screen.dart';
+// Table de routage centralisée
+import 'routing/router.dart';
 
 /* Widget racine de l'application.
 - Fournit le MaterialApp avec les thèmes, la configuration de navigation et les routes.
@@ -50,46 +43,8 @@ class App extends ConsumerWidget {
       /* Route initiale */
       initialRoute: AppRoutes.root,
 
-      /* Table de routage : mappe les noms de routes à des widgets. */
-      routes: {
-        /* La route racine (/) est gérée par RootRouter qui décide d'afficher HomePage ou LoginPage selon la présence d'un JWT en local. */
-        AppRoutes.root: (context) => const HomePage(),
-
-        /* Route de connexion : peut recevoir un argument `error` pour afficher un message d'erreur initial. */
-        AppRoutes.login: (context) {
-          final args =
-              ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>?;
-          final error = args?['error'] as String?;
-          debugPrint('Navigating to LoginPage with error: $error');
-          return LoginPage(key: const Key('LoginPage'));
-        },
-
-        /* Écrans principaux simples sans arguments. */
-        AppRoutes.home: (context) => const HomePage(),
-        AppRoutes.operations: (context) => const OperationsPage(),
-        AppRoutes.subscriptions: (context) => const SubscriptionsPage(),
-        AppRoutes.profile: (context) => const ProfilePage(),
-
-        /* Écran pour saisie de code : attend `email` et `name` optionnels. */
-        AppRoutes.codeEntry: (context) {
-          final args =
-              ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>?;
-          final email = args?['email'] as String?;
-          final name = args?['name'] as String?;
-          return CodeEntryPage(email: email, name: name);
-        },
-
-        /* Page générique de placeholder : permet d'afficher un titre. */
-        AppRoutes.placeholder: (context) {
-          final args =
-              ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>?;
-          final title = args?['title'] as String? ?? 'Placeholder';
-          return PlaceholderPage(title: title);
-        },
-      },
+      /* Table de routage centralisée dans router.dart */
+      routes: buildAppRoutes(),
 
       /* Désactive la bannière de debug en mode debug. */
       debugShowCheckedModeBanner: false,
