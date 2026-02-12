@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:econoris_app/data/services/api/auth_api_client.dart';
+import 'package:econoris_app/data/services/api/operations_api_client.dart';
+import 'package:econoris_app/data/services/api/subscriptions_api_client.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../domain/models/operations/operation.dart';
 import '../../domain/models/subscriptions/subscription.dart';
-import 'api/api_client.dart';
 
 /// Global data store that keeps the last fetched operations, subscriptions and
 /// user profile. Use `ensureData(jwt)` to load them when needed. If any of the
@@ -67,9 +69,9 @@ class GlobalData {
   Future<void> _doFetch(String jwt) async {
     try {
       final futs = <Future<dynamic>>[
-        ApiClient.getProfile(jwt),
-        ApiClient.getOperations(jwt),
-        ApiClient.getSubscriptions(jwt),
+        AuthApiClient.getProfile(),
+        OperationsApiClient.getOperations(),
+        SubscriptionsApiClient.getSubscriptions(),
       ];
       final results = await Future.wait(futs);
 

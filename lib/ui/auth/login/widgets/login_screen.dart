@@ -48,78 +48,44 @@ class _LoginPageState extends State<LoginPage> {
     // the register endpoint and expects a JWT back. If only the email was
     // provided we call the requestLoginCode endpoint (login by code).
     if (_requireName && name.isNotEmpty) {
-      // Signup -> registerUser (expect immediate JWT)
-      final resp = await AuthApiClient.registerUser(email, name);
-      setState(() {
-        _loading = false;
-      });
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        try {
-          final j = jsonDecode(resp.body);
-          final jwt = j['jwt'];
-          if (jwt != null) {
-            final sp = await SharedPreferences.getInstance();
-            await sp.setString('jwt', jwt);
-            await sp.setString('email', email);
-            if (!mounted) return;
-            Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-            return;
-          }
-        } catch (e, st) {
-          debugPrint('registerUser: parse error: $e\n$st');
-        }
+      try {
+        final jwt = await AuthApiClient.registerUser(email, name);
+        setState(() {
+          _loading = false;
+        });
+
+        final sp = await SharedPreferences.getInstance();
+        await sp.setString('jwt', jwt);
+        await sp.setString('email', email);
+        if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+        return;
+      } catch (e, st) {
+        debugPrint('registerUser: parse error: $e\n$st');
         setState(() {
           _error = 'Réponse invalide du serveur';
-        });
-      } else {
-        String msg = 'Erreur';
-        try {
-          final j = jsonDecode(resp.body);
-          msg = j['error'] ?? resp.body;
-        } catch (e, st) {
-          debugPrint('registerUser parse error: $e\n$st');
-        }
-        setState(() {
-          _error = msg;
         });
       }
     } else {
-      // Login -> requestLoginCode and go to code entry
-      final resp = await AuthApiClient.requestLoginCode(email);
-      setState(() {
-        _loading = false;
-      });
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        // Expect the server to return a token to be used when confirming the code
-        try {
-          final j = jsonDecode(resp.body);
-          final token = j['token'];
-          if (token != null && token is String && token.isNotEmpty) {
-            final sp = await SharedPreferences.getInstance();
-            await sp.setString('login_token', token);
-            if (!mounted) return;
-            Navigator.of(context).pushReplacementNamed(
-              AppRoutes.codeEntry,
-              arguments: {'email': email},
-            );
-            return;
-          }
-        } catch (e, st) {
-          debugPrint('requestLoginCode: parse error: $e\n$st');
+      try {
+        final token = await AuthApiClient.requestLoginCode(email);
+        setState(() {
+          _loading = false;
+        });
+        if (token.isNotEmpty) {
+          final sp = await SharedPreferences.getInstance();
+          await sp.setString('login_token', token);
+          if (!mounted) return;
+          Navigator.of(context).pushReplacementNamed(
+            AppRoutes.codeEntry,
+            arguments: {'email': email},
+          );
+          return;
         }
+      } catch (e, st) {
+        debugPrint('requestLoginCode: parse error: $e\n$st');
         setState(() {
           _error = 'Réponse invalide du serveur';
-        });
-      } else {
-        String msg = 'Erreur';
-        try {
-          final j = jsonDecode(resp.body);
-          msg = j['error'] ?? resp.body;
-        } catch (e, st) {
-          debugPrint('requestLoginCode: parse error: $e\n$st');
-        }
-        setState(() {
-          _error = msg;
         });
       }
     }

@@ -47,41 +47,17 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
       return;
     }
 
-    final resp = await AuthApiClient.confirmLoginCode(email, token, code);
-    setState(() {
-      _loading = false;
-    });
-    if (resp.statusCode >= 200 && resp.statusCode < 300) {
-      try {
-        final j = jsonDecode(resp.body);
-        final jwt = j['jwt'];
-        if (jwt != null) {
-          final sp = await SharedPreferences.getInstance();
-          await sp.setString('jwt', jwt);
-          await sp.setString('email', email);
-          // remove temporary login token
-          await sp.remove('login_token');
-          if (!mounted) return;
-          Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-          return;
-        }
-      } catch (e, st) {
-        debugPrint('confirmLoginCode: parse error: $e\n$st');
-      }
-      setState(() {
-        _error = 'Réponse invalide du serveur';
-      });
-    } else {
-      String msg = 'Erreur';
-      try {
-        final j = jsonDecode(resp.body);
-        msg = j['error'] ?? resp.body;
-      } catch (e, st) {
-        debugPrint('confirmLoginCode parse error: $e\n$st');
-      }
-      setState(() {
-        _error = msg;
-      });
+    try {
+      final jwt = await AuthApiClient.confirmLoginCode(email, token, code);
+      final sp = await SharedPreferences.getInstance();
+      await sp.setString('jwt', jwt);
+      await sp.setString('email', email);
+      await sp.remove('login_token');
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+      return;
+    } catch (e, st) {
+      debugPrint('confirmLoginCode: parse error: $e\n$st');
     }
   }
 
@@ -115,68 +91,23 @@ class _CodeEntryPageState extends State<CodeEntryPage> {
       _error = null;
       _resolvedEmail = email;
     });
+
     try {
-      final resp = await AuthApiClient.requestLoginCode(email);
-      if (resp.statusCode >= 200 && resp.statusCode < 300) {
-        // success - expect a token in response body
-        try {
-          final j = jsonDecode(resp.body);
-          final token = j['token'];
-          if (token != null && token is String && token.isNotEmpty) {
-            await sp.setString('login_token', token);
-            setState(() {});
-          } else {
-            String msg = 'Réponse invalide du serveur';
-            setState(() {
-              _error = msg;
-            });
-          }
-        } catch (e, st) {
-          debugPrint('requestLoginCode: parse error: $e\n$st');
-          setState(() {
-            _error = 'Réponse invalide du serveur';
-          });
-        }
-      } else if (resp.statusCode >= 500) {
-        // server error -> show message like LoginPage
-        String msg = 'Erreur lors de l\'envoi du code';
-        try {
-          final j = jsonDecode(resp.body);
-          msg = j['error'] ?? resp.body;
-        } catch (e, st) {
-          debugPrint('requestLoginCode parse error: $e\n$st');
-        }
-        setState(() {
-          _error = msg;
-        });
-      } else if (resp.statusCode >= 400 && resp.statusCode < 500) {
-        // client error -> clear local creds and redirect to login with API message
-        String msg = 'Erreur';
-        try {
-          final j = jsonDecode(resp.body);
-          msg = j['error'] ?? resp.body;
-        } catch (e, st) {
-          debugPrint('requestLoginCode parse error: $e\n$st');
-        }
-        final sp = await SharedPreferences.getInstance();
-        await sp.remove('jwt');
-        await sp.remove('email');
-        if (!mounted) return;
-        // navigate to login and pass the error message to display
-        Navigator.of(
-          context,
-        ).pushReplacementNamed(AppRoutes.login, arguments: {'error': msg});
-        return;
+      final token = await AuthApiClient.requestLoginCode(email);
+      if (token.isNotEmpty) {
+        await sp.setString('login_token', token);
+        setState(() {});
       } else {
-        String msg = 'Erreur inconnue lors de l\'envoi du code';
+        await sp.remove('jwt');
+        String msg = 'Réponse invalide du serveur';
         setState(() {
           _error = msg;
         });
       }
     } catch (e, st) {
-      debugPrint('requestLoginCode: network error: $e\n$st');
+      debugPrint('requestLoginCode: parse error: $e\n$st');
       setState(() {
-        _error = 'Erreur réseau lors de l\'envoi du code';
+        _error = 'Réponse invalide du serveur';
       });
     } finally {
       setState(() {});
