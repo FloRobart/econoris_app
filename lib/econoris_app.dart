@@ -31,31 +31,21 @@ class EconorisApp extends ConsumerWidget {
       themeMode: themeMode,
       initialRoute: AppRoutes.root,
       routes: {
-        AppRoutes.root: (ctx) => const RootRouter(),
-        AppRoutes.login: (ctx) {
+        AppRoutes.root: (context) => const RootRouter(),
+        AppRoutes.login: (context) => const LoginPage(),
+        AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.operations: (context) => const OperationsPage(),
+        AppRoutes.subscriptions: (context) => const SubscriptionsPage(),
+        AppRoutes.profile: (context) => const ProfilePage(),
+        AppRoutes.codeEntry: (context) => const CodeEntryPage(),
+        AppRoutes.placeholder: (context) {
           final args =
-              ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
-          final error = args?['error'] as String?;
-          return LoginPage.login(initialError: error);
-        },
-        AppRoutes.home: (ctx) => const HomePage(),
-        AppRoutes.operations: (ctx) => const OperationsPage(),
-        AppRoutes.subscriptions: (ctx) => const SubscriptionsPage(),
-        AppRoutes.profile: (ctx) => const ProfilePage(),
-        AppRoutes.codeEntry: (ctx) {
-          final args =
-              ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
-          final email = args?['email'] as String?;
-          final name = args?['name'] as String?;
-          return CodeEntryPage(email: email, name: name);
-        },
-        AppRoutes.placeholder: (ctx) {
-          final args =
-              ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
+              ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
           final title = args?['title'] as String? ?? 'Placeholder';
           return PlaceholderPage(title: title);
         },
       },
+
       debugShowCheckedModeBanner: false,
     );
   }
