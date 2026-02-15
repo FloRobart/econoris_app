@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'profile.dart';
+part of 'user.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -12,20 +12,20 @@ part of 'profile.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$Profile {
+mixin _$User {
 
  String get email; String get pseudo; bool get isConnected; bool get isVerifiedEmail; String get createdAt;
-/// Create a copy of Profile
+/// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$ProfileCopyWith<Profile> get copyWith => _$ProfileCopyWithImpl<Profile>(this as Profile, _$identity);
+$UserCopyWith<User> get copyWith => _$UserCopyWithImpl<User>(this as User, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Profile&&(identical(other.email, email) || other.email == email)&&(identical(other.pseudo, pseudo) || other.pseudo == pseudo)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.isVerifiedEmail, isVerifiedEmail) || other.isVerifiedEmail == isVerifiedEmail)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.email, email) || other.email == email)&&(identical(other.pseudo, pseudo) || other.pseudo == pseudo)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.isVerifiedEmail, isVerifiedEmail) || other.isVerifiedEmail == isVerifiedEmail)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
@@ -34,15 +34,15 @@ int get hashCode => Object.hash(runtimeType,email,pseudo,isConnected,isVerifiedE
 
 @override
 String toString() {
-  return 'Profile(email: $email, pseudo: $pseudo, isConnected: $isConnected, isVerifiedEmail: $isVerifiedEmail, createdAt: $createdAt)';
+  return 'User(email: $email, pseudo: $pseudo, isConnected: $isConnected, isVerifiedEmail: $isVerifiedEmail, createdAt: $createdAt)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $ProfileCopyWith<$Res>  {
-  factory $ProfileCopyWith(Profile value, $Res Function(Profile) _then) = _$ProfileCopyWithImpl;
+abstract mixin class $UserCopyWith<$Res>  {
+  factory $UserCopyWith(User value, $Res Function(User) _then) = _$UserCopyWithImpl;
 @useResult
 $Res call({
  String email, String pseudo, bool isConnected, bool isVerifiedEmail, String createdAt
@@ -53,14 +53,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$ProfileCopyWithImpl<$Res>
-    implements $ProfileCopyWith<$Res> {
-  _$ProfileCopyWithImpl(this._self, this._then);
+class _$UserCopyWithImpl<$Res>
+    implements $UserCopyWith<$Res> {
+  _$UserCopyWithImpl(this._self, this._then);
 
-  final Profile _self;
-  final $Res Function(Profile) _then;
+  final User _self;
+  final $Res Function(User) _then;
 
-/// Create a copy of Profile
+/// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? email = null,Object? pseudo = null,Object? isConnected = null,Object? isVerifiedEmail = null,Object? createdAt = null,}) {
   return _then(_self.copyWith(
@@ -76,8 +76,8 @@ as String,
 }
 
 
-/// Adds pattern-matching-related methods to [Profile].
-extension ProfilePatterns on Profile {
+/// Adds pattern-matching-related methods to [User].
+extension UserPatterns on User {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -90,10 +90,10 @@ extension ProfilePatterns on Profile {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Profile value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _User value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Profile() when $default != null:
+case _User() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -112,10 +112,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Profile value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _User value)  $default,){
 final _that = this;
 switch (_that) {
-case _Profile():
+case _User():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -133,10 +133,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Profile value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _User value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Profile() when $default != null:
+case _User() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -156,7 +156,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  String createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Profile() when $default != null:
+case _User() when $default != null:
 return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail,_that.createdAt);case _:
   return orElse();
 
@@ -177,7 +177,7 @@ return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  String createdAt)  $default,) {final _that = this;
 switch (_that) {
-case _Profile():
+case _User():
 return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
@@ -197,7 +197,7 @@ return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  String createdAt)?  $default,) {final _that = this;
 switch (_that) {
-case _Profile() when $default != null:
+case _User() when $default != null:
 return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail,_that.createdAt);case _:
   return null;
 
@@ -209,8 +209,8 @@ return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail
 /// @nodoc
 
 
-class _Profile implements Profile {
-  const _Profile({required this.email, required this.pseudo, required this.isConnected, required this.isVerifiedEmail, required this.createdAt});
+class _User implements User {
+  const _User({required this.email, required this.pseudo, required this.isConnected, required this.isVerifiedEmail, required this.createdAt});
   
 
 @override final  String email;
@@ -219,17 +219,17 @@ class _Profile implements Profile {
 @override final  bool isVerifiedEmail;
 @override final  String createdAt;
 
-/// Create a copy of Profile
+/// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ProfileCopyWith<_Profile> get copyWith => __$ProfileCopyWithImpl<_Profile>(this, _$identity);
+_$UserCopyWith<_User> get copyWith => __$UserCopyWithImpl<_User>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Profile&&(identical(other.email, email) || other.email == email)&&(identical(other.pseudo, pseudo) || other.pseudo == pseudo)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.isVerifiedEmail, isVerifiedEmail) || other.isVerifiedEmail == isVerifiedEmail)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.email, email) || other.email == email)&&(identical(other.pseudo, pseudo) || other.pseudo == pseudo)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.isVerifiedEmail, isVerifiedEmail) || other.isVerifiedEmail == isVerifiedEmail)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
@@ -238,15 +238,15 @@ int get hashCode => Object.hash(runtimeType,email,pseudo,isConnected,isVerifiedE
 
 @override
 String toString() {
-  return 'Profile(email: $email, pseudo: $pseudo, isConnected: $isConnected, isVerifiedEmail: $isVerifiedEmail, createdAt: $createdAt)';
+  return 'User(email: $email, pseudo: $pseudo, isConnected: $isConnected, isVerifiedEmail: $isVerifiedEmail, createdAt: $createdAt)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ProfileCopyWith<$Res> implements $ProfileCopyWith<$Res> {
-  factory _$ProfileCopyWith(_Profile value, $Res Function(_Profile) _then) = __$ProfileCopyWithImpl;
+abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
+  factory _$UserCopyWith(_User value, $Res Function(_User) _then) = __$UserCopyWithImpl;
 @override @useResult
 $Res call({
  String email, String pseudo, bool isConnected, bool isVerifiedEmail, String createdAt
@@ -257,17 +257,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$ProfileCopyWithImpl<$Res>
-    implements _$ProfileCopyWith<$Res> {
-  __$ProfileCopyWithImpl(this._self, this._then);
+class __$UserCopyWithImpl<$Res>
+    implements _$UserCopyWith<$Res> {
+  __$UserCopyWithImpl(this._self, this._then);
 
-  final _Profile _self;
-  final $Res Function(_Profile) _then;
+  final _User _self;
+  final $Res Function(_User) _then;
 
-/// Create a copy of Profile
+/// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? email = null,Object? pseudo = null,Object? isConnected = null,Object? isVerifiedEmail = null,Object? createdAt = null,}) {
-  return _then(_Profile(
+  return _then(_User(
 email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,pseudo: null == pseudo ? _self.pseudo : pseudo // ignore: cast_nullable_to_non_nullable
 as String,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
