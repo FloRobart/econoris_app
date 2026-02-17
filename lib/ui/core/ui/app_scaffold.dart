@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -107,7 +108,7 @@ class AppScaffold extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset('logo/econoris_logo-512.png', width: 36),
+              Image.asset(Assets.logo_512, width: 36),
               const SizedBox(width: 8),
               Text(AppConfig.appName),
             ],

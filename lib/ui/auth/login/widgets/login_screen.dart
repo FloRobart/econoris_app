@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -137,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     children: [
                       Image.asset(
-                        'logo/econoris_logo-512.png',
+                        Assets.logo_512,
                         width: 48,
                         height: 48,
                       ),
