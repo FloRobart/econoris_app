@@ -1,5 +1,5 @@
 import 'package:econoris_app/data/models/auth/user/user_dto.dart';
-import 'package:econoris_app/data/models/auth/user/user_mapper.dart';
+import 'package:econoris_app/data/models/auth/user/user_dto_mapper.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_local.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_remote.dart';
