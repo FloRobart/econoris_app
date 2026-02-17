@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/app_config.dart';
-import 'routing/router.dart';
+import 'routing/root_router.dart';
 import 'routing/routes.dart';
 import 'ui/auth/login/widgets/code_entry_screen.dart';
 import 'ui/auth/login/widgets/login_screen.dart';
@@ -15,12 +15,11 @@ import 'ui/core/themes/theme_controller.dart';
 import 'ui/core/ui/placeholder_screen.dart';
 
 /// Racine de l'application.
-class EconorisApp extends ConsumerWidget {
-  const EconorisApp({super.key});
+class App extends ConsumerWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Lecture du theme depuis Riverpod avec fallback en mode systeme.
     final themeModeAsync = ref.watch(themeControllerProvider);
     final themeMode = themeModeAsync.value ?? ThemeMode.system;
 

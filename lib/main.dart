@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-import 'econoris_app.dart';
+import 'app.dart';
 import 'config/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Load environment variables from .env (falls back to defaults in Config)
+  // Load environment variables from .env
   await dotenv.load(fileName: '.env');
 
   // Initialize immutable Config values from dotenv
@@ -18,5 +18,5 @@ void main() async {
   // Initialize intl locale data for formatting dates/numbers (French)
   await initializeDateFormatting('fr_FR');
   Intl.defaultLocale = 'fr_FR';
-  runApp(const ProviderScope(child: EconorisApp()));
+  runApp(const ProviderScope(child: App()));
 }
