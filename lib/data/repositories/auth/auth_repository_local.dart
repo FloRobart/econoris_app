@@ -3,8 +3,6 @@ import 'package:econoris_app/domain/models/auth/user/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepositoryLocal {
-  // final SharedPreferences sharedPreferences = SharedPreferences.getInstance();
-
   /// Save the email in local storage for later use in the login process.
   Future<void> saveEmail(String email) async {
     final sharedPreferences = await SharedPreferences.getInstance();

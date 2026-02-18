@@ -7,15 +7,20 @@ import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 
 /// Repository interface for subscriptions data.
 class SubscriptionsRepositoryImpl implements SubscriptionsRepository {
+  final SubscriptionsRepositoryRemote remote;
+  final SubscriptionsRepositoryLocal local;
+
+  SubscriptionsRepositoryImpl({required this.remote, required this.local});
+
   /// Fetches a list of subscriptions from the remote API.
   @override
   Future<List<Subscription>> getSubscriptions() async {
     List<SubscriptionDto> subscriptionsDtoList = [];
     try {
-      subscriptionsDtoList = await SubscriptionsRepositoryRemote().getSubscriptions();
-      SubscriptionsRepositoryLocal().saveSubscriptions(subscriptionsDtoList);
+      subscriptionsDtoList = await remote.getSubscriptions();
+      local.saveSubscriptions(subscriptionsDtoList);
     } catch (e) {
-      subscriptionsDtoList = await SubscriptionsRepositoryLocal().getSubscriptions();
+      subscriptionsDtoList = await local.getSubscriptions();
     }
 
     return subscriptionsDtoList
@@ -27,8 +32,8 @@ class SubscriptionsRepositoryImpl implements SubscriptionsRepository {
   @override
   Future<Subscription> addSubscription(SubscriptionDto body) async {
     try {
-      final subscriptionDto = await SubscriptionsRepositoryRemote().addSubscription(body);
-      SubscriptionsRepositoryLocal().saveSubscriptions([subscriptionDto]);
+      final subscriptionDto = await remote.addSubscription(body);
+      local.saveSubscriptions([subscriptionDto]);
       return subscriptionDto.toDomain();
     } catch (e) {
       print('Error adding subscription: $e');
@@ -39,19 +44,19 @@ class SubscriptionsRepositoryImpl implements SubscriptionsRepository {
   /// Updates an existing subscription in the remote API.
   @override
   Future<Subscription> updateSubscription(int id, SubscriptionDto body) async {
-    final subscriptionDto = await SubscriptionsRepositoryRemote().updateSubscription(
+    final subscriptionDto = await remote.updateSubscription(
       id,
       body,
     );
-    SubscriptionsRepositoryLocal().updateSubscription(id, subscriptionDto);
+    local.updateSubscription(id, subscriptionDto);
     return subscriptionDto.toDomain();
   }
 
   /// Deletes an subscription from the remote API.
   @override
   Future<Subscription> deleteSubscription(int id) async {
-    final subscriptionDto = await SubscriptionsRepositoryRemote().deleteSubscription(id);
-    SubscriptionsRepositoryLocal().deleteSubscription(id);
+    final subscriptionDto = await remote.deleteSubscription(id);
+    local.deleteSubscription(id);
     return subscriptionDto.toDomain();
   }
 }
