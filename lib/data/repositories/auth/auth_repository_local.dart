@@ -1,33 +1,33 @@
-import 'package:econoris_app/data/services/api/auth_api_client.dart';
 import 'package:econoris_app/data/services/auth_manager.dart';
 import 'package:econoris_app/domain/models/auth/user/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepositoryLocal {
-  final AuthApiClient apiClient;
-  final SharedPreferences sharedPreferences;
-
-  AuthRepositoryLocal(this.apiClient, this.sharedPreferences);
+  // final SharedPreferences sharedPreferences = SharedPreferences.getInstance();
 
   /// Save the email in local storage for later use in the login process.
   Future<void> saveEmail(String email) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString('email', email);
   }
 
   /// Get the email from local storage, if it exists.
   /// Returns the email if it exists, or null if it doesn't.
   Future<String?> getEmail() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getString('email');
   }
 
   /// Save the secret in local storage for later use in the login process.
   Future<void> saveLoginToken(String secret) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString('login_token', secret);
   }
 
   /// Get the secret from local storage, if it exists.
   /// Returns the secret if it exists, or null if it doesn't.
   Future<String?> getLoginToken() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getString('login_token');
   }
 

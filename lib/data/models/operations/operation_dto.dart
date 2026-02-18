@@ -1,10 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'operation.freezed.dart';
+part 'operation_dto.freezed.dart';
+part 'operation_dto.g.dart';
 
 @freezed
-abstract class Operation with _$Operation {
-  const factory Operation({
+abstract class OperationDto with _$OperationDto {
+  const factory OperationDto({
     required int id,
     @JsonKey(name: 'levy_date') required String levyDate,
     required String label,
@@ -18,5 +19,8 @@ abstract class Operation with _$Operation {
     @JsonKey(name: 'subscription_id') required String? subscriptionId,
     @JsonKey(name: 'created_at') required String createdAt,
     @JsonKey(name: 'updated_at') required String updatedAt,
-  }) = _Operation;
+  }) = _OperationDto;
+
+  factory OperationDto.fromJson(Map<String, dynamic> json) =>
+      _$OperationDtoFromJson(json);
 }
