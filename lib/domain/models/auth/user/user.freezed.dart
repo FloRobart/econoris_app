@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$User {
 
- String get email; String get pseudo; bool get isConnected; bool get isVerifiedEmail; String get createdAt;
+ String get email; String get pseudo; bool get isConnected; bool get isVerifiedEmail; DateTime get createdAt;
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $UserCopyWith<$Res>  {
   factory $UserCopyWith(User value, $Res Function(User) _then) = _$UserCopyWithImpl;
 @useResult
 $Res call({
- String email, String pseudo, bool isConnected, bool isVerifiedEmail, String createdAt
+ String email, String pseudo, bool isConnected, bool isVerifiedEmail, DateTime createdAt
 });
 
 
@@ -69,7 +69,7 @@ as String,pseudo: null == pseudo ? _self.pseudo : pseudo // ignore: cast_nullabl
 as String,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,isVerifiedEmail: null == isVerifiedEmail ? _self.isVerifiedEmail : isVerifiedEmail // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,
+as DateTime,
   ));
 }
 
@@ -154,7 +154,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  String createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
 return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail,_that.createdAt);case _:
@@ -175,7 +175,7 @@ return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  String createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _User():
 return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail,_that.createdAt);case _:
@@ -195,7 +195,7 @@ return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  String createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String email,  String pseudo,  bool isConnected,  bool isVerifiedEmail,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
 return $default(_that.email,_that.pseudo,_that.isConnected,_that.isVerifiedEmail,_that.createdAt);case _:
@@ -217,7 +217,7 @@ class _User implements User {
 @override final  String pseudo;
 @override final  bool isConnected;
 @override final  bool isVerifiedEmail;
-@override final  String createdAt;
+@override final  DateTime createdAt;
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
@@ -249,7 +249,7 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$UserCopyWith(_User value, $Res Function(_User) _then) = __$UserCopyWithImpl;
 @override @useResult
 $Res call({
- String email, String pseudo, bool isConnected, bool isVerifiedEmail, String createdAt
+ String email, String pseudo, bool isConnected, bool isVerifiedEmail, DateTime createdAt
 });
 
 
@@ -273,7 +273,7 @@ as String,pseudo: null == pseudo ? _self.pseudo : pseudo // ignore: cast_nullabl
 as String,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,isVerifiedEmail: null == isVerifiedEmail ? _self.isVerifiedEmail : isVerifiedEmail // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,
+as DateTime,
   ));
 }
 

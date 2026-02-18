@@ -6,17 +6,17 @@ part 'operation.freezed.dart';
 abstract class Operation with _$Operation {
   const factory Operation({
     required int id,
-    @JsonKey(name: 'levy_date') required String levyDate,
+    @JsonKey(name: 'levy_date') required DateTime levyDate,
     required String label,
     required double amount,
     required String category,
-    required String source,
-    required String destination,
+    required String? source,
+    required String? destination,
     required double costs,
     @JsonKey(name: 'is_validate') required bool isValidate,
     @JsonKey(name: 'user_id') required int userId,
     @JsonKey(name: 'subscription_id') required String? subscriptionId,
-    @JsonKey(name: 'created_at') required String createdAt,
-    @JsonKey(name: 'updated_at') required String updatedAt,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') required DateTime updatedAt,
   }) = _Operation;
 }

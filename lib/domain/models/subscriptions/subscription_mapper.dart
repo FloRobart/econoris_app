@@ -14,13 +14,13 @@ extension SubscriptionMapper on Subscription {
       active: active,
       intervalValue: intervalValue,
       intervalUnit: intervalUnit,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: startDate.toIso8601String(),
+      endDate: endDate?.toIso8601String(),
       dayOfMonth: dayOfMonth,
-      lastGeneratedAt: lastGeneratedAt,
+      lastGeneratedAt: lastGeneratedAt?.toIso8601String(),
       userId: userId,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
+      createdAt: createdAt.toIso8601String(),
+      updatedAt: updatedAt.toIso8601String(),
     );
   }
 }

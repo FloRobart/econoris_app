@@ -9,6 +9,6 @@ abstract class User with _$User {
     required String pseudo,
     required bool isConnected,
     required bool isVerifiedEmail,
-    required String createdAt,
+    required DateTime createdAt,
   }) = _User;
 }

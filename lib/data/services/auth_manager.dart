@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/shared_preferences_keys.dart';
 import 'package:econoris_app/domain/models/auth/user/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ class AuthManager {
   /// This should be called at app startup to restore the session if possible.
   Future<String?> loadJwt() async {
     final localStorage = await SharedPreferences.getInstance();
-    _jwt = localStorage.getString('jwt');
+    _jwt = localStorage.getString(SharedPreferencesKeys.jwtToken);
     return _jwt;
   }
 
@@ -32,13 +33,13 @@ class AuthManager {
   Future<void> setJwt(String token) async {
     final localStorage = await SharedPreferences.getInstance();
     _jwt = token;
-    await localStorage.setString('jwt', token);
+    await localStorage.setString(SharedPreferencesKeys.jwtToken, token);
   }
 
   /// Invalidate the current session by removing the JWT from storage and notifying listeners.
   Future<void> removeJwt() async {
     final localStorage = await SharedPreferences.getInstance();
-    await localStorage.remove('jwt');
+    await localStorage.remove(SharedPreferencesKeys.jwtToken);
     _jwt = null;
     sessionInvalidated.value = true;
   }
@@ -47,7 +48,7 @@ class AuthManager {
     final localStorage = await SharedPreferences.getInstance();
     // TODO: implement saveProfile
     // await localStorage.setString('profile', profile.toJson());
-    _jwt = localStorage.getString('jwt');
+    _jwt = localStorage.getString(SharedPreferencesKeys.jwtToken);
     return _jwt;
   }
 
@@ -55,7 +56,7 @@ class AuthManager {
     final localStorage = await SharedPreferences.getInstance();
     // TODO: implement loadProfile
     // final String? profileJson = localStorage.getString('profile');
-    _jwt = localStorage.getString('jwt');
+    _jwt = localStorage.getString(SharedPreferencesKeys.jwtToken);
     return null;
   }
 }

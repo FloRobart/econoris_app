@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:econoris_app/config/shared_preferences_keys.dart';
 import 'package:econoris_app/data/models/subscriptions/subscription_dto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Repository interface for subscriptions data stored locally.
 class SubscriptionsRepositoryLocal {
-  static final String _subscriptionsKey = 'subscriptions';
+  static final String _subscriptionsKey = SharedPreferencesKeys.subscriptions;
 
   /// Fetches a list of subscriptions from the local storage.
   Future<List<SubscriptionDto>> getSubscriptions() async {

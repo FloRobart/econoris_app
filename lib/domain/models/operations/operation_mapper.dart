@@ -5,7 +5,7 @@ extension OperationMapper on Operation {
   OperationDto toDto() {
     return OperationDto(
       id: id,
-      levyDate: levyDate,
+      levyDate: levyDate.toIso8601String(),
       label: label,
       amount: amount,
       category: category,
@@ -15,8 +15,8 @@ extension OperationMapper on Operation {
       isValidate: isValidate,
       userId: userId,
       subscriptionId: subscriptionId,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
+      createdAt: createdAt.toIso8601String(),
+      updatedAt: updatedAt.toIso8601String(),
     );
   }
 }

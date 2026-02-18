@@ -5,7 +5,7 @@ extension OperationDtoMapper on OperationDto {
   Operation toDomain() {
     return Operation(
       id: id,
-      levyDate: levyDate,
+      levyDate: DateTime.parse(levyDate),
       label: label,
       amount: amount,
       category: category,
@@ -15,8 +15,8 @@ extension OperationDtoMapper on OperationDto {
       isValidate: isValidate,
       userId: userId,
       subscriptionId: subscriptionId,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
+      createdAt: DateTime.parse(createdAt),
+      updatedAt: DateTime.parse(updatedAt),
     );
   }
 }

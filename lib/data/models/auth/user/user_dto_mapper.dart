@@ -8,7 +8,7 @@ extension UserDtoMapper on UserDto {
       pseudo: pseudo,
       isConnected: isConnected,
       isVerifiedEmail: isVerifiedEmail,
-      createdAt: createdAt,
+      createdAt: DateTime.parse(createdAt),
     );
   }
 }

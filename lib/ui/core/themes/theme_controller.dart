@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/shared_preferences_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +9,7 @@ final themeControllerProvider =
 
 /// Gestionnaire de theme en MVVM (etat + persistance).
 class ThemeController extends AsyncNotifier<ThemeMode> {
-  static const String _key = 'theme_mode';
+  static const String _key = SharedPreferencesKeys.themeMode;
 
   @override
   Future<ThemeMode> build() async {

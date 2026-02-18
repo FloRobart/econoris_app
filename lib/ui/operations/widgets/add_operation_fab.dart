@@ -4,7 +4,6 @@ import 'package:econoris_app/data/services/api/subscriptions/subscriptions_api_c
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../data/services/global_data.dart';
 import '../../../domain/models/operations/operation.dart';
 import '../../../domain/models/subscriptions/subscription.dart';
 import 'add_operation_button.dart';

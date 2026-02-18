@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../config/app_config.dart';
-import '../../../data/services/global_data.dart';
 import '../../../routing/routes.dart';
 
 /// Reusable scaffold that provides a consistent AppBar (logo + app name + Profil)

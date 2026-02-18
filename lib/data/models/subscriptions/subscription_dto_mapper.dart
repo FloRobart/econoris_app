@@ -14,13 +14,13 @@ extension SubscriptionDtoMapper on SubscriptionDto {
       active: active,
       intervalValue: intervalValue,
       intervalUnit: intervalUnit,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: DateTime.parse(startDate),
+      endDate: endDate != null ? DateTime.parse(endDate!) : null,
       dayOfMonth: dayOfMonth,
-      lastGeneratedAt: lastGeneratedAt,
+      lastGeneratedAt: lastGeneratedAt != null ? DateTime.parse(lastGeneratedAt!) : null,
       userId: userId,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
+      createdAt: DateTime.parse(createdAt),
+      updatedAt: DateTime.parse(updatedAt),
     );
   }
 }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SubscriptionDto {
 
- int get id; String get label; double get amount; String get category; String get source; String get destination; double get costs; bool get active;@JsonKey(name: 'interval_value') int get intervalValue;@JsonKey(name: 'interval_unit') String get intervalUnit;@JsonKey(name: 'start_date') String get startDate;@JsonKey(name: 'end_date') String get endDate;@JsonKey(name: 'day_of_month') int get dayOfMonth;@JsonKey(name: 'last_generated_at') String get lastGeneratedAt;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'created_at') String get createdAt;@JsonKey(name: 'updated_at') String get updatedAt;
+ int get id; String get label; double get amount; String get category; String? get source; String? get destination; double get costs; bool get active;@JsonKey(name: 'interval_value') int get intervalValue;@JsonKey(name: 'interval_unit') String get intervalUnit;@JsonKey(name: 'start_date') String get startDate;@JsonKey(name: 'end_date') String? get endDate;@JsonKey(name: 'day_of_month') int get dayOfMonth;@JsonKey(name: 'last_generated_at') String? get lastGeneratedAt;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'created_at') String get createdAt;@JsonKey(name: 'updated_at') String get updatedAt;
 /// Create a copy of SubscriptionDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $SubscriptionDtoCopyWith<$Res>  {
   factory $SubscriptionDtoCopyWith(SubscriptionDto value, $Res Function(SubscriptionDto) _then) = _$SubscriptionDtoCopyWithImpl;
 @useResult
 $Res call({
- int id, String label, double amount, String category, String source, String destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') String startDate,@JsonKey(name: 'end_date') String endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') String lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
+ int id, String label, double amount, String category, String? source, String? destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') String startDate,@JsonKey(name: 'end_date') String? endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') String? lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
 });
 
 
@@ -65,23 +65,23 @@ class _$SubscriptionDtoCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = null,Object? destination = null,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = null,Object? dayOfMonth = null,Object? lastGeneratedAt = null,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = freezed,Object? dayOfMonth = null,Object? lastGeneratedAt = freezed,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
-as String,destination: null == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
-as String,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_to_non_nullable
+as String,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String?,destination: freezed == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
+as String?,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_to_non_nullable
 as double,active: null == active ? _self.active : active // ignore: cast_nullable_to_non_nullable
 as bool,intervalValue: null == intervalValue ? _self.intervalValue : intervalValue // ignore: cast_nullable_to_non_nullable
 as int,intervalUnit: null == intervalUnit ? _self.intervalUnit : intervalUnit // ignore: cast_nullable_to_non_nullable
 as String,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as String,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as String,dayOfMonth: null == dayOfMonth ? _self.dayOfMonth : dayOfMonth // ignore: cast_nullable_to_non_nullable
-as int,lastGeneratedAt: null == lastGeneratedAt ? _self.lastGeneratedAt : lastGeneratedAt // ignore: cast_nullable_to_non_nullable
-as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as String?,dayOfMonth: null == dayOfMonth ? _self.dayOfMonth : dayOfMonth // ignore: cast_nullable_to_non_nullable
+as int,lastGeneratedAt: freezed == lastGeneratedAt ? _self.lastGeneratedAt : lastGeneratedAt // ignore: cast_nullable_to_non_nullable
+as String?,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
@@ -169,7 +169,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String source,  String destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  String startDate, @JsonKey(name: 'end_date')  String endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  String lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  String startDate, @JsonKey(name: 'end_date')  String? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  String? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SubscriptionDto() when $default != null:
 return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt);case _:
@@ -190,7 +190,7 @@ return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String source,  String destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  String startDate, @JsonKey(name: 'end_date')  String endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  String lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  String startDate, @JsonKey(name: 'end_date')  String? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  String? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionDto():
 return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt);case _:
@@ -210,7 +210,7 @@ return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String label,  double amount,  String category,  String source,  String destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  String startDate, @JsonKey(name: 'end_date')  String endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  String lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  String startDate, @JsonKey(name: 'end_date')  String? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  String? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionDto() when $default != null:
 return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt);case _:
@@ -232,16 +232,16 @@ class _SubscriptionDto implements SubscriptionDto {
 @override final  String label;
 @override final  double amount;
 @override final  String category;
-@override final  String source;
-@override final  String destination;
+@override final  String? source;
+@override final  String? destination;
 @override final  double costs;
 @override final  bool active;
 @override@JsonKey(name: 'interval_value') final  int intervalValue;
 @override@JsonKey(name: 'interval_unit') final  String intervalUnit;
 @override@JsonKey(name: 'start_date') final  String startDate;
-@override@JsonKey(name: 'end_date') final  String endDate;
+@override@JsonKey(name: 'end_date') final  String? endDate;
 @override@JsonKey(name: 'day_of_month') final  int dayOfMonth;
-@override@JsonKey(name: 'last_generated_at') final  String lastGeneratedAt;
+@override@JsonKey(name: 'last_generated_at') final  String? lastGeneratedAt;
 @override@JsonKey(name: 'user_id') final  int userId;
 @override@JsonKey(name: 'created_at') final  String createdAt;
 @override@JsonKey(name: 'updated_at') final  String updatedAt;
@@ -279,7 +279,7 @@ abstract mixin class _$SubscriptionDtoCopyWith<$Res> implements $SubscriptionDto
   factory _$SubscriptionDtoCopyWith(_SubscriptionDto value, $Res Function(_SubscriptionDto) _then) = __$SubscriptionDtoCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String label, double amount, String category, String source, String destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') String startDate,@JsonKey(name: 'end_date') String endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') String lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
+ int id, String label, double amount, String category, String? source, String? destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') String startDate,@JsonKey(name: 'end_date') String? endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') String? lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
 });
 
 
@@ -296,23 +296,23 @@ class __$SubscriptionDtoCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = null,Object? destination = null,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = null,Object? dayOfMonth = null,Object? lastGeneratedAt = null,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = freezed,Object? dayOfMonth = null,Object? lastGeneratedAt = freezed,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_SubscriptionDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,source: null == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
-as String,destination: null == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
-as String,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_to_non_nullable
+as String,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
+as String?,destination: freezed == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
+as String?,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_to_non_nullable
 as double,active: null == active ? _self.active : active // ignore: cast_nullable_to_non_nullable
 as bool,intervalValue: null == intervalValue ? _self.intervalValue : intervalValue // ignore: cast_nullable_to_non_nullable
 as int,intervalUnit: null == intervalUnit ? _self.intervalUnit : intervalUnit // ignore: cast_nullable_to_non_nullable
 as String,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as String,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as String,dayOfMonth: null == dayOfMonth ? _self.dayOfMonth : dayOfMonth // ignore: cast_nullable_to_non_nullable
-as int,lastGeneratedAt: null == lastGeneratedAt ? _self.lastGeneratedAt : lastGeneratedAt // ignore: cast_nullable_to_non_nullable
-as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as String?,dayOfMonth: null == dayOfMonth ? _self.dayOfMonth : dayOfMonth // ignore: cast_nullable_to_non_nullable
+as int,lastGeneratedAt: freezed == lastGeneratedAt ? _self.lastGeneratedAt : lastGeneratedAt // ignore: cast_nullable_to_non_nullable
+as String?,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
