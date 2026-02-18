@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:econoris_app/data/services/api/operations_api_client.dart';
-import 'package:econoris_app/data/services/api/subscriptions_api_client.dart';
+import 'package:econoris_app/data/services/api/operations/operations_api_client.dart';
+import 'package:econoris_app/data/services/api/subscriptions/subscriptions_api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

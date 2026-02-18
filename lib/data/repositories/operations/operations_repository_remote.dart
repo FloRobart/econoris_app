@@ -1,5 +1,5 @@
 import 'package:econoris_app/data/models/operations/operation_dto.dart';
-import 'package:econoris_app/data/services/api/operations_api_client.dart';
+import 'package:econoris_app/data/services/api/operations/operations_api_client.dart';
 
 /// Repository interface for operations data.
 class OperationsRepositoryRemote {

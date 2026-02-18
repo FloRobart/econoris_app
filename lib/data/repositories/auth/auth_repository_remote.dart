@@ -1,5 +1,5 @@
 import 'package:econoris_app/data/models/auth/user/user_dto.dart';
-import 'package:econoris_app/data/services/api/auth_api_client.dart';
+import 'package:econoris_app/data/services/api/auth/auth_api_client.dart';
 
 class AuthRepositoryRemote {
   /// Requests a login code to be sent to the user's email.

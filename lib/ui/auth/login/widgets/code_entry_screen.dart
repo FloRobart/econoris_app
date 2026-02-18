@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../data/services/api/auth_api_client.dart';
+import '../../../../data/services/api/auth/auth_api_client.dart';
 import '../../../../routing/routes.dart';
 
 class CodeEntryPage extends StatefulWidget {

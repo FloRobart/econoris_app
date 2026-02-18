@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../../data/services/api/auth_api_client.dart';
+import '../../../data/services/api/auth/auth_api_client.dart';
 import '../../../data/services/global_data.dart';
 import '../../../routing/routes.dart';
 import '../../core/themes/theme_manager.dart';

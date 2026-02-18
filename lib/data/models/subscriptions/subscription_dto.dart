@@ -1,10 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'subscription.freezed.dart';
+part 'subscription_dto.freezed.dart';
+part 'subscription_dto.g.dart';
 
 @freezed
-abstract class Subscription with _$Subscription {
-  const factory Subscription({
+abstract class SubscriptionDto with _$SubscriptionDto {
+  const factory SubscriptionDto({
     required int id,
     required String label,
     required double amount,
@@ -22,5 +23,8 @@ abstract class Subscription with _$Subscription {
     @JsonKey(name: 'user_id') required int userId,
     @JsonKey(name: 'created_at') required String createdAt,
     @JsonKey(name: 'updated_at') required String updatedAt,
-  }) = _Subscription;
+  }) = _SubscriptionDto;
+
+  factory SubscriptionDto.fromJson(Map<String, dynamic> json) =>
+      _$SubscriptionDtoFromJson(json);
 }

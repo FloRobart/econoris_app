@@ -1,8 +1,5 @@
 import 'dart:convert';
-
 import 'package:econoris_app/data/services/api/api_client.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:econoris_app/config/app_config.dart';
 
 /// Auth-specific API wrapper using the shared [DataApiClient] transport.
@@ -14,7 +11,7 @@ class AuthApiClient {
   static Future<String> requestLoginCode(String email) async {
     final body = {'email': email};
 
-    final http.Response response = await ApiClient.request(
+    final response = await ApiClient.request(
       HttpMethod.post,
       '$_baseUrl/login/request',
       false,
@@ -34,7 +31,7 @@ class AuthApiClient {
   ) async {
     final body = {'email': email, 'token': token, 'secret': secret};
 
-    final http.Response response = await ApiClient.request(
+    final response = await ApiClient.request(
       HttpMethod.post,
       '$_baseUrl/login/confirm',
       false,
@@ -46,7 +43,7 @@ class AuthApiClient {
 
   /// Logout the user
   static Future<void> logout() async {
-    final http.Response response = await ApiClient.request(
+    final response = await ApiClient.request(
       HttpMethod.post,
       '$_baseUrl/logout',
       true,
@@ -63,7 +60,7 @@ class AuthApiClient {
   static Future<String> registerUser(String email, String pseudo) async {
     final body = {'email': email, 'pseudo': pseudo};
 
-    final http.Response response = await ApiClient.request(
+    final response = await ApiClient.request(
       HttpMethod.post,
       _baseUrl,
       false,
@@ -76,7 +73,7 @@ class AuthApiClient {
   /// Get the current user's profile information.
   /// The server is expected to return the user's profile data if the JWT is valid.
   static Future<Map<String, String>> getProfile() async {
-    final http.Response response = await ApiClient.request(
+    final response = await ApiClient.request(
       HttpMethod.get,
       _baseUrl,
       true,
@@ -89,7 +86,7 @@ class AuthApiClient {
   /// The server is expected to update the user's profile and return the new JWT.
   static Future<String> updateUser(String email, String name) async {
     final body = {'email': email, 'name': name};
-    final http.Response response = await ApiClient.request(
+    final response = await ApiClient.request(
       HttpMethod.put,
       _baseUrl,
       true,
@@ -102,7 +99,7 @@ class AuthApiClient {
   /// Delete the current user's account.
   /// The server is expected to delete the user's account if the JWT is valid.
   static Future<void> deleteUser() async {
-    final http.Response response = await ApiClient.request(
+    final response = await ApiClient.request(
       HttpMethod.delete,
       _baseUrl,
       true,
