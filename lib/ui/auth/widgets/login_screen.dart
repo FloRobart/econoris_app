@@ -2,9 +2,9 @@ import 'package:econoris_app/domain/models/auth/user/user.dart';
 import 'package:econoris_app/ui/core/ui/widgets/base_app.dart';
 import 'package:flutter/material.dart';
 
-/// Écran d'accueil de l'application.
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+/// Écran de connexion pour la demande d'authentification de l'utilisateur.
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
         isVerifiedEmail: true,
         createdAt: DateTime.now(),
       ),
-      body: const Center(child: Text('Home Screen')),
+      body: const Center(child: Text('Login Screen')),
     );
   }
 }
