@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 
+enum AppFontSize { small, medium, large, xlarge, xxlarge }
+
 /// Themes centralises pour garantir une apparence coherente.
 class AppTheme {
   AppTheme._();
+
+  static const fontSizes = {
+    AppFontSize.small: 12.0,
+    AppFontSize.medium: 16.0,
+    AppFontSize.large: 20.0,
+    AppFontSize.xlarge: 24.0,
+    AppFontSize.xxlarge: 28.0,
+  };
 
   static ThemeData light() {
     return ThemeData.light().copyWith(
