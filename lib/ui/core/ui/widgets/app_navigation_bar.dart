@@ -10,7 +10,8 @@ class AppNavigationBar extends StatelessWidget {
   /* Ordre des routes dans la barre de navigation */
   static const List<String> orderedRoutes = [
     AppRoutes.home,
-    AppRoutes.login
+    AppRoutes.login,
+    AppRoutes.operations,
   ];
 
   /* Détermine l'index de la route actuelle dans la barre de navigation */
@@ -51,6 +52,11 @@ class AppNavigationBar extends StatelessWidget {
           icon: Icon(Icons.login_outlined),
           activeIcon: Icon(Icons.login),
           label: 'Connexion',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.list_outlined),
+          activeIcon: Icon(Icons.list),
+          label: 'Opérations',
         ),
       ],
     );

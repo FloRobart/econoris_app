@@ -18,5 +18,6 @@ abstract class Operation with _$Operation {
     @JsonKey(name: 'subscription_id') required String? subscriptionId,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    required bool isSelected,
   }) = _Operation;
 }

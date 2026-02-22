@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Operation {
 
- int get id;@JsonKey(name: 'levy_date') DateTime get levyDate; String get label; double get amount; String get category; String? get source; String? get destination; double get costs;@JsonKey(name: 'is_validate') bool get isValidate;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'subscription_id') String? get subscriptionId;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt;
+ int get id;@JsonKey(name: 'levy_date') DateTime get levyDate; String get label; double get amount; String get category; String? get source; String? get destination; double get costs;@JsonKey(name: 'is_validate') bool get isValidate;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'subscription_id') String? get subscriptionId;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt; bool get isSelected;
 /// Create a copy of Operation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $OperationCopyWith<Operation> get copyWith => _$OperationCopyWithImpl<Operation>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Operation&&(identical(other.id, id) || other.id == id)&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.isValidate, isValidate) || other.isValidate == isValidate)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Operation&&(identical(other.id, id) || other.id == id)&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.isValidate, isValidate) || other.isValidate == isValidate)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSelected, isSelected) || other.isSelected == isSelected));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,levyDate,label,amount,category,source,destination,costs,isValidate,userId,subscriptionId,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,levyDate,label,amount,category,source,destination,costs,isValidate,userId,subscriptionId,createdAt,updatedAt,isSelected);
 
 @override
 String toString() {
-  return 'Operation(id: $id, levyDate: $levyDate, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, isValidate: $isValidate, userId: $userId, subscriptionId: $subscriptionId, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Operation(id: $id, levyDate: $levyDate, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, isValidate: $isValidate, userId: $userId, subscriptionId: $subscriptionId, createdAt: $createdAt, updatedAt: $updatedAt, isSelected: $isSelected)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $OperationCopyWith<$Res>  {
   factory $OperationCopyWith(Operation value, $Res Function(Operation) _then) = _$OperationCopyWithImpl;
 @useResult
 $Res call({
- int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
+ int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
 });
 
 
@@ -62,7 +62,7 @@ class _$OperationCopyWithImpl<$Res>
 
 /// Create a copy of Operation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? isValidate = null,Object? userId = null,Object? subscriptionId = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? isValidate = null,Object? userId = null,Object? subscriptionId = freezed,Object? createdAt = null,Object? updatedAt = null,Object? isSelected = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,levyDate: null == levyDate ? _self.levyDate : levyDate // ignore: cast_nullable_to_non_nullable
@@ -77,7 +77,8 @@ as bool,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_
 as int,subscriptionId: freezed == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isSelected: null == isSelected ? _self.isSelected : isSelected // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -162,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Operation() when $default != null:
-return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
   return orElse();
 
 }
@@ -183,10 +184,10 @@ return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)  $default,) {final _that = this;
 switch (_that) {
 case _Operation():
-return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +204,10 @@ return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,) {final _that = this;
 switch (_that) {
 case _Operation() when $default != null:
-return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
   return null;
 
 }
@@ -218,7 +219,7 @@ return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,
 
 
 class _Operation implements Operation {
-  const _Operation({required this.id, @JsonKey(name: 'levy_date') required this.levyDate, required this.label, required this.amount, required this.category, required this.source, required this.destination, required this.costs, @JsonKey(name: 'is_validate') required this.isValidate, @JsonKey(name: 'user_id') required this.userId, @JsonKey(name: 'subscription_id') required this.subscriptionId, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt});
+  const _Operation({required this.id, @JsonKey(name: 'levy_date') required this.levyDate, required this.label, required this.amount, required this.category, required this.source, required this.destination, required this.costs, @JsonKey(name: 'is_validate') required this.isValidate, @JsonKey(name: 'user_id') required this.userId, @JsonKey(name: 'subscription_id') required this.subscriptionId, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt, required this.isSelected});
   
 
 @override final  int id;
@@ -234,6 +235,7 @@ class _Operation implements Operation {
 @override@JsonKey(name: 'subscription_id') final  String? subscriptionId;
 @override@JsonKey(name: 'created_at') final  DateTime createdAt;
 @override@JsonKey(name: 'updated_at') final  DateTime updatedAt;
+@override final  bool isSelected;
 
 /// Create a copy of Operation
 /// with the given fields replaced by the non-null parameter values.
@@ -245,16 +247,16 @@ _$OperationCopyWith<_Operation> get copyWith => __$OperationCopyWithImpl<_Operat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Operation&&(identical(other.id, id) || other.id == id)&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.isValidate, isValidate) || other.isValidate == isValidate)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Operation&&(identical(other.id, id) || other.id == id)&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.isValidate, isValidate) || other.isValidate == isValidate)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSelected, isSelected) || other.isSelected == isSelected));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,levyDate,label,amount,category,source,destination,costs,isValidate,userId,subscriptionId,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,levyDate,label,amount,category,source,destination,costs,isValidate,userId,subscriptionId,createdAt,updatedAt,isSelected);
 
 @override
 String toString() {
-  return 'Operation(id: $id, levyDate: $levyDate, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, isValidate: $isValidate, userId: $userId, subscriptionId: $subscriptionId, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Operation(id: $id, levyDate: $levyDate, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, isValidate: $isValidate, userId: $userId, subscriptionId: $subscriptionId, createdAt: $createdAt, updatedAt: $updatedAt, isSelected: $isSelected)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$OperationCopyWith<$Res> implements $OperationCopyWith<$Re
   factory _$OperationCopyWith(_Operation value, $Res Function(_Operation) _then) = __$OperationCopyWithImpl;
 @override @useResult
 $Res call({
- int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
+ int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
 });
 
 
@@ -282,7 +284,7 @@ class __$OperationCopyWithImpl<$Res>
 
 /// Create a copy of Operation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? isValidate = null,Object? userId = null,Object? subscriptionId = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? isValidate = null,Object? userId = null,Object? subscriptionId = freezed,Object? createdAt = null,Object? updatedAt = null,Object? isSelected = null,}) {
   return _then(_Operation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,levyDate: null == levyDate ? _self.levyDate : levyDate // ignore: cast_nullable_to_non_nullable
@@ -297,7 +299,8 @@ as bool,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_
 as int,subscriptionId: freezed == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isSelected: null == isSelected ? _self.isSelected : isSelected // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

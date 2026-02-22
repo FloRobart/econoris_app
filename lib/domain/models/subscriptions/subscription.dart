@@ -22,5 +22,6 @@ abstract class Subscription with _$Subscription {
     @JsonKey(name: 'user_id') required int userId,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    required bool isSelected,
   }) = _Subscription;
 }

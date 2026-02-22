@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/constantes.dart';
 import 'package:econoris_app/data/models/subscriptions/subscription_dto.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 
@@ -21,6 +22,7 @@ extension SubscriptionDtoMapper on SubscriptionDto {
       userId: userId,
       createdAt: DateTime.parse(createdAt),
       updatedAt: DateTime.parse(updatedAt),
+      isSelected: Constantes.isSubscriptionSelected,
     );
   }
 }

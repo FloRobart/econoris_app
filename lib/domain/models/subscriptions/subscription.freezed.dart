@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Subscription {
 
- int get id; String get label; double get amount; String get category; String? get source; String? get destination; double get costs; bool get active;@JsonKey(name: 'interval_value') int get intervalValue;@JsonKey(name: 'interval_unit') String get intervalUnit;@JsonKey(name: 'start_date') DateTime get startDate;@JsonKey(name: 'end_date') DateTime? get endDate;@JsonKey(name: 'day_of_month') int get dayOfMonth;@JsonKey(name: 'last_generated_at') DateTime? get lastGeneratedAt;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt;
+ int get id; String get label; double get amount; String get category; String? get source; String? get destination; double get costs; bool get active;@JsonKey(name: 'interval_value') int get intervalValue;@JsonKey(name: 'interval_unit') String get intervalUnit;@JsonKey(name: 'start_date') DateTime get startDate;@JsonKey(name: 'end_date') DateTime? get endDate;@JsonKey(name: 'day_of_month') int get dayOfMonth;@JsonKey(name: 'last_generated_at') DateTime? get lastGeneratedAt;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt; bool get isSelected;
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $SubscriptionCopyWith<Subscription> get copyWith => _$SubscriptionCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Subscription&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.active, active) || other.active == active)&&(identical(other.intervalValue, intervalValue) || other.intervalValue == intervalValue)&&(identical(other.intervalUnit, intervalUnit) || other.intervalUnit == intervalUnit)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.dayOfMonth, dayOfMonth) || other.dayOfMonth == dayOfMonth)&&(identical(other.lastGeneratedAt, lastGeneratedAt) || other.lastGeneratedAt == lastGeneratedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Subscription&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.active, active) || other.active == active)&&(identical(other.intervalValue, intervalValue) || other.intervalValue == intervalValue)&&(identical(other.intervalUnit, intervalUnit) || other.intervalUnit == intervalUnit)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.dayOfMonth, dayOfMonth) || other.dayOfMonth == dayOfMonth)&&(identical(other.lastGeneratedAt, lastGeneratedAt) || other.lastGeneratedAt == lastGeneratedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSelected, isSelected) || other.isSelected == isSelected));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,label,amount,category,source,destination,costs,active,intervalValue,intervalUnit,startDate,endDate,dayOfMonth,lastGeneratedAt,userId,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,label,amount,category,source,destination,costs,active,intervalValue,intervalUnit,startDate,endDate,dayOfMonth,lastGeneratedAt,userId,createdAt,updatedAt,isSelected);
 
 @override
 String toString() {
-  return 'Subscription(id: $id, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, active: $active, intervalValue: $intervalValue, intervalUnit: $intervalUnit, startDate: $startDate, endDate: $endDate, dayOfMonth: $dayOfMonth, lastGeneratedAt: $lastGeneratedAt, userId: $userId, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Subscription(id: $id, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, active: $active, intervalValue: $intervalValue, intervalUnit: $intervalUnit, startDate: $startDate, endDate: $endDate, dayOfMonth: $dayOfMonth, lastGeneratedAt: $lastGeneratedAt, userId: $userId, createdAt: $createdAt, updatedAt: $updatedAt, isSelected: $isSelected)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $SubscriptionCopyWith<$Res>  {
   factory $SubscriptionCopyWith(Subscription value, $Res Function(Subscription) _then) = _$SubscriptionCopyWithImpl;
 @useResult
 $Res call({
- int id, String label, double amount, String category, String? source, String? destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') DateTime startDate,@JsonKey(name: 'end_date') DateTime? endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') DateTime? lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
+ int id, String label, double amount, String category, String? source, String? destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') DateTime startDate,@JsonKey(name: 'end_date') DateTime? endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') DateTime? lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
 });
 
 
@@ -62,7 +62,7 @@ class _$SubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = freezed,Object? dayOfMonth = null,Object? lastGeneratedAt = freezed,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = freezed,Object? dayOfMonth = null,Object? lastGeneratedAt = freezed,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,Object? isSelected = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
@@ -81,7 +81,8 @@ as int,lastGeneratedAt: freezed == lastGeneratedAt ? _self.lastGeneratedAt : las
 as DateTime?,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isSelected: null == isSelected ? _self.isSelected : isSelected // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -166,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  DateTime startDate, @JsonKey(name: 'end_date')  DateTime? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  DateTime? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  DateTime startDate, @JsonKey(name: 'end_date')  DateTime? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  DateTime? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Subscription() when $default != null:
-return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
   return orElse();
 
 }
@@ -187,10 +188,10 @@ return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  DateTime startDate, @JsonKey(name: 'end_date')  DateTime? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  DateTime? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  DateTime startDate, @JsonKey(name: 'end_date')  DateTime? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  DateTime? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)  $default,) {final _that = this;
 switch (_that) {
 case _Subscription():
-return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +208,10 @@ return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  DateTime startDate, @JsonKey(name: 'end_date')  DateTime? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  DateTime? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String label,  double amount,  String category,  String? source,  String? destination,  double costs,  bool active, @JsonKey(name: 'interval_value')  int intervalValue, @JsonKey(name: 'interval_unit')  String intervalUnit, @JsonKey(name: 'start_date')  DateTime startDate, @JsonKey(name: 'end_date')  DateTime? endDate, @JsonKey(name: 'day_of_month')  int dayOfMonth, @JsonKey(name: 'last_generated_at')  DateTime? lastGeneratedAt, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,) {final _that = this;
 switch (_that) {
 case _Subscription() when $default != null:
-return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.active,_that.intervalValue,_that.intervalUnit,_that.startDate,_that.endDate,_that.dayOfMonth,_that.lastGeneratedAt,_that.userId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
   return null;
 
 }
@@ -222,7 +223,7 @@ return $default(_that.id,_that.label,_that.amount,_that.category,_that.source,_t
 
 
 class _Subscription implements Subscription {
-  const _Subscription({required this.id, required this.label, required this.amount, required this.category, required this.source, required this.destination, required this.costs, required this.active, @JsonKey(name: 'interval_value') required this.intervalValue, @JsonKey(name: 'interval_unit') required this.intervalUnit, @JsonKey(name: 'start_date') required this.startDate, @JsonKey(name: 'end_date') required this.endDate, @JsonKey(name: 'day_of_month') required this.dayOfMonth, @JsonKey(name: 'last_generated_at') required this.lastGeneratedAt, @JsonKey(name: 'user_id') required this.userId, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt});
+  const _Subscription({required this.id, required this.label, required this.amount, required this.category, required this.source, required this.destination, required this.costs, required this.active, @JsonKey(name: 'interval_value') required this.intervalValue, @JsonKey(name: 'interval_unit') required this.intervalUnit, @JsonKey(name: 'start_date') required this.startDate, @JsonKey(name: 'end_date') required this.endDate, @JsonKey(name: 'day_of_month') required this.dayOfMonth, @JsonKey(name: 'last_generated_at') required this.lastGeneratedAt, @JsonKey(name: 'user_id') required this.userId, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt, required this.isSelected});
   
 
 @override final  int id;
@@ -242,6 +243,7 @@ class _Subscription implements Subscription {
 @override@JsonKey(name: 'user_id') final  int userId;
 @override@JsonKey(name: 'created_at') final  DateTime createdAt;
 @override@JsonKey(name: 'updated_at') final  DateTime updatedAt;
+@override final  bool isSelected;
 
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +255,16 @@ _$SubscriptionCopyWith<_Subscription> get copyWith => __$SubscriptionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Subscription&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.active, active) || other.active == active)&&(identical(other.intervalValue, intervalValue) || other.intervalValue == intervalValue)&&(identical(other.intervalUnit, intervalUnit) || other.intervalUnit == intervalUnit)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.dayOfMonth, dayOfMonth) || other.dayOfMonth == dayOfMonth)&&(identical(other.lastGeneratedAt, lastGeneratedAt) || other.lastGeneratedAt == lastGeneratedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Subscription&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.source, source) || other.source == source)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.costs, costs) || other.costs == costs)&&(identical(other.active, active) || other.active == active)&&(identical(other.intervalValue, intervalValue) || other.intervalValue == intervalValue)&&(identical(other.intervalUnit, intervalUnit) || other.intervalUnit == intervalUnit)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.dayOfMonth, dayOfMonth) || other.dayOfMonth == dayOfMonth)&&(identical(other.lastGeneratedAt, lastGeneratedAt) || other.lastGeneratedAt == lastGeneratedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.isSelected, isSelected) || other.isSelected == isSelected));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,label,amount,category,source,destination,costs,active,intervalValue,intervalUnit,startDate,endDate,dayOfMonth,lastGeneratedAt,userId,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,label,amount,category,source,destination,costs,active,intervalValue,intervalUnit,startDate,endDate,dayOfMonth,lastGeneratedAt,userId,createdAt,updatedAt,isSelected);
 
 @override
 String toString() {
-  return 'Subscription(id: $id, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, active: $active, intervalValue: $intervalValue, intervalUnit: $intervalUnit, startDate: $startDate, endDate: $endDate, dayOfMonth: $dayOfMonth, lastGeneratedAt: $lastGeneratedAt, userId: $userId, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Subscription(id: $id, label: $label, amount: $amount, category: $category, source: $source, destination: $destination, costs: $costs, active: $active, intervalValue: $intervalValue, intervalUnit: $intervalUnit, startDate: $startDate, endDate: $endDate, dayOfMonth: $dayOfMonth, lastGeneratedAt: $lastGeneratedAt, userId: $userId, createdAt: $createdAt, updatedAt: $updatedAt, isSelected: $isSelected)';
 }
 
 
@@ -273,7 +275,7 @@ abstract mixin class _$SubscriptionCopyWith<$Res> implements $SubscriptionCopyWi
   factory _$SubscriptionCopyWith(_Subscription value, $Res Function(_Subscription) _then) = __$SubscriptionCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String label, double amount, String category, String? source, String? destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') DateTime startDate,@JsonKey(name: 'end_date') DateTime? endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') DateTime? lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
+ int id, String label, double amount, String category, String? source, String? destination, double costs, bool active,@JsonKey(name: 'interval_value') int intervalValue,@JsonKey(name: 'interval_unit') String intervalUnit,@JsonKey(name: 'start_date') DateTime startDate,@JsonKey(name: 'end_date') DateTime? endDate,@JsonKey(name: 'day_of_month') int dayOfMonth,@JsonKey(name: 'last_generated_at') DateTime? lastGeneratedAt,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
 });
 
 
@@ -290,7 +292,7 @@ class __$SubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of Subscription
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = freezed,Object? dayOfMonth = null,Object? lastGeneratedAt = freezed,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? amount = null,Object? category = null,Object? source = freezed,Object? destination = freezed,Object? costs = null,Object? active = null,Object? intervalValue = null,Object? intervalUnit = null,Object? startDate = null,Object? endDate = freezed,Object? dayOfMonth = null,Object? lastGeneratedAt = freezed,Object? userId = null,Object? createdAt = null,Object? updatedAt = null,Object? isSelected = null,}) {
   return _then(_Subscription(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
@@ -309,7 +311,8 @@ as int,lastGeneratedAt: freezed == lastGeneratedAt ? _self.lastGeneratedAt : las
 as DateTime?,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isSelected: null == isSelected ? _self.isSelected : isSelected // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

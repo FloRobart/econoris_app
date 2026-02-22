@@ -5,7 +5,7 @@ import 'package:econoris_app/data/repositories/operations/operations_repository_
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance asynchrone d'[OperationsRepository].
-final operationsRepositoryProvider = FutureProvider<OperationsRepository>((ref) async {
+final operationRepositoryProvider = FutureProvider<OperationsRepository>((ref) async {
   final remote = OperationsRepositoryRemote();
   final local = OperationsRepositoryLocal();
 

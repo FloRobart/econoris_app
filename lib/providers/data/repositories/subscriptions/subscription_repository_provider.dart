@@ -5,7 +5,7 @@ import 'package:econoris_app/data/repositories/subscriptions/subscriptions_repos
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance asynchrone d'[SubscriptionsRepository].
-final subscriptionsRepositoryProvider = FutureProvider<SubscriptionsRepository>((ref) async {
+final subscriptionRepositoryProvider = FutureProvider<SubscriptionsRepository>((ref) async {
   final remote = SubscriptionsRepositoryRemote();
   final local = SubscriptionsRepositoryLocal();
 
