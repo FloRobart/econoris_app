@@ -1,16 +1,16 @@
 import 'package:econoris_app/data/models/subscriptions/subscription_dto.dart';
 import 'package:econoris_app/data/models/subscriptions/subscription_dto_mapper.dart';
-import 'package:econoris_app/data/repositories/subscriptions/subscriptions_repository.dart';
-import 'package:econoris_app/data/repositories/subscriptions/subscriptions_repository_local.dart';
-import 'package:econoris_app/data/repositories/subscriptions/subscriptions_repository_remote.dart';
+import 'package:econoris_app/data/repositories/subscriptions/subscription_repository.dart';
+import 'package:econoris_app/data/repositories/subscriptions/subscription_repository_local.dart';
+import 'package:econoris_app/data/repositories/subscriptions/subscription_repository_remote.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 
 /// Repository interface for subscriptions data.
-class SubscriptionsRepositoryImpl implements SubscriptionsRepository {
-  final SubscriptionsRepositoryRemote remote;
-  final SubscriptionsRepositoryLocal local;
+class SubscriptionRepositoryImpl implements SubscriptionRepository {
+  final SubscriptionRepositoryRemote remote;
+  final SubscriptionRepositoryLocal local;
 
-  SubscriptionsRepositoryImpl({required this.remote, required this.local});
+  SubscriptionRepositoryImpl({required this.remote, required this.local});
 
   /// Fetches a list of subscriptions from the remote API.
   @override

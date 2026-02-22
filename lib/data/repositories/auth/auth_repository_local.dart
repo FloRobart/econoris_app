@@ -35,12 +35,6 @@ class AuthRepositoryLocal {
     await AuthManager.instance.setJwt(jwt);
   }
 
-  /// Get the JWT token from local storage, if it exists.
-  /// Returns the JWT token if it exists, or null if it doesn't.
-  Future<String?> getJwt() async {
-    return AuthManager.instance.jwt;
-  }
-
   /// Logs out the user by remove local JWT token.
   /// This is a local operation, so it doesn't need to return anything.
   Future<void> logout() async {

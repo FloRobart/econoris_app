@@ -8,17 +8,26 @@ class AuthManager {
   /// Private constructor for singleton pattern.
   AuthManager._private();
 
+  /// The API client for authentication-related network requests.
+
+
   /// Static instance for singleton access.
   static final AuthManager instance = AuthManager._private();
 
   /// The current JWT token
   String? _jwt;
+  User? currentUser;
+
+  /// A stream that emits events whenever the user changes (e.g., login/logout).
+  Stream<dynamic> get userChange => Stream.value(currentUser);
 
   /// A notifier to signal when the session has been invalidated, allowing the UI to react accordingly.
   final ValueNotifier<bool> sessionInvalidated = ValueNotifier(false);
 
-  /// Getter for the current JWT.
-  String? get jwt => _jwt;
+  /// Get the current JWT token
+  String? getJwt() {
+    return _jwt;
+  }
 
   /// Load the JWT from shared preferences.
   /// This should be called at app startup to restore the session if possible.
@@ -48,6 +57,7 @@ class AuthManager {
     final localStorage = await SharedPreferences.getInstance();
     // TODO: implement saveProfile
     // await localStorage.setString('profile', profile.toJson());
+    currentUser = profile;
     _jwt = localStorage.getString(SharedPreferencesKeys.jwtToken);
     return _jwt;
   }
@@ -58,5 +68,9 @@ class AuthManager {
     // final String? profileJson = localStorage.getString('profile');
     _jwt = localStorage.getString(SharedPreferencesKeys.jwtToken);
     return null;
+  }
+
+  Stream<dynamic> userChanges() {
+    return userChange;
   }
 }

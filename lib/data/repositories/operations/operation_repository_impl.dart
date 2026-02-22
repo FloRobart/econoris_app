@@ -1,16 +1,16 @@
 import 'package:econoris_app/data/models/operations/operation_dto.dart';
 import 'package:econoris_app/data/models/operations/operation_dto_mapper.dart';
-import 'package:econoris_app/data/repositories/operations/operations_repository.dart';
-import 'package:econoris_app/data/repositories/operations/operations_repository_local.dart';
-import 'package:econoris_app/data/repositories/operations/operations_repository_remote.dart';
+import 'package:econoris_app/data/repositories/operations/operation_repository.dart';
+import 'package:econoris_app/data/repositories/operations/operation_repository_local.dart';
+import 'package:econoris_app/data/repositories/operations/operation_repository_remote.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 
 /// Repository interface for operations data.
-class OperationsRepositoryImpl implements OperationsRepository {
-  final OperationsRepositoryRemote remote;
-  final OperationsRepositoryLocal local;
+class OperationRepositoryImpl implements OperationRepository {
+  final OperationRepositoryRemote remote;
+  final OperationRepositoryLocal local;
 
-  OperationsRepositoryImpl({required this.remote, required this.local});
+  OperationRepositoryImpl({required this.remote, required this.local});
 
   /// Fetches a list of operations from the remote API.
   @override

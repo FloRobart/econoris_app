@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:econoris_app/routing/routes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 /// Widget de barre de navigation pour les écrans de l'application.
@@ -34,7 +35,7 @@ class AppNavigationBar extends StatelessWidget {
       return;
     }
 
-    Navigator.pushReplacementNamed(context, nextRoute);
+    GoRouter.of(context).pushNamed(nextRoute);
   }
 
   @override

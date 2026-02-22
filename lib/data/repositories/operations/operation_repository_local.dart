@@ -4,7 +4,7 @@ import 'package:econoris_app/data/models/operations/operation_dto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Repository interface for operations data stored locally.
-class OperationsRepositoryLocal {
+class OperationRepositoryLocal {
   static final String _operationsKey = SharedPreferencesKeys.operations;
 
   /// Fetches a list of operations from the local storage.

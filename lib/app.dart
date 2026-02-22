@@ -1,8 +1,9 @@
+import 'package:econoris_app/routing/router.dart';
 import 'package:econoris_app/ui/auth/widgets/login_screen.dart';
 import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/themes/theme_controller.dart';
 import 'package:econoris_app/ui/home/widgets/home_screen.dart';
-import 'package:econoris_app/ui/operations/widgets/operations_screen.dart';
+import 'package:econoris_app/ui/operations/widgets/operation_screen.dart';
 import 'package:econoris_app/ui/profile/widgets/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,38 +20,23 @@ class App extends ConsumerWidget {
     final themeModeAsync = ref.watch(themeControllerProvider);
     final themeMode = themeModeAsync.value ?? ThemeMode.system;
 
-    return MaterialApp(
+    return MaterialApp.router(
+      /* Title */
       title: AppConfig.appName,
+
+      /* Theming */
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
-      initialRoute: AppRoutes.home,
-      routes: {
-        /* Home */
-        AppRoutes.home: (context) => const HomeScreen(),
 
-        /* Auth */
-        AppRoutes.login: (context) => const LoginScreen(),
-        // AppRoutes.codeEntry: (context) => const CodeEntryPage(),
+      /* Local and internationalization */
+      // supportedLocales: const [Locale('fr', 'FR')],
+      // locale: const Locale('fr', 'FR'),
 
-        /* Profile */
-        AppRoutes.profile: (context) => const ProfileScreen(),
+      /* Routing */
+      routerConfig: ref.watch(routerProvider),
 
-        // /* Operations */
-        AppRoutes.operations: (context) => const OperationsScreen(),
-
-        // /* Subscriptions */
-        // AppRoutes.subscriptions: (context) => const SubscriptionsPage(),
-
-        /* Placeholder */
-        // AppRoutes.placeholder: (context) {
-        //   final args =
-        //       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-        //   final title = args?['title'] as String? ?? 'Placeholder';
-        //   return PlaceholderPage(title: title);
-        // },
-      },
-
+      /* Debug */
       debugShowCheckedModeBanner: false,
     );
   }

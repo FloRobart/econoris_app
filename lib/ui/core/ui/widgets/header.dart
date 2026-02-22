@@ -1,37 +1,37 @@
 import 'package:econoris_app/config/app_config.dart';
 import 'package:econoris_app/config/assets.dart';
-import 'package:econoris_app/domain/models/auth/user/user.dart';
 import 'package:econoris_app/routing/routes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:flutter/material.dart';
 
 /// Widget d'en-tête (AppBar) pour les écrans de l'application.
 class Header extends StatelessWidget implements PreferredSizeWidget {
-  const Header({super.key, required this.user});
+  const Header({super.key, required this.userName});
 
-  final User user;
+  final String userName;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   /* réinitialiser la navigation puis rediriger vers home page */
   void _onPressedHomeButton(BuildContext context) {
-    final currentRoute = ModalRoute.of(context)?.settings.name;
+    final String currentRoute = GoRouter.of(context).state.matchedLocation;
     if (currentRoute == AppRoutes.home) {
       return;
     }
 
-    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+    GoRouter.of(context).go(AppRoutes.home);
   }
 
   /* Redirige vers la page de profil si l'utilisateur n'est pas déjà sur cette page */
   void _onPressedProfileButton(BuildContext context) {
-    final currentRoute = ModalRoute.of(context)?.settings.name;
+    final currentRoute = GoRouter.of(context).state.matchedLocation;
     if (currentRoute == AppRoutes.profile) {
       return;
     }
 
-    Navigator.pushNamed(context, AppRoutes.profile);
+    GoRouter.of(context).pushNamed(AppRoutes.profile);
   }
 
   @override
@@ -68,7 +68,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                 onPressed: () => _onPressedProfileButton(context),
                 icon: const Icon(Icons.person),
                 label: Text(
-                  user.pseudo,
+                  userName,
                   style: TextStyle(
                     fontSize: AppTheme.fontSizes[AppFontSize.medium],
                     fontWeight: FontWeight.w500,

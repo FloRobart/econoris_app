@@ -4,7 +4,7 @@ import 'package:econoris_app/data/models/subscriptions/subscription_dto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Repository interface for subscriptions data stored locally.
-class SubscriptionsRepositoryLocal {
+class SubscriptionRepositoryLocal {
   static final String _subscriptionsKey = SharedPreferencesKeys.subscriptions;
 
   /// Fetches a list of subscriptions from the local storage.
