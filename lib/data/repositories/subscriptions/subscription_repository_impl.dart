@@ -36,7 +36,6 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
       local.saveSubscriptions([subscriptionDto]);
       return subscriptionDto.toDomain();
     } catch (e) {
-      print('Error adding subscription: $e');
       rethrow;
     }
   }

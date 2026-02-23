@@ -5,10 +5,9 @@ enum HttpMethod { get, post, put, delete }
 
 /// A simple API client that wraps http requests. This is a very basic implementation and can be extended with features like error handling, logging, etc.
 class ApiClient {
-  const ApiClient({required Dio dio}): _dio = dio;
+  const ApiClient({required Dio dio}) : _dio = dio;
 
   final Dio _dio;
-
 
   /// A helper method to wrap http requests and handle common logic like adding the Authorization header and checking for 401 responses.
   Future<Response> request(
@@ -27,6 +26,7 @@ class ApiClient {
           response = await _dio.get(
             stringUri,
             queryParameters: queryParameters,
+            options: Options(extra: {'authenticated': authenticated}),
           );
           break;
         case HttpMethod.post:
@@ -34,6 +34,7 @@ class ApiClient {
             stringUri,
             data: jsonEncode(body),
             queryParameters: queryParameters,
+            options: Options(extra: {'authenticated': authenticated}),
           );
           break;
         case HttpMethod.put:
@@ -41,6 +42,7 @@ class ApiClient {
             stringUri,
             data: jsonEncode(body),
             queryParameters: queryParameters,
+            options: Options(extra: {'authenticated': authenticated}),
           );
           break;
         case HttpMethod.delete:
@@ -48,6 +50,7 @@ class ApiClient {
             stringUri,
             queryParameters: queryParameters,
             data: jsonEncode(body),
+            options: Options(extra: {'authenticated': authenticated}),
           );
           break;
       }

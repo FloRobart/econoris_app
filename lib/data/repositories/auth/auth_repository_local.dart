@@ -32,13 +32,21 @@ class AuthRepositoryLocal {
 
   /// Save the JWT token in local storage for later use in authenticated requests.
   Future<void> saveJwt(String jwt) async {
-    await AuthManager.instance.setJwt(jwt);
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setString(SharedPreferencesKeys.jwtToken, jwt);
+  }
+
+  /// get the JWT token in local storage for later use in authenticated requests.
+  Future<String?> getJwt() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getString(SharedPreferencesKeys.jwtToken);
   }
 
   /// Logs out the user by remove local JWT token.
   /// This is a local operation, so it doesn't need to return anything.
   Future<void> logout() async {
-    await AuthManager.instance.removeJwt();
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.remove(SharedPreferencesKeys.jwtToken);
   }
 
   /// Registers a new user with the provided email and pseudo.

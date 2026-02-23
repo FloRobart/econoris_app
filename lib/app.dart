@@ -1,15 +1,10 @@
 import 'package:econoris_app/routing/router.dart';
-import 'package:econoris_app/ui/auth/widgets/login_screen.dart';
 import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/themes/theme_controller.dart';
-import 'package:econoris_app/ui/home/widgets/home_screen.dart';
-import 'package:econoris_app/ui/operations/widgets/operation_screen.dart';
-import 'package:econoris_app/ui/profile/widgets/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/app_config.dart';
-import 'routing/routes.dart';
 
 /// Racine de l'application.
 class App extends ConsumerWidget {

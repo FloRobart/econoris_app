@@ -14,13 +14,50 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> requestLoginCode(String email) async {
     try {
-      final String token = await remote.requestLoginCode(email);
+      /* Save email in local storage */
       await local.saveEmail(email);
+
+      /* Call API to request login code */
+      final String token = await remote.requestLoginCode(email);
+
+      /* Save the login token in local storage */
       await local.saveLoginToken(token);
-    } catch (_) {
+    } catch (error) {
       throw Exception('Failed to request login code');
     }
   }
+
+  @override
+  Future<String?> getEmail() async {
+    try {
+      return await local.getEmail();
+    } catch (_) {
+      throw Exception('Failed to get email 1');
+    }
+  }
+
+  @override
+  Future<bool> isLoggedIn() async {
+    try {
+      final String? jwt = await local.getJwt();
+      return jwt != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   @override
   Future<void> confirmLoginCode(String secret) async {
@@ -106,15 +143,6 @@ class AuthRepositoryImpl implements AuthRepository {
       await local.deleteUser();
     } catch (_) {
       throw Exception('Failed to delete user');
-    }
-  }
-
-  @override
-  Future<String?> getEmail() async {
-    try {
-      return await local.getEmail();
-    } catch (_) {
-      throw Exception('Failed to get email 1');
     }
   }
 }

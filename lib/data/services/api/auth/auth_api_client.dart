@@ -23,7 +23,7 @@ class AuthApiClient {
       body: body,
     );
 
-    return jsonDecode(response.data)['token'];
+    return response.data['token'];
   }
 
   /// Confirm the login code by sending the email, token, and secret.

@@ -36,7 +36,6 @@ class OperationRepositoryImpl implements OperationRepository {
       local.saveOperations([operationDto]);
       return operationDto.toDomain();
     } catch (e) {
-      print('Error adding operation: $e');
       rethrow;
     }
   }
