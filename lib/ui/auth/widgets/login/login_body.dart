@@ -1,4 +1,4 @@
-import 'package:econoris_app/providers/ui/auth/login_body_viewmodel_provider.dart';
+import 'package:econoris_app/providers/ui/auth/login/login_body_viewmodel_provider.dart';
 import 'package:econoris_app/routing/routes.dart';
 import 'package:econoris_app/ui/auth/widgets/login/login_header.dart';
 import 'package:flutter/material.dart';
