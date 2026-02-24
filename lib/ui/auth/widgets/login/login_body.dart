@@ -1,20 +1,23 @@
-import 'package:econoris_app/providers/ui/auth/auth_screen_viewmodel_provider.dart';
+import 'package:econoris_app/providers/ui/auth/login_body_viewmodel_provider.dart';
 import 'package:econoris_app/routing/routes.dart';
-import 'package:econoris_app/ui/auth/widgets/login_header.dart';
+import 'package:econoris_app/ui/auth/widgets/login/login_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class AuthBody extends ConsumerStatefulWidget {
-  const AuthBody({super.key, required this.initialEmail});
+/// Widget affichant le formulaire de connexion et d'inscription.
+class LoginBody extends ConsumerStatefulWidget {
+  const LoginBody({super.key, required this.initialEmail, this.errorMessage});
 
   final String? initialEmail;
+  final String? errorMessage;
 
   @override
-  ConsumerState<AuthBody> createState() => _AuthBodyState();
+  ConsumerState<LoginBody> createState() => _AuthBodyState();
 }
 
-class _AuthBodyState extends ConsumerState<AuthBody> {
+/// État du widget [LoginBody] gérant la logique de connexion et d'inscription.
+class _AuthBodyState extends ConsumerState<LoginBody> {
   late final TextEditingController _emailController;
 
   @override
@@ -22,6 +25,10 @@ class _AuthBodyState extends ConsumerState<AuthBody> {
     super.initState();
     _emailController =
         TextEditingController(text: widget.initialEmail ?? '');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(widget.errorMessage ?? 'Erreur inconnue')),
+    );
   }
 
   @override
@@ -32,8 +39,28 @@ class _AuthBodyState extends ConsumerState<AuthBody> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.read(authScreenViewModelProvider);
+    final viewModel = ref.read(loginBodyViewModelProvider);
 
+    /* Affichage d'une erreur */
+    void displayLoginError(String errorMessage) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
+
+    /* Resultat de la tentative de connexion */
+    void handleLoginResult(bool loginRequestSuccess) {
+      if (!loginRequestSuccess) {
+        displayLoginError('Échec de la connexion. Veuillez réessayer.');
+      }
+
+      if (!mounted) return;
+      context.go(AppRoutes.codeEntry);
+    }
+
+
+    /* Widget */
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -41,6 +68,7 @@ class _AuthBodyState extends ConsumerState<AuthBody> {
         const LoginHeader(),
         const SizedBox(height: 28),
 
+        /* Champ de saisie de l'email */
         TextFormField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
@@ -55,18 +83,11 @@ class _AuthBodyState extends ConsumerState<AuthBody> {
 
         const SizedBox(height: 16),
 
+        /* Bouton de connexion */
         ElevatedButton(
           onPressed: () async {
             final loginRequestSuccess = await viewModel.loginRequest(_emailController.text);
-            if (!loginRequestSuccess) {
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Échec de la connexion. Veuillez réessayer.')),
-              );
-            }
-
-            if (!mounted) return;
-            context.go(AppRoutes.codeEntry);
+            handleLoginResult(loginRequestSuccess);
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
@@ -76,6 +97,7 @@ class _AuthBodyState extends ConsumerState<AuthBody> {
 
         const SizedBox(height: 12),
 
+        /* Bouton de création de compte */
         OutlinedButton.icon(
           onPressed: () {
             viewModel.register(_emailController.text, 'PseudoTemp');

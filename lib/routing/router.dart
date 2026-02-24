@@ -1,8 +1,8 @@
 import 'package:econoris_app/providers/routing/global_auth_provider.dart';
-import 'package:econoris_app/routing/global_auth_state.dart';
+import 'package:econoris_app/data/services/auth/global_auth_state.dart';
 import 'package:econoris_app/routing/routes.dart';
-import 'package:econoris_app/ui/auth/widgets/code_entry_screen.dart';
-import 'package:econoris_app/ui/auth/widgets/auth_screen.dart';
+import 'package:econoris_app/ui/auth/widgets/code_entry/code_entry_screen.dart';
+import 'package:econoris_app/ui/auth/widgets/login/login_screen.dart';
 import 'package:econoris_app/ui/home/widgets/home_screen.dart';
 import 'package:econoris_app/ui/operations/widgets/operation_screen.dart';
 import 'package:econoris_app/ui/profile/widgets/profile_screen.dart';
@@ -45,7 +45,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
     routes: [
       GoRoute(path: AppRoutes.home, builder: (_, _) => const HomeScreen()),
-      GoRoute(path: AppRoutes.login, builder: (_, _) => const AuthScreen()),
+      GoRoute(path: AppRoutes.login, builder: (_, _) => const LoginScreen()),
       GoRoute(
         path: AppRoutes.codeEntry,
         builder: (_, _) => const CodeEntryScreen(),

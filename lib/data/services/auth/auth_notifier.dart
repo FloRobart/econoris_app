@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:econoris_app/providers/domains/use_cases/auth/auth_screen_usecase_provider.dart';
+import 'package:econoris_app/providers/domains/use_cases/auth/login/login_usecase_provider.dart';
 import 'package:econoris_app/providers/routing/global_auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,7 +13,7 @@ class AuthNotifier extends AsyncNotifier<void> {
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(() async {
-      ref.read(authScreenUseCaseProvider).loginRequest(email);
+      ref.read(loginUseCaseProvider).loginRequest(email);
 
       // 🔥 ICI on met authenticated
       ref.read(globalAuthProvider.notifier).setAuthenticated();

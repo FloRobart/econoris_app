@@ -1,7 +1,7 @@
 import 'package:econoris_app/data/repositories/auth/auth_repository.dart';
 
-class AuthScreenUseCase {
-  AuthScreenUseCase({required this.authRepository});
+class LoginUseCase {
+  LoginUseCase({required this.authRepository});
 
   final AuthRepository authRepository;
 

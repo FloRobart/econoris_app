@@ -1,9 +1,9 @@
-import 'package:econoris_app/domain/use_cases/auth/auth_screen_usecase.dart';
+import 'package:econoris_app/domain/use_cases/auth/login/login_usecase.dart';
 
-class AuthScreenViewModel {
-  AuthScreenViewModel({required this.authScreenUseCase});
+class LoginBodyViewModel {
+  LoginBodyViewModel({required this.authScreenUseCase});
 
-  final AuthScreenUseCase authScreenUseCase;
+  final LoginUseCase authScreenUseCase;
 
   Future<String?> get getEmail => authScreenUseCase.getEmail;
 
@@ -12,7 +12,6 @@ class AuthScreenViewModel {
       await authScreenUseCase.loginRequest(email);
       return true;
     } catch (e) {
-      print('Login request failed: $e');
       return false;
     }
   }
