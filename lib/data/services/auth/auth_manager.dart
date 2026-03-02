@@ -1,5 +1,5 @@
 import 'package:econoris_app/config/shared_preferences_keys.dart';
-import 'package:econoris_app/domain/models/auth/user/user.dart';
+import 'package:econoris_app/domain/models/users/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

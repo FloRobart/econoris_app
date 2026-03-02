@@ -1,4 +1,4 @@
-import 'package:econoris_app/domain/models/auth/user/user.dart';
+import 'package:econoris_app/domain/models/users/user.dart';
 import 'package:econoris_app/providers/data/services/auth_manager_provider.dart';
 import 'package:econoris_app/ui/core/ui/widgets/header.dart';
 import 'package:econoris_app/ui/core/ui/widgets/app_navigation_bar.dart';

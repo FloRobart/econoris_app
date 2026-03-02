@@ -1,5 +1,5 @@
-import 'package:econoris_app/data/models/auth/user/user_dto.dart';
-import 'package:econoris_app/domain/models/auth/user/user.dart';
+import 'package:econoris_app/data/models/users/user_dto.dart';
+import 'package:econoris_app/domain/models/users/user.dart';
 
 extension UserDtoMapper on UserDto {
   User toDomain() {

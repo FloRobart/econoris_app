@@ -1,4 +1,4 @@
-import 'package:econoris_app/domain/models/auth/user/user.dart';
+import 'package:econoris_app/domain/models/users/user.dart';
 
 /// Repository interface for authentication operations.
 abstract class AuthRepository {

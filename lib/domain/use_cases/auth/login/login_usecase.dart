@@ -1,5 +1,14 @@
 import 'package:econoris_app/data/repositories/auth/auth_repository.dart';
+import 'package:econoris_app/providers/data/repositories/auth/auth_repository_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Fournit une instance de [LoginUseCase].
+final loginUseCaseProvider = Provider<LoginUseCase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return LoginUseCase(authRepository: authRepository);
+});
+
+/// Cas d'utilisation pour la requête de connexion de l'utilisateur.
 class LoginUseCase {
   LoginUseCase({required this.authRepository});
 
