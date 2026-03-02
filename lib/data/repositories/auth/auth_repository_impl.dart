@@ -37,6 +37,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> confirmLoginCode(String secret) async {
+    try {
+      final String email = await local.getEmail() ?? '';
+      final String token = await local.getLoginToken() ?? '';
+      final String jwt = await remote.confirmLoginCode(email, token, secret);
+      await local.saveJwt(jwt);
+    } catch (_) {
+      throw Exception('Failed to confirm login code');
+    }
+  }
+
+  @override
   Future<bool> isLoggedIn() async {
     try {
       final String? jwt = await local.getJwt();
@@ -59,17 +71,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
 
 
-  @override
-  Future<void> confirmLoginCode(String secret) async {
-    try {
-      final String email = await local.getEmail() ?? '';
-      final String token = await local.getLoginToken() ?? '';
-      final String jwt = await remote.confirmLoginCode(email, token, secret);
-      await local.saveJwt(jwt);
-    } catch (_) {
-      throw Exception('Failed to confirm login code');
-    }
-  }
+  
 
   @override
   Future<void> logoutAll() async {

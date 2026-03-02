@@ -9,7 +9,7 @@ class CodeEntryBodyViewModel {
 
   Future<bool> verifyCode() async {
     try {
-      // await authScreenUseCase.verifyCode(email, code);
+      await authScreenUseCase.verifyCode(code);
       return true;
     } catch (e) {
       return false;

@@ -23,12 +23,22 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
   @override
   void initState() {
     super.initState();
-    _emailController =
-        TextEditingController(text: widget.initialEmail ?? '');
+    _emailController = TextEditingController(text: widget.initialEmail ?? '');
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(widget.errorMessage ?? 'Erreur inconnue')),
-    );
+    final errorMessage = widget.errorMessage;
+    if (errorMessage == null || errorMessage.isEmpty) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+    });
   }
 
   @override
@@ -44,9 +54,9 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
     /* Affichage d'une erreur */
     void displayLoginError(String errorMessage) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
     }
 
     /* Resultat de la tentative de connexion */
@@ -58,7 +68,6 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
       if (!mounted) return;
       context.go(AppRoutes.codeEntry);
     }
-
 
     /* Widget */
     return Column(
@@ -86,7 +95,9 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
         /* Bouton de connexion */
         ElevatedButton(
           onPressed: () async {
-            final loginRequestSuccess = await viewModel.loginRequest(_emailController.text);
+            final loginRequestSuccess = await viewModel.loginRequest(
+              _emailController.text,
+            );
             handleLoginResult(loginRequestSuccess);
           },
           style: ElevatedButton.styleFrom(
@@ -112,5 +123,3 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
     );
   }
 }
-
-
