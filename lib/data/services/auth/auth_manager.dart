@@ -2,6 +2,13 @@ import 'package:econoris_app/config/shared_preferences_keys.dart';
 import 'package:econoris_app/domain/models/users/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+
+/// Fournit une instance asynchrone d'[AuthManager].
+final authManagerProvider = Provider<AuthManager>((ref) {
+  return AuthManager.instance;
+});
 
 /// Singleton class to manage authentication state, including JWT storage and session invalidation.
 class AuthManager {

@@ -1,4 +1,4 @@
-import 'package:econoris_app/providers/routing/global_auth_provider.dart';
+import 'package:econoris_app/data/services/auth/global_auth_notifier.dart';
 import 'package:econoris_app/data/services/auth/global_auth_state.dart';
 import 'package:econoris_app/routing/routes.dart';
 import 'package:econoris_app/ui/auth/widgets/code_entry/code_entry_screen.dart';

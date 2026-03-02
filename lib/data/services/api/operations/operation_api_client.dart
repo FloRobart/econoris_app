@@ -1,6 +1,12 @@
 import 'dart:convert';
 import 'package:econoris_app/data/services/api/api_client.dart';
 import 'package:econoris_app/config/app_config.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+/// Fournit une instance asynchrone d'[OperationApiClient].
+final operationApiClientProvider = Provider<OperationApiClient>((ref) {
+  return OperationApiClient(apiClient: ref.read(apiClientProvider));
+});
 
 /// Operations-specific API wrapper using the shared [ApiClient] transport.
 class OperationApiClient {

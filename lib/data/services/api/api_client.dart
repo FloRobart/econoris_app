@@ -1,6 +1,26 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:econoris_app/config/app_config.dart';
+import 'package:econoris_app/data/services/interceptors/auth_interceptor.dart';
 
+
+/// Fournit une instance asynchrone d'[Dio] configurée avec les interceptors nécessaires.
+final dioProvider = Provider<Dio>((ref) {
+  final dio = Dio(BaseOptions(baseUrl: AppConfig.dataUrl));
+  dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+  dio.interceptors.add(AuthInterceptor(getJwt: ref.watch(authManagerProvider).getJwt));
+
+  return dio;
+});
+
+/// Fournit une instance asynchrone d'[ApiClient].
+final apiClientProvider = Provider<ApiClient>((ref) {
+  return ApiClient(dio: ref.read(dioProvider));
+});
+
+/// Enum to represent HTTP methods.
 enum HttpMethod { get, post, put, delete }
 
 /// A simple API client that wraps http requests. This is a very basic implementation and can be extended with features like error handling, logging, etc.

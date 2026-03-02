@@ -1,4 +1,12 @@
 import 'package:econoris_app/domain/use_cases/auth/login/login_usecase.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+/// Fournit une instance de [CodeEntryBodyViewModel].
+final codeEntryBodyViewModelProvider = Provider<CodeEntryBodyViewModel>((ref) {
+  return CodeEntryBodyViewModel(
+    authScreenUseCase: ref.read(loginUseCaseProvider),
+  );
+});
 
 class CodeEntryBodyViewModel {
   CodeEntryBodyViewModel({required this.authScreenUseCase});

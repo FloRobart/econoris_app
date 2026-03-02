@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:econoris_app/providers/domains/use_cases/auth/login/login_usecase_provider.dart';
-import 'package:econoris_app/providers/routing/global_auth_provider.dart';
+import 'package:econoris_app/data/services/auth/global_auth_notifier.dart';
+import 'package:econoris_app/domain/use_cases/auth/login/login_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthNotifier extends AsyncNotifier<void> {
