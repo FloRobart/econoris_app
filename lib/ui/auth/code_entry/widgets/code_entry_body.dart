@@ -1,4 +1,4 @@
-import 'package:econoris_app/ui/auth/view_models/code_entry/code_entry_body_viewmodel.dart';
+import 'package:econoris_app/ui/auth/code_entry/view_models/code_entry_body_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

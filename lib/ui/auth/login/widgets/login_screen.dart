@@ -1,7 +1,7 @@
 import 'package:econoris_app/routing/routes.dart';
-import 'package:econoris_app/ui/auth/view_models/login/login_body_viewmodel.dart';
+import 'package:econoris_app/ui/auth/login/view_models/login_body_viewmodel.dart';
 import 'package:econoris_app/ui/auth/widgets/auth_base.dart';
-import 'package:econoris_app/ui/auth/widgets/login/login_body.dart';
+import 'package:econoris_app/ui/auth/login/widgets/login_body.dart';
 import 'package:econoris_app/ui/core/ui/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

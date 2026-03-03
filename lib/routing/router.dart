@@ -1,8 +1,8 @@
 import 'package:econoris_app/data/services/auth/global_auth_notifier.dart';
 import 'package:econoris_app/data/services/auth/global_auth_state.dart';
 import 'package:econoris_app/routing/routes.dart';
-import 'package:econoris_app/ui/auth/widgets/code_entry/code_entry_screen.dart';
-import 'package:econoris_app/ui/auth/widgets/login/login_screen.dart';
+import 'package:econoris_app/ui/auth/code_entry/widgets/code_entry_screen.dart';
+import 'package:econoris_app/ui/auth/login/widgets/login_screen.dart';
 import 'package:econoris_app/ui/home/widgets/home_screen.dart';
 import 'package:econoris_app/ui/operations/widgets/operation_screen.dart';
 import 'package:econoris_app/ui/profile/widgets/profile_screen.dart';
