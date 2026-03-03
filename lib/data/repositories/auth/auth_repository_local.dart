@@ -1,6 +1,4 @@
 import 'package:econoris_app/config/shared_preferences_keys.dart';
-import 'package:econoris_app/data/services/auth/auth_manager.dart';
-import 'package:econoris_app/domain/models/users/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepositoryLocal {
@@ -47,35 +45,5 @@ class AuthRepositoryLocal {
   Future<void> logout() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove(SharedPreferencesKeys.jwtToken);
-  }
-
-  /// Registers a new user with the provided email and pseudo.
-  /// Returns the JWT token if the registration is successful.
-  Future<String?> registerUser(User profile) async {
-    return await AuthManager.instance.saveProfile(profile);
-  }
-
-  /// Retrieves the user's profile information.
-  /// Returns a [Profile] containing the user's profile data.
-  Future<User?> getProfile() async {
-    return await AuthManager.instance.loadProfile();
-    // final String? profileJson = await sharedPreferencesService.getString('profile');
-    // if (profileJson == null) {
-    //   throw Exception('No profile found in local storage');
-    // }
-    // return Profile.fromJson(profileJson);
-  }
-
-  /// Updates the user's profile with the provided pseudo.
-  /// Returns the new JWT token if the update is successful.
-  Future<String?> updateProfile(String pseudo) async {
-    // TODO: implement updateProfile
-    throw UnimplementedError();
-  }
-
-  /// Deletes the user's account.
-  Future<void> deleteUser() async {
-    // TODO: implement deleteUser
-    throw UnimplementedError();
   }
 }

@@ -1,24 +1,25 @@
-import 'package:econoris_app/domain/use_cases/auth/login/login_usecase.dart';
+import 'package:econoris_app/domain/use_cases/auth/code_entry/code_entry_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance de [CodeEntryBodyViewModel].
 final codeEntryBodyViewModelProvider = Provider<CodeEntryBodyViewModel>((ref) {
   return CodeEntryBodyViewModel(
-    authScreenUseCase: ref.read(loginUseCaseProvider),
+    codeEntryUseCase: ref.read(codeEntryUseCaseProvider),
   );
 });
 
 class CodeEntryBodyViewModel {
-  CodeEntryBodyViewModel({required this.authScreenUseCase});
+  CodeEntryBodyViewModel({
+    required this.codeEntryUseCase,
+  });
 
-  final LoginUseCase authScreenUseCase;
+  final CodeEntryUseCase codeEntryUseCase;
 
   String code = "0";
 
   Future<bool> verifyCode() async {
     try {
-      await authScreenUseCase.verifyCode(code);
-      return true;
+      return await codeEntryUseCase.verifyCode(code);
     } catch (e) {
       return false;
     }

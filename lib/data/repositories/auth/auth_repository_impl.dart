@@ -1,15 +1,19 @@
-import 'package:econoris_app/data/models/users/user_dto.dart';
-import 'package:econoris_app/data/models/users/user_dto_mapper.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_local.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_remote.dart';
-import 'package:econoris_app/domain/models/users/user.dart';
+import 'package:econoris_app/data/services/auth/global_auth_notifier.dart';
+import 'package:flutter/material.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
+  AuthRepositoryImpl({
+    required this.remote,
+    required this.local,
+    required this.globalAuthNotifier,
+  });
+
   final AuthRepositoryRemote remote;
   final AuthRepositoryLocal local;
-
-  AuthRepositoryImpl({required this.remote, required this.local});
+  final GlobalAuthNotifier globalAuthNotifier;
 
   @override
   Future<void> requestLoginCode(String email) async {
@@ -37,12 +41,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> confirmLoginCode(String secret) async {
+  Future<bool> confirmLoginCode(String secret) async {
     try {
       final String email = await local.getEmail() ?? '';
       final String token = await local.getLoginToken() ?? '';
       final String jwt = await remote.confirmLoginCode(email, token, secret);
+      debugPrint('JWT : $jwt');
       await local.saveJwt(jwt);
+      globalAuthNotifier.setAuthenticated();
+
+      return true;
     } catch (_) {
       throw Exception('Failed to confirm login code');
     }
@@ -57,21 +65,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return false;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 
   @override
   Future<void> logoutAll() async {
@@ -89,62 +82,6 @@ class AuthRepositoryImpl implements AuthRepository {
       await local.logout();
     } catch (_) {
       throw Exception('Failed to logout');
-    }
-  }
-
-  @override
-  Future<User> registerUser(String email, String pseudo) async {
-    try {
-      await remote.registerUser(email, pseudo);
-      final profileDto = await remote.getProfile();
-      final profile = profileDto.toDomain();
-      await local.registerUser(profile);
-      return profile;
-    } catch (_) {
-      throw Exception('Failed to register user');
-    }
-  }
-
-  @override
-  Future<User> getProfile() async {
-    try {
-      final UserDto dto = await remote.getProfile();
-      final User user = dto.toDomain();
-      await local.registerUser(user);
-
-      return user;
-    } catch (_) {
-      final User user =
-          await local.getProfile() ??
-          (throw Exception('Failed to get profile'));
-      return user;
-    }
-  }
-
-  @override
-  Future<User> updateProfile(String pseudo) async {
-    try {
-      final String email = await local.getEmail() ?? '';
-      final String newJwt = await remote.updateProfile(email, pseudo);
-      await local.saveJwt(newJwt);
-
-      final profileDto = await remote.getProfile();
-      final profile = profileDto.toDomain();
-      await local.registerUser(profile);
-
-      return profile;
-    } catch (_) {
-      throw Exception('Failed to update profile');
-    }
-  }
-
-  @override
-  Future<void> deleteUser() async {
-    try {
-      await remote.deleteUser();
-      await local.deleteUser();
-    } catch (_) {
-      throw Exception('Failed to delete user');
     }
   }
 }

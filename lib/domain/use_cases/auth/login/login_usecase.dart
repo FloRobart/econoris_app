@@ -19,10 +19,6 @@ class LoginUseCase {
     await authRepository.requestLoginCode(email);
   }
 
-  Future<void> verifyCode(String code) async {
-    await authRepository.confirmLoginCode(code);
-  }
-
   void register(String email, String pseudo) {
     // Implement registration logic here
   }

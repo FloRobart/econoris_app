@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:econoris_app/data/services/api/api_client.dart';
 import 'package:econoris_app/config/app_config.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance asynchrone d'[AuthApiClient].
@@ -49,7 +50,10 @@ class AuthApiClient {
       body: body,
     );
 
-    return jsonDecode(response.data)['jwt'];
+    debugPrint('Response data: ${response.data}');
+    debugPrint("Response JWT : ${response.data['jwt']}");
+
+    return response.data['jwt'];
   }
 
   /// Logout the user
@@ -78,7 +82,7 @@ class AuthApiClient {
       body: body,
     );
 
-    return jsonDecode(response.data)['jwt'];
+    return response.data['jwt'];
   }
 
   /// Get the current user's profile information.
@@ -90,7 +94,7 @@ class AuthApiClient {
       authenticated: true,
     );
 
-    return jsonDecode(response.data);
+    return response.data;
   }
 
   /// Update the current user's profile information.
