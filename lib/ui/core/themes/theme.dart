@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 
 enum AppFontSize { small, medium, large, xlarge, xxlarge }
 
-/// Themes centralises pour garantir une apparence coherente.
 class AppTheme {
   AppTheme._();
+
+  /// Couleur principale d'Éconoris
+  static const Color primarySeed = Color(0xFFFCB82A);
+
+  /// Couleurs custom (faciles à changer)
+  static const Color success = Color(0xFF4CAF50);
+  static const Color error = Color(0xFFE53935);
+  static const Color warning = Color(0xFFFF9800);
 
   static const fontSizes = {
     AppFontSize.small: 12.0,
@@ -14,77 +21,134 @@ class AppTheme {
     AppFontSize.xxlarge: 28.0,
   };
 
+  /// LIGHT THEME
   static ThemeData light() {
-    return ThemeData.light().copyWith(
-      primaryColor: Colors.amber,
-      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(
-        surface: Colors.white,
-        primary: Colors.amber,
-        onPrimary: Colors.white,
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: primarySeed,
+      brightness: Brightness.light,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: colorScheme,
+
+      scaffoldBackgroundColor: colorScheme.surface,
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        elevation: 0,
       ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFBB80A),
-          foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          padding: const EdgeInsets.symmetric(
+            vertical: 14,
+            horizontal: 20,
           ),
-          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 1,
         ),
       ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: Colors.black),
-      ),
+
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.black,
-          side: const BorderSide(color: Color(0xFFFBB80A)),
+          foregroundColor: colorScheme.primary,
+          side: BorderSide(color: colorScheme.primary),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Color(0xFFFBB80A),
-        foregroundColor: Colors.black,
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+        ),
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
+        ),
       ),
     );
   }
 
+  /// DARK THEME
   static ThemeData dark() {
-    return ThemeData.dark().copyWith(
-      primaryColor: Colors.amber.shade700,
-      colorScheme: ColorScheme.fromSwatch(
-        primarySwatch: Colors.amber,
-        brightness: Brightness.dark,
-      ).copyWith(primary: Colors.amber.shade700, onPrimary: Colors.white),
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: primarySeed,
+      brightness: Brightness.dark,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: colorScheme,
+
+      scaffoldBackgroundColor: colorScheme.surface,
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        elevation: 0,
+      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFBB80A),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          padding: const EdgeInsets.symmetric(
+            vertical: 14,
+            horizontal: 20,
           ),
-          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 1,
         ),
       ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: Colors.white),
-      ),
+
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.white,
-          side: const BorderSide(color: Color(0xFFFBB80A)),
+          foregroundColor: colorScheme.primary,
+          side: BorderSide(color: colorScheme.primary),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Color(0xFFFBB80A),
-        foregroundColor: Colors.white,
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+        ),
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
     );
   }

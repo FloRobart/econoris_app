@@ -41,6 +41,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          /// Logo et nom de l'application
           Row(
             children: [
               TextButton.icon(
@@ -57,10 +58,10 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
               ),
-              
             ],
           ),
 
+          /// Bouton de profil avec le nom de l'utilisateur
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

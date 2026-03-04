@@ -40,24 +40,27 @@ class AppNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return BottomNavigationBar(
+      selectedItemColor: theme.textSelectionTheme.selectionColor,
       currentIndex: _currentIndex(context),
       onTap: (index) => _onTap(context, index),
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          activeIcon: Icon(Icons.home),
+          icon: const Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home_outlined, color: theme.textSelectionTheme.selectionColor),
           label: 'Accueil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.login_outlined),
-          activeIcon: Icon(Icons.login),
-          label: 'Connexion',
+          icon: const Icon(Icons.list_alt),
+          activeIcon: Icon(Icons.list_alt, color: theme.textSelectionTheme.selectionColor),
+          label: 'Opérations',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.list_outlined),
-          activeIcon: Icon(Icons.list),
-          label: 'Opérations',
+          icon: const Icon(Icons.repeat),
+          activeIcon: Icon(Icons.repeat, color: theme.textSelectionTheme.selectionColor),
+          label: 'Subscriptions',
         ),
       ],
     );
