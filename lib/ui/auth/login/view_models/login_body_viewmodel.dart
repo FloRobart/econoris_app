@@ -1,5 +1,4 @@
 import 'package:econoris_app/domain/use_cases/auth/login/login_usecase.dart';
-import 'package:econoris_app/data/services/auth/auth_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance de [LoginBodyViewModel].
@@ -14,8 +13,6 @@ final authInitialEmailProvider = FutureProvider<String?>((ref) async {
   final viewModel = ref.read(loginBodyViewModelProvider);
   return viewModel.getEmail;
 });
-
-final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, void>(AuthNotifier.new);
 
 
 /// ViewModel pour la logique de l'écran de connexion.
