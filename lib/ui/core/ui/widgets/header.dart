@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 
 /// Widget d'en-tête (AppBar) pour les écrans de l'application.
 class Header extends StatelessWidget implements PreferredSizeWidget {
-  const Header({super.key, required this.userName});
-
-  final String userName;
+  const Header({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -31,7 +29,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       return;
     }
 
-    GoRouter.of(context).pushNamed(AppRoutes.profile);
+    GoRouter.of(context).push(AppRoutes.profile);
   }
 
   @override
@@ -70,16 +68,9 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              TextButton.icon(
+              IconButton(
                 onPressed: () => _onPressedProfileButton(context),
                 icon: const Icon(Icons.person),
-                label: Text(
-                  userName,
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizes[AppFontSize.medium],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ),
             ],
           ),

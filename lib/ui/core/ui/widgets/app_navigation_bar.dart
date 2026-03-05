@@ -35,7 +35,7 @@ class AppNavigationBar extends StatelessWidget {
       return;
     }
 
-    GoRouter.of(context).pushNamed(nextRoute);
+    GoRouter.of(context).push(nextRoute);
   }
 
   @override
