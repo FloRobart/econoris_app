@@ -8,8 +8,8 @@ class AppConfig {
 
   /* Charge les variables de configuration à partir du fichier .env. */
   static void load() {
-    appName = dotenv.get('APP_NAME', fallback: 'Econoris');
-    authUrl = dotenv.get('AUTH_URL', fallback: 'http://localhost:26001');
-    dataUrl = dotenv.get('DATA_URL', fallback: 'http://localhost:26002');
+    appName = 'Econoris';//dotenv.get('APP_NAME', fallback: 'Econoris');
+    authUrl = 'http://192.168.1.91:26001';//dotenv.get('AUTH_URL', fallback: 'http://192.168.1.91:26001');
+    dataUrl = 'http://192.168.1.91:26002';//dotenv.get('DATA_URL', fallback: 'http://192.168.1.91:26002');
   }
 }

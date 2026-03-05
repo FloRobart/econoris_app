@@ -42,23 +42,28 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           /// Logo et nom de l'application
-          Row(
-            children: [
-              TextButton.icon(
-                onPressed: () => _onPressedHomeButton(context),
-                icon: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Image.asset(Assets.logo_512, height: 40),
-              ),
-                label: Text(
-                AppConfig.appName,
-                style: TextStyle(
-                  fontSize: AppTheme.fontSizes[AppFontSize.xlarge],
-                  fontWeight: FontWeight.w500,
+          Expanded(
+            child: Row(
+              children: [
+                Flexible(
+                  child: TextButton.icon(
+                    onPressed: () => _onPressedHomeButton(context),
+                    icon: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Image.asset(Assets.logo_512, height: 40),
+                    ),
+                    label: Text(
+                      AppConfig.appName,
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(
+                        fontSize: AppTheme.fontSizes[AppFontSize.xlarge],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           /// Bouton de profil avec le nom de l'utilisateur

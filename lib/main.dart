@@ -10,7 +10,7 @@ import 'config/app_config.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Load environment variables from .env
-  await dotenv.load(fileName: '.env');
+  // await dotenv.load(fileName: '.env');
 
   // Initialize immutable Config values from dotenv
   AppConfig.load();
