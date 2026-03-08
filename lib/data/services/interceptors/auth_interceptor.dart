@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:econoris_app/data/services/auth/auth_notifier.dart';
 
 /// Dio interceptor that injects the bearer token and refreshes it on demand.
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor({required this.getJwt});
+  AuthInterceptor({required this.authNotifier});
 
-  final String? Function() getJwt;
+  final AuthNotifier authNotifier;
 
   @override
   Future<void> onRequest(
@@ -26,13 +27,26 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
-    final token = getJwt();
+    /* If the user is not authenticated, we reject the request with an error. */
+    if (!authNotifier.isAuthenticated) {
+      handler.reject(
+        DioException(
+          requestOptions: options,
+          type: DioExceptionType.unknown,
+          error: 'AuthInterceptor: User not authenticated',
+        ),
+      );
+      return;
+    }
+
+    /* If the user is authenticated, we add the Authorization header with the JWT. */
+    final token = authNotifier.getJwt;
     if (token == null) {
       handler.reject(
         DioException(
           requestOptions: options,
           type: DioExceptionType.unknown,
-          error: 'AuthInterceptor: Access token NULL',
+          error: 'AuthInterceptor: JWT NULL',
         ),
       );
       return;

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:econoris_app/data/services/auth/auth_manager.dart';
+import 'package:econoris_app/data/services/auth/auth_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:econoris_app/config/app_config.dart';
 import 'package:econoris_app/data/services/interceptors/auth_interceptor.dart';
@@ -10,7 +10,7 @@ import 'package:econoris_app/data/services/interceptors/auth_interceptor.dart';
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(baseUrl: AppConfig.dataUrl));
   dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
-  dio.interceptors.add(AuthInterceptor(getJwt: ref.watch(authManagerProvider).getJwt));
+  dio.interceptors.add(AuthInterceptor(authNotifier: ref.read(authNotifierProvider.notifier)));
 
   return dio;
 });
@@ -52,7 +52,7 @@ class ApiClient {
         case HttpMethod.post:
           response = await _dio.post(
             stringUri,
-            data: jsonEncode(body),
+            data: body == null ? {} : jsonEncode(body),
             queryParameters: queryParameters,
             options: Options(extra: {'authenticated': authenticated}),
           );
@@ -60,7 +60,7 @@ class ApiClient {
         case HttpMethod.put:
           response = await _dio.put(
             stringUri,
-            data: jsonEncode(body),
+            data: body == null ? {} : jsonEncode(body),
             queryParameters: queryParameters,
             options: Options(extra: {'authenticated': authenticated}),
           );
@@ -69,7 +69,7 @@ class ApiClient {
           response = await _dio.delete(
             stringUri,
             queryParameters: queryParameters,
-            data: jsonEncode(body),
+            data: body == null ? {} : jsonEncode(body),
             options: Options(extra: {'authenticated': authenticated}),
           );
           break;

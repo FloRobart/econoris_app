@@ -2,7 +2,7 @@ import 'package:econoris_app/data/services/api/auth/auth_api_client.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_impl.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_local.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_remote.dart';
-import 'package:econoris_app/data/services/auth/global_auth_notifier.dart';
+import 'package:econoris_app/data/services/auth/auth_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance asynchrone d'[AuthRepository].
@@ -11,7 +11,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     authApiClient: ref.read(authApiClientProvider),
   );
   final local = AuthRepositoryLocal();
-  final globalAuthNotifier = ref.read(globalAuthProvider.notifier);
+  final globalAuthNotifier = ref.read(authNotifierProvider.notifier);
 
   return AuthRepositoryImpl(
     remote: remote,
@@ -25,8 +25,4 @@ abstract class AuthRepository {
   Future<void> requestLoginCode(String email);
   Future<bool> confirmLoginCode(String secret);
   Future<String?> getEmail();
-  Future<bool> isLoggedIn();
-
-  Future<void> logoutAll();
-  Future<void> logout();
 }
