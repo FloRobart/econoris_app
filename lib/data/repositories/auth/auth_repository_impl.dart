@@ -15,6 +15,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthNotifier globalAuthNotifier;
 
   @override
+  /// Requests a login code for the given email, saves the email and token locally.
   Future<void> requestLoginCode(String email) async {
     try {
       /* Save email in local storage */
@@ -31,6 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  /// Confirms the login code with the given secret, retrieves the JWT token, and updates the global auth state.
   Future<bool> confirmLoginCode(String secret) async {
     try {
       final String email = await local.getEmail() ?? '';
@@ -45,6 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  /// Retrieves the email from local storage.
   Future<String?> getEmail() async {
     try {
       return await local.getEmail();

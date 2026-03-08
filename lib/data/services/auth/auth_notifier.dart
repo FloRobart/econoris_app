@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:econoris_app/config/shared_preferences_keys.dart';
-import 'package:econoris_app/data/services/auth/auth_status.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+/// Definit les différents états d'authentification possibles pour l'application.
+enum AuthStatus { unknown, authenticated, unauthenticated }
 
 /// Fournit une instance de [AuthNotifier] pour gérer l'état d'authentification global de l'application.
 final authNotifierProvider = NotifierProvider<AuthNotifier, AuthStatus>(

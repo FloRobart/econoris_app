@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:econoris_app/data/services/api/api_client.dart';
 import 'package:econoris_app/config/app_config.dart';
 import 'package:flutter/widgets.dart';
@@ -66,62 +65,6 @@ class AuthApiClient {
 
     if (response.statusCode != null && (response.statusCode! < 200 || response.statusCode! >= 300)) {
       throw Exception('Failed to logout');
-    }
-  }
-
-  /// Register a new user with the given email and pseudo.
-  /// The server is expected to return a JWT on successful registration.
-  /// Return the JWT token if the registration is successful. Otherwise, an exception is thrown.
-  Future<String> registerUser(String email, String pseudo) async {
-    final body = {'email': email, 'pseudo': pseudo};
-
-    final response = await apiClient.request(
-      HttpMethod.post,
-      _baseUrl,
-      authenticated: false,
-      body: body,
-    );
-
-    return response.data['jwt'];
-  }
-
-  /// Get the current user's profile information.
-  /// The server is expected to return the user's profile data if the JWT is valid.
-  Future<Map<String, String>> getProfile() async {
-    final response = await apiClient.request(
-      HttpMethod.get,
-      _baseUrl,
-      authenticated: true,
-    );
-
-    return response.data;
-  }
-
-  /// Update the current user's profile information.
-  /// The server is expected to update the user's profile and return the new JWT.
-  Future<String> updateUser(String email, String name) async {
-    final body = {'email': email, 'name': name};
-    final response = await apiClient.request(
-      HttpMethod.put,
-      _baseUrl,
-      authenticated: true,
-      body: body,
-    );
-
-    return jsonDecode(response.data)['jwt'];
-  }
-
-  /// Delete the current user's account.
-  /// The server is expected to delete the user's account if the JWT is valid.
-  Future<void> deleteUser() async {
-    final response = await apiClient.request(
-      HttpMethod.delete,
-      _baseUrl,
-      authenticated: true,
-    );
-
-    if (response.statusCode != null && (response.statusCode! < 200 || response.statusCode! >= 300)) {
-      throw Exception('Failed to delete user');
     }
   }
 }

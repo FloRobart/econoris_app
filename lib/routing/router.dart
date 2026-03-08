@@ -1,5 +1,4 @@
 import 'package:econoris_app/data/services/auth/auth_notifier.dart';
-import 'package:econoris_app/data/services/auth/auth_status.dart';
 import 'package:econoris_app/routing/routes.dart';
 import 'package:econoris_app/ui/auth/code_entry/widgets/code_entry_screen.dart';
 import 'package:econoris_app/ui/auth/login/widgets/login_screen.dart';
@@ -10,6 +9,7 @@ import 'package:econoris_app/ui/subscriptions/widgets/subscriptions_screen.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+/// Fournit une instance asynchrone de [GoRouter] configuré avec les routes de l'application et la logique de redirection basée sur l'état d'authentification.
 final routerProvider = Provider<GoRouter>((ref) {
   final authStatus = ref.watch(authNotifierProvider);
 
