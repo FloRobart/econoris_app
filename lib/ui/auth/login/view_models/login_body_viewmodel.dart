@@ -31,8 +31,4 @@ class LoginBodyViewModel {
       return false;
     }
   }
-
-  void register(String email, String pseudo) {
-    authScreenUseCase.register(email, pseudo);
-  }
 }

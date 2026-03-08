@@ -18,8 +18,4 @@ class LoginUseCase {
   Future<void> loginRequest(String email) async {
     await authRepository.requestLoginCode(email);
   }
-
-  void register(String email, String pseudo) {
-    // Implement registration logic here
-  }
 }

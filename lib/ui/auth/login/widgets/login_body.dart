@@ -103,21 +103,7 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
-          child: const Text('Se connecter'),
-        ),
-
-        const SizedBox(height: 12),
-
-        /* Bouton de création de compte */
-        OutlinedButton.icon(
-          onPressed: () {
-            viewModel.register(_emailController.text, 'PseudoTemp');
-          },
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-          ),
-          icon: const Icon(Icons.person_add_alt_1_rounded),
-          label: const Text('Créer un compte'),
+          child: const Text('Se connecter / S\'inscrire'),
         ),
       ],
     );

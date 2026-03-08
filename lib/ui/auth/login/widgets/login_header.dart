@@ -33,6 +33,12 @@ class LoginHeader extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium,
         ),
+        const SizedBox(height: 8),
+        Text(
+          'Entrez votre adresse e-mail pour commencer. Si vous avez déjà un compte, vous serez connecté. Sinon, un compte sera créé pour vous.',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium,
+        ),
       ],
     );
   }
