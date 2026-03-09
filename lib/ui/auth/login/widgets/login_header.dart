@@ -13,14 +13,14 @@ class LoginHeader extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Comment fonctionne l\'authentification ?'),
-          content: Text(
-            'Entre ton adresse e-mail pour te connecter ou créer un compte.\n\nSi vous avez déjà un compte avec cette adresse e-mail, cela vous permettra de vous connectez et donc de retrouver vos données.\nSi vous n’avez pas de compte, un compte vous sera créé.',
+          title: const Text('Comment fonctionne l\'authentification ?'),
+          content: const Text(
+            'Il n\'y a aucune différence pour vous entre la connexion et l\'inscription.\n\nEntrez votre adresse e-mail pour vous connecter ou créer un compte.\n\nSi vous avez déjà un compte avec cette adresse e-mail, cela vous permettra de vous connectez et donc de retrouver vos données.\nSi vous n’avez pas de compte, un compte vous sera créé.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Fermer'),
+              child: const Text('Fermer'),
             ),
           ],
         ),
@@ -32,14 +32,14 @@ class LoginHeader extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Pourquoi il n\'y a pas de mot de passe ?'),
-          content: Text(
+          title: const Text('Pourquoi il n\'y a pas de mot de passe ?'),
+          content: const Text(
             'Éconoris utilise une méthode d\'authentification sans mot de passe pour simplifier le processus de connexion.\n\nLorsque vous entrez votre adresse e-mail, Éconoris vous envoie un code à usage unique par e-mail que vous devez saisir pour vérifier votre identité.\n\nCette méthode est plus simple et plus sécurisée, car elle élimine les risques associés aux mots de passe faibles, réutilisés, compromis ou oubliés.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Fermer'),
+              child: const Text('Fermer'),
             ),
           ],
         ),
@@ -51,14 +51,14 @@ class LoginHeader extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Comment sont sécurisés mes données ?'),
-          content: Text(
+          title: const Text('Comment sont sécurisés mes données ?'),
+          content: const Text(
             'Éconoris prend la sécurité de vos données très au sérieux. Nous utilisons des protocoles de sécurité avancés pour protéger vos informations personnelles et financières.\n\nAucune données utilisateur est utilisée à quelconque fin commerciale ou publicitaire. Nous ne partageons pas vos données avec des tiers.\n\nNous récoltons et stockons le minimum d\'information personnel que possible.\n\nToutes vos données sont stockées de manière sécurisée sur des serveurs Français qui appartiennent à une société Française également.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Fermer'),
+              child: const Text('Fermer'),
             ),
           ],
         ),
