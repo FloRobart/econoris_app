@@ -1,10 +1,10 @@
 import 'package:econoris_app/config/app_config.dart';
-import 'package:econoris_app/domain/models/users/user.dart';
-import 'package:econoris_app/ui/core/themes/theme.dart';
-import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:econoris_app/ui/core/ui/widgets/base_app.dart';
-import 'package:econoris_app/ui/core/ui/widgets/card_container.dart';
 import 'package:econoris_app/ui/profile/view_models/profile_screen_viewmodel.dart';
+import 'package:econoris_app/ui/profile/widgets/logout_section.dart';
+import 'package:econoris_app/ui/profile/widgets/overview_section.dart';
+import 'package:econoris_app/ui/profile/widgets/status_section.dart';
+import 'package:econoris_app/ui/profile/widgets/theme_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,155 +27,32 @@ class ProfileScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Sélecteur de thème
+                const ThemeSection(),
+
+                const SizedBox(height: 12),
+
                 /// Header card with avatar and basic info
-                CardContainer(
-                  child: Row(
-                    children: [
-                      /// User avatar with initials
-                      CircleAvatar(
-                        radius: 34,
-                        child: Text(
-                          viewModel.getUserInitial,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      /// User info (pseudo and email)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// Pseudo
-                            Text(
-                              viewModel.getUserPseudo,
-                              style: theme.textTheme.titleMedium,
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            /// Email
-                            Text(
-                              viewModel.getUserEmail,
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                OverViewSection(
+                  pseudo: viewModel.getUserPseudo,
+                  email: viewModel.getUserEmail,
                 ),
 
                 const SizedBox(height: 12),
 
                 /// Account status section
-                CardContainer(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Statut du compte',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      /// Connection status
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.link,
-                            color: viewModel.isUserConnected
-                                ? AppTheme.success
-                                : AppTheme.error,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${!viewModel.isUserConnected ? 'Non ' : ''}Connecté',
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      /// Email verification status
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.email,
-                            color: viewModel.isUserEmailVerified
-                                ? AppTheme.success
-                                : AppTheme.warning,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Email ${!viewModel.isUserEmailVerified ? 'non ' : ''}vérifié',
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      /// Account creation date
-                      Row(
-                        children: [
-                          const Icon(Icons.calendar_today),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Créé le : ${formatDate(viewModel.getUserCreatedAt, customFormat: 'EEEE dd MMMM yyyy') ?? 'Inconnu'}',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                StatusSection(
+                  isConnected: viewModel.isUserConnected,
+                  isEmailVerified: viewModel.isUserEmailVerified,
+                  createdAt: viewModel.getUserCreatedAt,
                 ),
 
                 const SizedBox(height: 16),
 
                 /// Logout section
-                CardContainer(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Déconnexion',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      /// Logout button
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.logout,
-                            color: AppTheme.error,
-                          ),
-                          const SizedBox(width: 8),
-                          TextButton(
-                            onPressed: viewModel.logout,
-                            child: const Text('Déconnexion de cet appareil'),
-                          ),
-                        ],
-                      ),
-
-                      /// Logout all button
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.exit_to_app,
-                            color: AppTheme.error,
-                          ),
-                          const SizedBox(width: 8),
-                          TextButton(
-                            onPressed: viewModel.logoutAll,
-                            child: const Text('Déconnexion de tous les appareils'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                LogoutSection(
+                  onLogout: viewModel.logout,
+                  onLogoutAll: viewModel.logoutAll,
                 ),
 
                 const SizedBox(height: 16),
@@ -192,7 +69,9 @@ class ProfileScreen extends ConsumerWidget {
             ),
           );
         },
+
         loading: () => const Center(child: CircularProgressIndicator()),
+
         error: (error, stackTrace) {
           return Center(
             child: Padding(

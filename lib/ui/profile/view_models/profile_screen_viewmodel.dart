@@ -31,18 +31,14 @@ class ProfileScreenViewmodel {
   bool get isUserConnected => _user.isConnected;
   bool get isUserEmailVerified => _user.isVerifiedEmail;
   DateTime get getUserCreatedAt => _user.createdAt;
-  String get getUserInitial => _user.pseudo
-      .split(' ')
-      .where((s) => s.isNotEmpty)
-      .map((s) => s[0].toUpperCase())
-      .take(2)
-      .join();
 
   /* View functions */
+  /// Déconnecte l'utilisateur de l'appareil actuel.
   void logout() {
     useCase.logout();
   }
 
+  /// Déconnecte l'utilisateur de tous les appareils.
   void logoutAll() {
     useCase.logoutAll();
   }
