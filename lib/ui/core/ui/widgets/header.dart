@@ -34,6 +34,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AppBar(
       automaticallyImplyLeading: false,
       title: Row(
@@ -68,9 +70,22 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                onPressed: () => _onPressedProfileButton(context),
-                icon: const Icon(Icons.person),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: theme.iconTheme.color ?? Colors.black,
+                    width: 2,
+                  ),
+                ),
+                child: GestureDetector(
+                  onTap: () => _onPressedProfileButton(context),
+                  child: const SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: Icon(Icons.person_outlined, size: 22),
+                  ),
+                ),
               ),
             ],
           ),

@@ -69,11 +69,113 @@ class ProfileScreen extends ConsumerWidget {
 
                 const SizedBox(height: 12),
 
-                _ProfileStatusCard(user: user, viewModel: viewModel),
+                /// Account status section
+                CardContainer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Statut du compte',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
 
-                TextButton(
-                  onPressed: viewModel.logoutAll,
-                  child: Text('Déconnexion de tous les appareils'),
+                      const SizedBox(height: 12),
+
+                      /// Connection status
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.link,
+                            color: viewModel.isUserConnected
+                                ? AppTheme.success
+                                : AppTheme.error,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${!viewModel.isUserConnected ? 'Non ' : ''}Connecté',
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      /// Email verification status
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.email,
+                            color: viewModel.isUserEmailVerified
+                                ? AppTheme.success
+                                : AppTheme.warning,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Email ${!viewModel.isUserEmailVerified ? 'non ' : ''}vérifié',
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      /// Account creation date
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Créé le : ${formatDate(viewModel.getUserCreatedAt, customFormat: 'EEEE dd MMMM yyyy') ?? 'Inconnu'}',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// Logout section
+                CardContainer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Déconnexion',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      /// Logout button
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.logout,
+                            color: AppTheme.error,
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: viewModel.logout,
+                            child: const Text('Déconnexion de cet appareil'),
+                          ),
+                        ],
+                      ),
+
+                      /// Logout all button
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.exit_to_app,
+                            color: AppTheme.error,
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: viewModel.logoutAll,
+                            child: const Text('Déconnexion de tous les appareils'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -103,68 +205,6 @@ class ProfileScreen extends ConsumerWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _ProfileStatusCard extends StatelessWidget {
-  const _ProfileStatusCard({required this.user, required this.viewModel});
-
-  final User user;
-  final ProfileScreenViewmodel viewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return CardContainer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Connection status
-          Row(
-            children: [
-              Icon(
-                Icons.link,
-                color: viewModel.isUserConnected
-                    ? AppTheme.success
-                    : AppTheme.error,
-              ),
-              const SizedBox(width: 8),
-              Text('${!viewModel.isUserConnected ? 'Non ' : ''}Connecté'),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          /// Email verification status
-          Row(
-            children: [
-              Icon(
-                Icons.email,
-                color: viewModel.isUserEmailVerified
-                    ? AppTheme.success
-                    : AppTheme.warning,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Email ${!viewModel.isUserEmailVerified ? 'non ' : ''}vérifié',
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          /// Account creation date
-          Row(
-            children: [
-              const Icon(Icons.calendar_today),
-              const SizedBox(width: 8),
-              Text(
-                'Créé le : ${formatDate(viewModel.getUserCreatedAt, customFormat: 'EEEE dd MMMM yyyy') ?? 'Inconnu'}',
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

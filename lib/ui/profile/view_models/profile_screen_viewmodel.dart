@@ -39,6 +39,10 @@ class ProfileScreenViewmodel {
       .join();
 
   /* View functions */
+  void logout() {
+    useCase.logout();
+  }
+
   void logoutAll() {
     useCase.logoutAll();
   }

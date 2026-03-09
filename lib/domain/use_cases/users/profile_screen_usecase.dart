@@ -19,6 +19,11 @@ class ProfileScreenUsecase {
   }
 
   /// Déconnecte l'utilisateur de tous les appareils.
+  Future<void> logout() {
+    return userRepository.logout();
+  }
+
+  /// Déconnecte l'utilisateur de tous les appareils.
   Future<void> logoutAll() {
     return userRepository.logoutAll();
   }
