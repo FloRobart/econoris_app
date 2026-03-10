@@ -9,7 +9,7 @@ final profileScreenViewModelProvider = Provider<ProfileScreenViewmodel>((ref) {
 });
 
 /// Provider asynchrone de l'utilisateur courant.
-final profileCurrentUserProvider = FutureProvider<User>((ref) async {
+final profileCurrentUserProvider = FutureProvider.autoDispose<User>((ref) async {
   return ref.read(profileScreenViewModelProvider).getCurrentUser();
 });
 

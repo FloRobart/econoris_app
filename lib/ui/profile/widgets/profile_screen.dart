@@ -57,6 +57,7 @@ class ProfileScreen extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
+                /// App version
                 Center(
                   child: Text(
                     'Version : ${AppConfig.appVersion}',
