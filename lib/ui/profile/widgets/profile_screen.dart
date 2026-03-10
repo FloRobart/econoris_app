@@ -19,10 +19,14 @@ class ProfileScreen extends ConsumerWidget {
     final ThemeData theme = Theme.of(context);
 
     return BaseApp(
+      onRefresh: () async {
+        ref.invalidate(profileCurrentUserProvider);
+        await ref.read(profileCurrentUserProvider.future);
+      },
       body: currentUserAsync.when(
         data: (user) {
           viewModel.setUser = user;
-          return SingleChildScrollView(
+          return Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
