@@ -2,15 +2,15 @@ import 'package:econoris_app/data/repositories/operations/operation_repository.d
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
-/// Fournit une instance de [OperationScreenUseCase].
-final operationScreenUseCaseProvider = Provider<OperationScreenUseCase>((ref) {
+/// Fournit une instance de [OperationBodyUseCase].
+final operationBodyUseCaseProvider = Provider<OperationBodyUseCase>((ref) {
   final operationRepository = ref.read(operationRepositoryProvider);
-  return OperationScreenUseCase(operationRepository: operationRepository);
+  return OperationBodyUseCase(operationRepository: operationRepository);
 });
 
 /// Use case class for the operation screen
-class OperationScreenUseCase {
-  OperationScreenUseCase({required this.operationRepository});
+class OperationBodyUseCase {
+  OperationBodyUseCase({required this.operationRepository});
 
   final OperationRepository operationRepository;
 }
