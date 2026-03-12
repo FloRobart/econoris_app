@@ -18,6 +18,11 @@ class ProfileScreenUsecase {
     return userRepository.getCurrentUser();
   }
 
+  /// Met à jour le pseudo de l'utilisateur.
+  Future<void> updatePseudo(String newPseudo) {
+    return userRepository.updatePseudo(newPseudo);
+  }
+
   /// Déconnecte l'utilisateur de tous les appareils.
   Future<void> logout() {
     return userRepository.logout();

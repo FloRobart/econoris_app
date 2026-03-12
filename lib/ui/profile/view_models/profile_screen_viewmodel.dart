@@ -33,6 +33,10 @@ class ProfileScreenViewmodel {
   DateTime get getUserCreatedAt => _user.createdAt;
 
   /* View functions */
+  void updatePseudo(String newPseudo) {
+    useCase.updatePseudo(newPseudo);
+  }
+
   /// Déconnecte l'utilisateur de l'appareil actuel.
   void logout() {
     useCase.logout();

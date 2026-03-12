@@ -1,4 +1,4 @@
-import 'package:econoris_app/data/services/auth/auth_notifier.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
 import 'package:econoris_app/routing/routes.dart';
 import 'package:econoris_app/ui/auth/code_entry/widgets/code_entry_screen.dart';
 import 'package:econoris_app/ui/auth/login/widgets/login_screen.dart';

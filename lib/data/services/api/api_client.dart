@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:econoris_app/data/services/auth/auth_notifier.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:econoris_app/config/app_config.dart';
 import 'package:econoris_app/data/services/interceptors/auth_interceptor.dart';

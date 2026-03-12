@@ -7,14 +7,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Definit les différents états d'authentification possibles pour l'application.
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
-/// Fournit une instance de [AuthNotifier] pour gérer l'état d'authentification global de l'application.
-final authNotifierProvider = NotifierProvider<AuthNotifier, AuthStatus>(
-  AuthNotifier.new,
+/// Fournit une instance de [AuthManager] pour gérer l'état d'authentification global de l'application.
+final authNotifierProvider = NotifierProvider<AuthManager, AuthStatus>(
+  AuthManager.new,
 );
 
-/// Ce fichier contient le [AuthNotifier] qui gère l'état d'authentification global de l'application.
-class AuthNotifier extends Notifier<AuthStatus> {
+/// Ce fichier contient le [AuthManager] qui gère l'état d'authentification global de l'application.
+class AuthManager extends Notifier<AuthStatus> {
   String? _jwt;
+  String? _email;
 
   @override
   AuthStatus build() {
@@ -28,6 +29,7 @@ class AuthNotifier extends Notifier<AuthStatus> {
     _jwt = prefs.getString(SharedPreferencesKeys.jwtToken);
 
     if (_jwt != null && expireIn > 0) {
+      _email = _getEmailFromJwt();
       state = AuthStatus.authenticated;
     } else {
       state = AuthStatus.unauthenticated;
@@ -36,6 +38,9 @@ class AuthNotifier extends Notifier<AuthStatus> {
 
   /// Récupère le JWT actuellement stocké.
   String? get getJwt => _jwt;
+
+  /// Récupère l'email de l'utilisateur actuellement connecté.
+  String? get getEmail => _email;
 
   /// Indique si l'utilisateur est actuellement authentifié.
   bool get isAuthenticated {
@@ -66,6 +71,7 @@ class AuthNotifier extends Notifier<AuthStatus> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove(SharedPreferencesKeys.jwtToken);
     _jwt = null;
+    _email = null;
     state = AuthStatus.unauthenticated;
   }
 
@@ -74,6 +80,26 @@ class AuthNotifier extends Notifier<AuthStatus> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(SharedPreferencesKeys.jwtToken, jwt);
     _jwt = jwt;
+    _email = _getEmailFromJwt();
     state = AuthStatus.authenticated;
+  }
+
+  /// Récupère l'email de l'utilisateur à partir du JWT.
+  String? _getEmailFromJwt() {
+    if (_jwt == null) return null;
+
+    final parts = _jwt!.split('.');
+    if (parts.length != 3) return null;
+
+    final payload = parts[1];
+    final normalized = base64Url.normalize(payload);
+    final decoded = utf8.decode(base64Url.decode(normalized));
+    final Map<String, dynamic> payloadMap = jsonDecode(decoded);
+
+    if (payloadMap.containsKey('email')) {
+      return payloadMap['email'];
+    }
+
+    return null;
   }
 }

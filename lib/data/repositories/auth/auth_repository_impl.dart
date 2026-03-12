@@ -1,7 +1,7 @@
 import 'package:econoris_app/data/repositories/auth/auth_repository.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_local.dart';
 import 'package:econoris_app/data/repositories/auth/auth_repository_remote.dart';
-import 'package:econoris_app/data/services/auth/auth_notifier.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl({
@@ -12,7 +12,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   final AuthRepositoryRemote remote;
   final AuthRepositoryLocal local;
-  final AuthNotifier globalAuthNotifier;
+  final AuthManager globalAuthNotifier;
 
   @override
   /// Requests a login code for the given email, saves the email and token locally.

@@ -23,72 +23,77 @@ class ProfileScreen extends ConsumerWidget {
         ref.invalidate(profileCurrentUserProvider);
         await ref.read(profileCurrentUserProvider.future);
       },
-      body: currentUserAsync.when(
-        data: (user) {
-          viewModel.setUser = user;
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Sélecteur de thème
-                const ThemeSection(),
-
-                const SizedBox(height: 12),
-
-                /// Header card with avatar and basic info
-                OverViewSection(
-                  pseudo: viewModel.getUserPseudo,
-                  email: viewModel.getUserEmail,
-                ),
-
-                const SizedBox(height: 12),
-
-                /// Account status section
-                StatusSection(
-                  isConnected: viewModel.isUserConnected,
-                  isEmailVerified: viewModel.isUserEmailVerified,
-                  createdAt: viewModel.getUserCreatedAt,
-                ),
-
-                const SizedBox(height: 16),
-
-                /// Logout section
-                LogoutSection(
-                  onLogout: viewModel.logout,
-                  onLogoutAll: viewModel.logoutAll,
-                ),
-
-                const SizedBox(height: 16),
-
-                /// App version
-                Center(
-                  child: Text(
-                    'Version : ${AppConfig.appVersion}',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ),
-
-                const SizedBox(height: 36),
-              ],
-            ),
-          );
-        },
-
-        loading: () => const Center(child: CircularProgressIndicator()),
-
-        error: (error, stackTrace) {
-          return Center(
-            child: Padding(
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: currentUserAsync.when(
+          data: (user) {
+            viewModel.setUser = user;
+            return Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(
-                'Impossible de charger votre profil.',
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Sélecteur de thème
+                  const ThemeSection(),
+
+                  const SizedBox(height: 12),
+
+                  /// Header card with avatar and basic info
+                  OverViewSection(
+                    pseudo: viewModel.getUserPseudo,
+                    email: viewModel.getUserEmail,
+                    onPseudoChanged: viewModel.updatePseudo,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  /// Account status section
+                  StatusSection(
+                    isConnected: viewModel.isUserConnected,
+                    isEmailVerified: viewModel.isUserEmailVerified,
+                    createdAt: viewModel.getUserCreatedAt,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  /// Logout section
+                  LogoutSection(
+                    onLogout: viewModel.logout,
+                    onLogoutAll: viewModel.logoutAll,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  /// App version
+                  Center(
+                    child: Text(
+                      'Version : ${AppConfig.appVersion}',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ),
+
+                  const SizedBox(height: 36),
+                ],
               ),
-            ),
-          );
-        },
+            );
+          },
+
+          loading: () => const Center(child: CircularProgressIndicator()),
+
+          error: (error, stackTrace) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Impossible de charger votre profil.',
+                  style: theme.textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

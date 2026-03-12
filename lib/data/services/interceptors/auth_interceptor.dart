@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:econoris_app/data/services/auth/auth_notifier.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
 
 /// Dio interceptor that injects the bearer token and refreshes it on demand.
 class AuthInterceptor extends Interceptor {
   AuthInterceptor({required this.authNotifier});
 
-  final AuthNotifier authNotifier;
+  final AuthManager authNotifier;
 
   @override
   Future<void> onRequest(

@@ -3,7 +3,7 @@ import 'package:econoris_app/data/models/users/user_dto_mapper.dart';
 import 'package:econoris_app/data/repositories/users/user_repository.dart';
 import 'package:econoris_app/data/repositories/users/user_repository_local.dart';
 import 'package:econoris_app/data/repositories/users/user_repository_remote.dart';
-import 'package:econoris_app/data/services/auth/auth_notifier.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
 import 'package:econoris_app/domain/models/users/user.dart';
 import 'package:flutter/widgets.dart';
 
@@ -16,7 +16,7 @@ class UserRepositoryImpl extends UserRepository {
 
   final UserRepositoryRemote remote;
   final UserRepositoryLocal local;
-  final AuthNotifier authNotifier;
+  final AuthManager authNotifier;
 
   @override
   Future<User> getCurrentUser() async {
@@ -26,6 +26,16 @@ class UserRepositoryImpl extends UserRepository {
     } catch (e) {
       debugPrint('UserRepositoryImpl: Fetching user from local : error $e');
       return await local.getCurrentUser();
+    }
+  }
+
+  @override
+  Future<void> updatePseudo(String newPseudo) async {
+    try {
+      await remote.updatePseudo(newPseudo);
+    } catch (e) {
+      debugPrint('UserRepositoryImpl: Updating pseudo failed : error $e');
+      throw Exception('Failed to update pseudo');
     }
   }
 
