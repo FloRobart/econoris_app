@@ -19,6 +19,8 @@ class OverViewSection extends StatefulWidget {
 }
 
 class _OverViewSectionState extends State<OverViewSection> {
+  static const double _minPseudoWidth = 56;
+
   late final TextEditingController _pseudoController;
   late final FocusNode _pseudoFocusNode;
   late String _currentPseudo;
@@ -93,6 +95,24 @@ class _OverViewSectionState extends State<OverViewSection> {
         .join();
   }
 
+  double _computePseudoWidth({
+    required BuildContext context,
+    required TextStyle? style,
+    required double maxWidth,
+  }) {
+    final String value = _isEditingPseudo
+        ? _pseudoController.text
+        : _currentPseudo;
+    final TextPainter painter = TextPainter(
+      text: TextSpan(text: value.isEmpty ? ' ' : value, style: style),
+      textDirection: Directionality.of(context),
+      maxLines: 1,
+    )..layout();
+
+    final double contentWidth = painter.width + (_isEditingPseudo ? 20 : 0);
+    return contentWidth.clamp(_minPseudoWidth, maxWidth).toDouble();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -115,45 +135,76 @@ class _OverViewSectionState extends State<OverViewSection> {
               children: [
                 Row(
                   children: [
-                    /// Pseudo editable au clic
+                    /// Pseudo editable au clic avec largeur dynamique
                     Expanded(
-                      child: _isEditingPseudo
-                          ? TextField(
-                              controller: _pseudoController,
-                              focusNode: _pseudoFocusNode,
-                              autofocus: true,
-                              textInputAction: TextInputAction.done,
-                              onSubmitted: (_) => _commitPseudo(),
-                              style: theme.textTheme.titleMedium,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                border: InputBorder.none,
-                                enabledBorder: const UnderlineInputBorder(),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: theme.colorScheme.primary,
-                                  ),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final double iconSize =
+                              theme.textTheme.titleMedium?.fontSize ?? 16;
+                          final double maxPseudoWidth =
+                              (constraints.maxWidth - iconSize - 8)
+                                  .clamp(_minPseudoWidth, double.infinity)
+                                  .toDouble();
+                          final double pseudoWidth = _computePseudoWidth(
+                            context: context,
+                            style: theme.textTheme.titleMedium,
+                            maxWidth: maxPseudoWidth,
+                          );
+
+                          return Row(
+                            children: [
+                              SizedBox(
+                                width: pseudoWidth,
+                                child: _isEditingPseudo
+                                    ? TextField(
+                                        controller: _pseudoController,
+                                        focusNode: _pseudoFocusNode,
+                                        autofocus: true,
+                                        textInputAction: TextInputAction.done,
+                                        onChanged: (_) => setState(() {}),
+                                        onSubmitted: (_) => _commitPseudo(),
+                                        style: theme.textTheme.titleMedium,
+                                        maxLines: 1,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          enabledBorder:
+                                              const UnderlineInputBorder(),
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: theme.colorScheme.primary,
+                                            ),
+                                          ),
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                      )
+                                    : GestureDetector(
+                                        onTap: _startPseudoEditing,
+                                        child: Text(
+                                          _currentPseudo,
+                                          style: theme.textTheme.titleMedium,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                              ),
+
+                              const SizedBox(width: 8),
+
+                              /// Edit profile button
+                              GestureDetector(
+                                onTap: _startPseudoEditing,
+                                behavior: HitTestBehavior.opaque,
+                                child: Icon(
+                                  Icons.edit,
+                                  color: theme.iconTheme.color,
+                                  size: iconSize,
                                 ),
-                                contentPadding: EdgeInsets.zero,
                               ),
-                            )
-                          : GestureDetector(
-                              onTap: _startPseudoEditing,
-                              child: Text(
-                                _currentPseudo,
-                                style: theme.textTheme.titleMedium,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                    ),
-
-                    const SizedBox(width: 8),
-
-                    /// Edit profile button
-                    Icon(
-                      Icons.edit,
-                      color: theme.iconTheme.color,
-                      size: theme.textTheme.titleMedium?.fontSize ?? 16,
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
