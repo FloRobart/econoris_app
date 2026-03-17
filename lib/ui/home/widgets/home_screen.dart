@@ -16,10 +16,11 @@ class HomeScreen extends ConsumerWidget {
       },
       body: HomeBody(),
 
-      onAddButtonPressed: () {
-        // TODO: Handle add button press
-      },
-      addButtonTooltip: 'Ajouter une opération',
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        tooltip: 'Ajouter une opération',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

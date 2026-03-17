@@ -9,14 +9,12 @@ class BaseApp extends StatelessWidget {
     super.key,
     required this.body,
     this.onRefresh,
-    this.onAddButtonPressed,
-    this.addButtonTooltip,
+    this.floatingActionButton,
   });
 
   final Widget body;
   final Future<void> Function()? onRefresh;
-  final void Function()? onAddButtonPressed;
-  final String? addButtonTooltip;
+  final Widget? floatingActionButton;
 
   /// Rafraîchit le contenu de l'écran. Si une fonction de rafraîchissement personnalisée est fournie, elle sera utilisée. Sinon, la page sera simplement rafraîchie.
   Future<void> _refresh(BuildContext context) async {
@@ -52,25 +50,7 @@ class BaseApp extends StatelessWidget {
         ),
       ),
 
-      floatingActionButton: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            onPressed: onAddButtonPressed,
-            tooltip: addButtonTooltip,
-            child: const Icon(Icons.add),
-          ),
-
-          const SizedBox(height: 8, width: 8),
-
-          FloatingActionButton(
-            heroTag: 'refresh',
-            onPressed: onAddButtonPressed,
-            tooltip: addButtonTooltip,
-            child: Text('Ajouter une opération'),
-          ),
-        ],
-      ),
+      floatingActionButton: floatingActionButton,
 
       /* Navigation */
       bottomNavigationBar: const AppNavigationBar(),
