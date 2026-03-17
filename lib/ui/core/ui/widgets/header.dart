@@ -70,20 +70,23 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: theme.iconTheme.color ?? Colors.black,
-                    width: 2,
-                  ),
-                ),
-                child: GestureDetector(
-                  onTap: () => _onPressedProfileButton(context),
-                  child: const SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: Icon(Icons.person_outlined, size: 22),
+              GestureDetector(
+                onTap: () => _onPressedProfileButton(context),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: theme.iconTheme.color ?? Colors.black,
+                        width: 2,
+                      ),
+                    ),
+                    child: SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: Icon(Icons.person_outlined, size: 22),
+                    ),
                   ),
                 ),
               ),

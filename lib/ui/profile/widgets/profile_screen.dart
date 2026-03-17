@@ -14,9 +14,9 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ThemeData theme = Theme.of(context);
     final viewModel = ref.read(profileScreenViewModelProvider);
     final currentUserAsync = ref.watch(profileCurrentUserProvider);
-    final ThemeData theme = Theme.of(context);
 
     return BaseApp(
       onRefresh: () async {

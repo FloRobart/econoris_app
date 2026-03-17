@@ -10,7 +10,7 @@ final profileScreenViewModelProvider = Provider<ProfileScreenViewmodel>((ref) {
 
 /// Provider asynchrone de l'utilisateur courant.
 final profileCurrentUserProvider = FutureProvider.autoDispose<User>((ref) async {
-  return ref.read(profileScreenViewModelProvider).getCurrentUser();
+  return ref.read(profileScreenViewModelProvider).getCurrentUser;
 });
 
 /// ViewModel pour l'écran de profil.
@@ -20,17 +20,17 @@ class ProfileScreenViewmodel {
   final ProfileScreenUsecase useCase;
   late User _user;
 
-  Future<User> getCurrentUser() => useCase.getCurrentUser();
-
-  /* Setters */
-  set setUser(User user) => _user = user;
 
   /* Getters */
+  Future<User> get getCurrentUser => useCase.getCurrentUser();
   String get getUserEmail => _user.email;
   String get getUserPseudo => _user.pseudo;
   bool get isUserConnected => _user.isConnected;
   bool get isUserEmailVerified => _user.isVerifiedEmail;
   DateTime get getUserCreatedAt => _user.createdAt;
+
+  /* Setters */
+  set setUser(User user) => _user = user;
 
   /* View functions */
   void updatePseudo(String newPseudo) {
