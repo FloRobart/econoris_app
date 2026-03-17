@@ -10,12 +10,40 @@ class OperationsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (operations.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final List<Operation> displayedOperations = List<Operation>.generate(
+      operations.length * 15,
+      (index) => operations[index % operations.length],
+    );
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: operations.length * 15,
-      itemBuilder: (context, index) =>
-          OperationCard(operation: operations[index % 3]),
+      itemCount: displayedOperations.length,
+      itemBuilder: (context, index) {
+        final Operation operation = displayedOperations[index];
+        final bool showDateSeparator =
+            index == 0 ||
+            !DateUtils.isSameDay(
+              displayedOperations[index - 1].levyDate,
+              operation.levyDate,
+            );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (showDateSeparator) ...[
+              if (index != 0) const SizedBox(height: 8),
+              const Divider(height: 1),
+              const SizedBox(height: 8),
+            ],
+            OperationCard(operation: operation),
+          ],
+        );
+      },
     );
   }
 }

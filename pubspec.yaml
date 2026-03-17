@@ -102,7 +102,7 @@ flutter_launcher_icons:
 
   image_path: "assets/icons/icon_foreground.png"
 
-  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_background: "#FFFFFF" # TODO: replace by Econoris color 
   adaptive_icon_foreground: "assets/icons/icon_foreground.png"
 
   # An image asset can refer to one or more resolution-specific "variants", see
