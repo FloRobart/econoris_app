@@ -1,4 +1,5 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
+import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_card.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
@@ -46,9 +47,9 @@ class OperationsTable extends StatelessWidget {
                             customFormat: 'EEEE dd MMMM yyyy',
                           ) ??
                           'Date Inconnu',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: AppTheme.fontSizes[AppFontSize.medium],
                 ),
               ),
               const Divider(height: 1),
