@@ -1,7 +1,7 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operations_table.dart';
 import 'package:econoris_app/ui/home/view_models/home_body_viewmodel.dart';
-import 'package:econoris_app/ui/home/widgets/home_stats_section.dart';
+import 'package:econoris_app/ui/home/widgets/home_stats.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
