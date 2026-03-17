@@ -23,7 +23,10 @@ class HomeBody extends ConsumerWidget {
           const SizedBox(height: 12),
 
           /// Affiche une liste d'opérations récentes
-          OperationsTable(operations: operations),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: OperationsTable(operations: operations),
+          ),
 
           const SizedBox(height: 96),
         ],

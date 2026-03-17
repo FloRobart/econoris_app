@@ -39,11 +39,13 @@ class OperationsTable extends StatelessWidget {
             if (showDateSeparator) ...[
               if (index != 0) const SizedBox(height: 16),
               Text(
-                formatDate(
-                      operation.levyDate,
-                      customFormat: 'EEEE dd MMMM yyyy',
-                    ) ??
-                    'Date Inconnu',
+                DateUtils.isSameDay(operation.levyDate, DateTime.now())
+                    ? 'Aujourd\'hui'
+                    : formatDate(
+                            operation.levyDate,
+                            customFormat: 'EEEE dd MMMM yyyy',
+                          ) ??
+                          'Date Inconnu',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
