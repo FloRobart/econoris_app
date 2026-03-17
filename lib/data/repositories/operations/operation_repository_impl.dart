@@ -4,6 +4,8 @@ import 'package:econoris_app/data/repositories/operations/operation_repository.d
 import 'package:econoris_app/data/repositories/operations/operation_repository_local.dart';
 import 'package:econoris_app/data/repositories/operations/operation_repository_remote.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
+import 'package:econoris_app/domain/models/operations/operation_mapper.dart';
+import 'package:econoris_app/ui/core/ui/utils/operation_sort.dart';
 
 /// Repository interface for operations data.
 class OperationRepositoryImpl implements OperationRepository {
@@ -19,22 +21,24 @@ class OperationRepositoryImpl implements OperationRepository {
     try {
       operationsDtoList = await remote.getOperations();
       local.saveOperations(operationsDtoList);
-    } catch (e) {
+    } catch (_) {
       operationsDtoList = await local.getOperations();
     }
 
     return operationsDtoList
         .map((operationDto) => operationDto.toDomain())
-        .toList();
+        .toList()
+      ..sort(operationSort);
   }
 
   /// Adds a new operation to the remote API.
   @override
-  Future<Operation> addOperation(OperationDto body) async {
+  Future<Operation> addOperation(Operation body) async {
     try {
-      final operationDto = await remote.addOperation(body);
-      local.saveOperations([operationDto]);
-      return operationDto.toDomain();
+      final operationDto = body.toDto();
+      final repOperationDto = await remote.addOperation(operationDto);
+      local.saveOperations([repOperationDto]);
+      return repOperationDto.toDomain();
     } catch (e) {
       rethrow;
     }
@@ -42,13 +46,11 @@ class OperationRepositoryImpl implements OperationRepository {
 
   /// Updates an existing operation in the remote API.
   @override
-  Future<Operation> updateOperation(int id, OperationDto body) async {
-    final operationDto = await remote.updateOperation(
-      id,
-      body,
-    );
-    local.updateOperation(id, operationDto);
-    return operationDto.toDomain();
+  Future<Operation> updateOperation(int id, Operation body) async {
+    final operationDto = body.toDto();
+    final repOperationDto = await remote.updateOperation(id, operationDto);
+    local.updateOperation(id, repOperationDto);
+    return repOperationDto.toDomain();
   }
 
   /// Deletes an operation from the remote API.

@@ -1,4 +1,3 @@
-import 'package:econoris_app/data/models/operations/operation_dto.dart';
 import 'package:econoris_app/data/services/api/operations/operation_api_client.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/data/repositories/operations/operation_repository_impl.dart';
@@ -17,7 +16,7 @@ final operationRepositoryProvider = Provider<OperationRepository>((ref) {
 /// Repository interface for operations data.
 abstract class OperationRepository {
   Future<List<Operation>> getOperations();
-  Future<Operation> addOperation(OperationDto body);
-  Future<Operation> updateOperation(int id, OperationDto body);
+  Future<Operation> addOperation(Operation body);
+  Future<Operation> updateOperation(int id, Operation body);
   Future<Operation> deleteOperation(int id);
 }
