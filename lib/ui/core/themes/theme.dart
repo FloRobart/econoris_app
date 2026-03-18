@@ -9,9 +9,10 @@ class AppTheme {
   static const Color primarySeed = Color(0xFFFCB82A);
 
   /// Couleurs custom (faciles à changer)
-  static const Color success = Color(0xFF4CAF50);
-  static const Color error = Color(0xFFE53935);
-  static const Color warning = Color(0xFFFF9800);
+  static const Color successColor = Color(0xFF4CAF50);
+  static const Color errorColor = Color(0xFFE53935);
+  static const Color warningColor = Color(0xFFFF9800);
+  static const Color infoColor = Color(0xFF2196F3);
 
   static const fontSizes = {
     AppFontSize.small: 12.0,

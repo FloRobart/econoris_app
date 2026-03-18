@@ -15,40 +15,71 @@ final homeStatsProvider = Provider<AsyncValue<HomeStatsViewModel>>((ref) {
 class HomeStatsViewModel {
   const HomeStatsViewModel({
     required this.operationsCount,
-    required this.totalAmount,
-    required this.incomesTotal,
-    required this.expensesTotal,
-    required this.balance,
+    required this.operationsAmount,
+
+    required this.positiveOperationsCount,
+    required this.positiveOperationsAmount,
+
+    required this.negativeOperationsCount,
+    required this.negativeOperationsAmount,
+
+    required this.moneyManagementIndex,
+    required this.possibleExpenses,
   });
 
   final int operationsCount;
-  final double totalAmount;
-  final double incomesTotal;
-  final double expensesTotal;
-  final double balance;
+  final double operationsAmount;
 
+  final int positiveOperationsCount;
+  final double positiveOperationsAmount;
+
+  final int negativeOperationsCount;
+  final double negativeOperationsAmount;
+
+  final double moneyManagementIndex;
+  final double possibleExpenses;
+
+  /// Calcule les statistiques à partir de la liste d'opérations en un seul parcours.
   factory HomeStatsViewModel.fromOperations(List<Operation> operations) {
-    var totalAmount = 0.0;
-    var incomesTotal = 0.0;
-    var expensesTotal = 0.0;
+    double operationsAmount = 0;
+
+    int positiveOperationsCount = 0;
+    double positiveOperationsAmount = 0;
+
+    int negativeOperationsCount = 0;
+    double negativeOperationsAmount = 0;
+
+    double moneyManagementIndex = 0;
 
     for (final operation in operations) {
-      final amount = operation.amount;
-      totalAmount += amount;
+      operationsAmount += operation.amount;
 
-      if (amount >= 0) {
-        incomesTotal += amount;
+
+      if (operation.amount > 0) {
+        positiveOperationsAmount += operation.amount;
+        positiveOperationsCount++;
       } else {
-        expensesTotal += amount;
+        negativeOperationsAmount += operation.amount;
+        negativeOperationsCount++;
       }
     }
 
+    moneyManagementIndex = negativeOperationsAmount.abs() != 0
+        ? (positiveOperationsAmount / negativeOperationsAmount.abs())
+        : 0;
+
+    double possibleExpenses = positiveOperationsAmount + negativeOperationsAmount;
+
+    /// On retourne un objet de stats avec tous les calculs déjà faits pour éviter de les refaire dans le widget.
     return HomeStatsViewModel(
       operationsCount: operations.length,
-      totalAmount: totalAmount,
-      incomesTotal: incomesTotal,
-      expensesTotal: expensesTotal,
-      balance: incomesTotal + expensesTotal,
+      operationsAmount: operationsAmount,
+      positiveOperationsCount: positiveOperationsCount,
+      positiveOperationsAmount: positiveOperationsAmount,
+      negativeOperationsCount: negativeOperationsCount,
+      negativeOperationsAmount: negativeOperationsAmount,
+      moneyManagementIndex: moneyManagementIndex,
+      possibleExpenses: possibleExpenses,
     );
   }
 }

@@ -54,7 +54,7 @@ class StatusSection extends StatelessWidget {
             children: [
               Icon(
                 Icons.link,
-                color: isConnected ? AppTheme.success : AppTheme.error,
+                color: isConnected ? AppTheme.successColor : AppTheme.errorColor,
               ),
               const SizedBox(width: 8),
               Flexible(child: Text('${!isConnected ? 'Non ' : ''}Connecté')),
@@ -68,7 +68,7 @@ class StatusSection extends StatelessWidget {
             children: [
               Icon(
                 Icons.email,
-                color: isEmailVerified ? AppTheme.success : AppTheme.warning,
+                color: isEmailVerified ? AppTheme.successColor : AppTheme.warningColor,
               ),
               const SizedBox(width: 8),
               Flexible(

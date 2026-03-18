@@ -1,4 +1,5 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
+import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ class OperationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     final String operationDate =
         formatDate(operation.levyDate, customFormat: 'dd MMMM yyyy') ?? '';
     final String amountText = '${operation.amount.toStringAsFixed(2)} €';
@@ -31,16 +33,15 @@ class OperationCard extends StatelessWidget {
                       operation.label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       operationDate,
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: operation.isValidate
-                            ? Colors.green
-                            : Colors.blue,
+                            ? AppTheme.successColor
+                            : AppTheme.infoColor,
                       ),
                     ),
                   ],
@@ -52,7 +53,7 @@ class OperationCard extends StatelessWidget {
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: operation.amount >= 0 ? Colors.green : Colors.red,
+                  color: operation.amount >= 0 ? AppTheme.successColor : AppTheme.errorColor,
                 ),
               ),
             ],

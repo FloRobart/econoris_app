@@ -21,7 +21,7 @@ class LogoutSection extends StatelessWidget {
           /// Logout button
           Row(
             children: [
-              Icon(Icons.logout, color: AppTheme.error),
+              Icon(Icons.logout, color: AppTheme.errorColor),
               const SizedBox(width: 8),
               TextButton(
                 onPressed: onLogout,
@@ -33,7 +33,7 @@ class LogoutSection extends StatelessWidget {
           /// Logout all button
           Row(
             children: [
-              Icon(Icons.exit_to_app, color: AppTheme.error),
+              Icon(Icons.exit_to_app, color: AppTheme.errorColor),
               const SizedBox(width: 8),
               TextButton(
                 onPressed: onLogoutAll,

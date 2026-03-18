@@ -1,5 +1,4 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
-import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_card.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
@@ -12,14 +11,22 @@ class OperationsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     if (operations.isEmpty) {
       return const SizedBox.shrink();
     }
 
     final List<Operation> displayedOperations = List<Operation>.generate(
-      operations.length * 15,
-      (index) => operations[index % operations.length],
+      operations.length,
+      (index) => operations[index],
     );
+
+    final Map<DateTime, int> operationCountByDate = <DateTime, int>{};
+    for (final Operation operation in displayedOperations) {
+      final DateTime dateKey = DateUtils.dateOnly(operation.levyDate);
+      operationCountByDate[dateKey] = (operationCountByDate[dateKey] ?? 0) + 1;
+    }
 
     return ListView.builder(
       shrinkWrap: true,
@@ -39,18 +46,27 @@ class OperationsTable extends StatelessWidget {
           children: [
             if (showDateSeparator) ...[
               if (index != 0) const SizedBox(height: 16),
-              Text(
-                DateUtils.isSameDay(operation.levyDate, DateTime.now())
-                    ? 'Aujourd\'hui'
-                    : formatDate(
-                            operation.levyDate,
-                            customFormat: 'EEEE dd MMMM yyyy',
-                          ) ??
-                          'Date Inconnu',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppTheme.fontSizes[AppFontSize.medium],
-                ),
+              Row(
+                children: [
+                  Text(
+                    DateUtils.isSameDay(operation.levyDate, DateTime.now())
+                        ? ' Aujourd\'hui'
+                        : formatDate(
+                                operation.levyDate,
+                                customFormat: ' EEEE dd MMMM yyyy',
+                              ) ??
+                              ' Date Inconnu',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${operationCountByDate[DateUtils.dateOnly(operation.levyDate)] ?? 0} ',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               const Divider(height: 1),
               const SizedBox(height: 4),
