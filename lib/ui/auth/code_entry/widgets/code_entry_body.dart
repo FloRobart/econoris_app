@@ -27,7 +27,14 @@ class _CodeEntryBodyState extends ConsumerState<CodeEntryBody> {
       });
 
       try {
-        await viewModel.verifyCode();
+        final success = await viewModel.verifyCode();
+        if (!success) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Code de vérification incorrect.')),
+            );
+          }
+        }
       } finally {
         setState(() {
           _isSubmitting = false;
@@ -39,8 +46,6 @@ class _CodeEntryBodyState extends ConsumerState<CodeEntryBody> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Entrez le code de vérification envoyé à votre email'),
-          const SizedBox(height: 20),
           TextField(
             enabled: !_isSubmitting,
             textInputAction: TextInputAction.done,

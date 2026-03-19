@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/assets.dart';
 import 'package:flutter/material.dart';
 
 class AuthBase extends StatelessWidget {
@@ -34,7 +35,33 @@ class AuthBase extends StatelessWidget {
                     padding: const EdgeInsets.all(24),
 
                     /* Affichage du contenu */
-                    child: body,
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            Assets.logo_192,
+                            width: 72,
+                            height: 72,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Text(
+                          'Bienvenue sur Econoris',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        body,
+                      ],
+                    ),
                   ),
                 ),
               ),

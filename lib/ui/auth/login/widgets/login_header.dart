@@ -1,4 +1,3 @@
-import 'package:econoris_app/config/assets.dart';
 import 'package:flutter/material.dart';
 
 class LoginHeader extends StatelessWidget {
@@ -6,8 +5,6 @@ class LoginHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     /// Affiche une boîte de dialogue expliquant comment fonctionne la création de compte et l'authentification.
     void showCreateAccountHelper() {
       showDialog(
@@ -67,28 +64,6 @@ class LoginHeader extends StatelessWidget {
 
     return Column(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            Assets.logo_192,
-            width: 72,
-            height: 72,
-            fit: BoxFit.cover,
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        Text(
-          'Bienvenue sur Econoris',
-          textAlign: TextAlign.center,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-
-        const SizedBox(height: 10),
-
         const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

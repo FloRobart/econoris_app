@@ -1,142 +1,24 @@
-import 'package:econoris_app/routing/routes.dart';
 import 'package:econoris_app/ui/auth/login/view_models/login_body_viewmodel.dart';
-import 'package:econoris_app/ui/auth/login/widgets/login_header.dart';
+import 'package:econoris_app/ui/auth/login/widgets/login_form.dart';
+import 'package:econoris_app/ui/core/ui/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 /// Widget affichant le formulaire de connexion et d'inscription.
-class LoginBody extends ConsumerStatefulWidget {
-  const LoginBody({super.key, required this.initialEmail, this.errorMessage});
-
-  final String? initialEmail;
-  final String? errorMessage;
+class LoginBody extends ConsumerWidget {
+  const LoginBody({super.key});
 
   @override
-  ConsumerState<LoginBody> createState() => _AuthBodyState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final emailAsync = ref.watch(authInitialEmailProvider);
 
-/// État du widget [LoginBody] gérant la logique de connexion et d'inscription.
-class _AuthBodyState extends ConsumerState<LoginBody> {
-  late final TextEditingController _emailController;
-  bool _isSubmitting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _emailController = TextEditingController(text: widget.initialEmail ?? '');
-
-    final errorMessage = widget.errorMessage;
-    if (errorMessage == null || errorMessage.isEmpty) {
-      return;
-    }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
-    });
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final viewModel = ref.read(loginBodyViewModelProvider);
-
-    /* Affichage d'une erreur */
-    void displayLoginError(String errorMessage) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
-    }
-
-    /* Resultat de la tentative de connexion */
-    void handleLoginResult(bool loginRequestSuccess) {
-      if (!loginRequestSuccess) {
-        displayLoginError('Échec de la connexion. Veuillez réessayer.');
-      }
-
-      if (!mounted) return;
-      context.go(AppRoutes.codeEntry);
-    }
-
-    /// Envoie la requête de connexion et gère le résultat.
-    Future<void> submitLoginRequest() async {
-      if (_isSubmitting) {
-        return;
-      }
-
-      setState(() {
-        _isSubmitting = true;
-      });
-
-      try {
-        final loginRequestSuccess = await viewModel.loginRequest(
-          _emailController.text,
-        );
-        handleLoginResult(loginRequestSuccess);
-      } finally {
-        if (!mounted) {
-          return;
-        }
-
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
-    }
-
-    /* Widget */
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const LoginHeader(),
-        const SizedBox(height: 28),
-
-        /* Champ de saisie de l'email */
-        TextFormField(
-          controller: _emailController,
-          enabled: !_isSubmitting,
-          keyboardType: TextInputType.emailAddress,
-          textInputAction: TextInputAction.done,
-          onFieldSubmitted: _isSubmitting ? null : (_) => submitLoginRequest(),
-          autofillHints: const [AutofillHints.email],
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            hintText: 'Entrez votre adresse email',
-            prefixIcon: Icon(Icons.mail),
-            border: OutlineInputBorder(),
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        /* Bouton de connexion */
-        ElevatedButton(
-          onPressed: _isSubmitting ? null : submitLoginRequest,
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-          ),
-          child: _isSubmitting
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
-                )
-              : const Text('Se connecter / S\'inscrire'),
-        ),
-      ],
+    return emailAsync.when(
+      loading: () => const LoadingWidget(),
+      error: (e, _) => const LoginForm(
+        initialEmail: '',
+        errorMessage: 'Erreur de chargement de l\'email',
+      ),
+      data: (email) => LoginForm(initialEmail: email),
     );
   }
 }
