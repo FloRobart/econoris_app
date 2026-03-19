@@ -19,6 +19,7 @@ class LoginBody extends ConsumerStatefulWidget {
 /// État du widget [LoginBody] gérant la logique de connexion et d'inscription.
 class _AuthBodyState extends ConsumerState<LoginBody> {
   late final TextEditingController _emailController;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -69,6 +70,32 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
       context.go(AppRoutes.codeEntry);
     }
 
+    /// Envoie la requête de connexion et gère le résultat.
+    Future<void> submitLoginRequest() async {
+      if (_isSubmitting) {
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = true;
+      });
+
+      try {
+        final loginRequestSuccess = await viewModel.loginRequest(
+          _emailController.text,
+        );
+        handleLoginResult(loginRequestSuccess);
+      } finally {
+        if (!mounted) {
+          return;
+        }
+
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+
     /* Widget */
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -80,7 +107,10 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
         /* Champ de saisie de l'email */
         TextFormField(
           controller: _emailController,
+          enabled: !_isSubmitting,
           keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: _isSubmitting ? null : (_) => submitLoginRequest(),
           autofillHints: const [AutofillHints.email],
           decoration: const InputDecoration(
             labelText: 'Email',
@@ -94,16 +124,17 @@ class _AuthBodyState extends ConsumerState<LoginBody> {
 
         /* Bouton de connexion */
         ElevatedButton(
-          onPressed: () async {
-            final loginRequestSuccess = await viewModel.loginRequest(
-              _emailController.text,
-            );
-            handleLoginResult(loginRequestSuccess);
-          },
+          onPressed: _isSubmitting ? null : submitLoginRequest,
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
-          child: const Text('Se connecter / S\'inscrire'),
+          child: _isSubmitting
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              : const Text('Se connecter / S\'inscrire'),
         ),
       ],
     );
