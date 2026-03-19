@@ -19,7 +19,12 @@ class HomeBody extends ConsumerWidget {
       data: (operations) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          HomeStats(),
+          /// Affiche les statistiques globales des opérations
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: HomeStats(),
+          ),
+
           const SizedBox(height: 12),
 
           /// Affiche une liste d'opérations récentes
