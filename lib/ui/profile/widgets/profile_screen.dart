@@ -79,7 +79,21 @@ class ProfileScreen extends ConsumerWidget {
             );
           },
 
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Sélecteur de thème
+                  const ThemeSection(),
+
+                  const SizedBox(height: 12),
+                  const Center(child: CircularProgressIndicator()),
+                ],
+              ),
+            );
+          },
 
           error: (error, stackTrace) {
             return Center(
