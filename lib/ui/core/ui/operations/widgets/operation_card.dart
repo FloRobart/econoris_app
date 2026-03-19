@@ -23,7 +23,13 @@ class OperationCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              const Icon(Icons.receipt_long_outlined),
+              Icon(
+                operation.subscriptionId == null
+                    ? Icons.receipt_long_outlined
+                    : (operation.levyDate.isAfter(DateTime.now())
+                          ? Icons.event_repeat
+                          : Icons.currency_exchange),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -36,24 +42,46 @@ class OperationCard extends StatelessWidget {
                       style: theme.textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      operationDate,
-                      style: TextStyle(
-                        color: operation.isValidate
-                            ? AppTheme.successColor
-                            : AppTheme.infoColor,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            operationDate,
+                            style: TextStyle(
+                              color: operation.isValidate
+                                  ? AppTheme.successColor
+                                  : AppTheme.infoColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        Icon(
+                          operation.isValidate
+                              ? Icons.check_circle_outline
+                              : Icons.hourglass_empty_outlined,
+                          size: 16,
+                          color: operation.isValidate
+                              ? AppTheme.successColor
+                              : AppTheme.infoColor,
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 12),
               Text(
-                amountText,
+                '${operation.amount > 0 ? "+" : ""}$amountText',
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: operation.amount >= 0 ? AppTheme.successColor : AppTheme.errorColor,
+                  color: operation.amount >= 0
+                      ? AppTheme.successColor
+                      : AppTheme.errorColor,
                 ),
               ),
             ],
