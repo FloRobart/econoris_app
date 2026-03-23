@@ -85,42 +85,48 @@ class _MoneyManagementIndexValue extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncViewmodel = ref.watch(operationManagementIndexViewmodelProvider);
+    final asyncViewModel = ref.watch(
+      operationManagementIndexViewmodelProvider,
+    );
 
-    return asyncViewmodel.when(
-      data: (viewmodel) {
-        final indexColor = getMoneyManagementIndexColor(
-          viewmodel.moneyManagementIndex,
-        );
-        final indexText = getMoneyManagementIndexText(
-          viewmodel.moneyManagementIndex,
-        );
+    final indexColor = getMoneyManagementIndexColor(
+      asyncViewModel
+              .whenData((viewmodel) => viewmodel.moneyManagementIndex)
+              .value ??
+          0,
+    );
 
-        return Text.rich(
+    final indexText = getMoneyManagementIndexText(
+      asyncViewModel
+              .whenData((viewmodel) => viewmodel.moneyManagementIndex)
+              .value ??
+          0,
+    );
+
+    return Text.rich(
+      TextSpan(
+        children: [
           TextSpan(
-            children: [
-              TextSpan(
-                text: viewmodel.moneyManagementIndexPercentage.toStringAsFixed(
-                  0,
-                ),
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: indexColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextSpan(
-                text: ' $indexText',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: indexColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+            text:
+                asyncViewModel
+                    .whenData((viewmodel) => viewmodel.moneyManagementIndexPercentage)
+                    .value
+                    ?.toStringAsFixed(0) ??
+                '0',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              color: indexColor,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        );
-      },
-      loading: () => const CircularProgressIndicator(),
-      error: (error, stackTrace) => const Text('Error loading index'),
+          TextSpan(
+            text: ' $indexText',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: indexColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -133,21 +139,18 @@ class _MoneyManagementIndexIcons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncViewmodel = ref.watch(operationManagementIndexViewmodelProvider);
+    final asyncManagementIndex = ref.watch(
+      operationManagementIndexViewmodelProvider,
+    );
 
-    return asyncViewmodel.when(
-      data: (viewmodel) {
-        return Icon(
-          Icons.speed_outlined,
-          size: size,
-          color: getMoneyManagementIndexColor(viewmodel.moneyManagementIndex),
-        );
-      },
-      loading: () => const CircularProgressIndicator(),
-      error: (error, stackTrace) => Icon(
-        Icons.speed_outlined,
-        size: 28,
-        color: Theme.of(context).colorScheme.primary,
+    return Icon(
+      Icons.speed_outlined,
+      size: size,
+      color: getMoneyManagementIndexColor(
+        asyncManagementIndex
+                .whenData((viewmodel) => viewmodel.moneyManagementIndex)
+                .value ??
+            0,
       ),
     );
   }
@@ -167,8 +170,7 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
 
     final asyncEndMonthDate = ref.watch(
       operationStatsProvider.select(
-        (asyncStats) =>
-            asyncStats.whenData((stats) => stats.endMonthDate),
+        (asyncStats) => asyncStats.whenData((stats) => stats.endMonthDate),
       ),
     );
 
@@ -182,10 +184,7 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
 
     final endMonthDate = asyncEndMonthDate.when(
       data: (endMonthDate) =>
-          formatDate(
-            endMonthDate,
-            customFormat: 'dd MMMM yyyy',
-          ) ??
+          formatDate(endMonthDate, customFormat: 'dd MMMM yyyy') ??
           'Mois inconnu',
       loading: () => '...',
       error: (error, stackTrace) => 'Mois inconnu',
