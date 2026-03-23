@@ -12,6 +12,7 @@ class HomeBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final AsyncValue<List<Operation>> asyncOperations = ref.watch(
       homeOperationsProvider,
     );
@@ -33,7 +34,35 @@ class HomeBody extends ConsumerWidget {
           child: const OperationMonthlyStats(),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 32),
+
+        /// Affiche un titre pour les opérations récentes
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.history_rounded,
+                  color: theme.colorScheme.primary,
+                  size: (theme.textTheme.titleLarge?.fontSize ?? 22) + 2,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Opérations récentes',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 22),
 
         /// Affiche une liste d'opérations récentes
         Padding(
