@@ -1,19 +1,21 @@
 import 'package:econoris_app/config/constantes.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/home/view_models/home_body_viewmodel.dart';
+import 'package:econoris_app/ui/operations/view_models/month_change_card_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider derive unique qui calcule les statistiques de la home.
 final operationStatsProvider = Provider<AsyncValue<OperationStatsViewModel>>((
   ref,
 ) {
-  final asyncOperations = ref.watch(homeOperationsProvider);
+  final asyncOperations = ref.watch(homeBodyViewModelProvider);
+  final monthOffset = ref.watch(
+    monthChangeCardViewModelProvider.select((state) => state.monthOffset),
+  );
 
   return asyncOperations.whenData(
-    (operations) => OperationStatsViewModel.fromOperations(
-      operations,
-      ref.read(homeOperationsProvider.notifier).currentMonthOffset,
-    ),
+    (operations) =>
+        OperationStatsViewModel.fromOperations(operations, monthOffset),
   );
 });
 

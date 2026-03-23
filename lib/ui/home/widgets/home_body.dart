@@ -14,7 +14,7 @@ class HomeBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final AsyncValue<List<Operation>> asyncOperations = ref.watch(
-      homeOperationsProvider,
+      homeBodyViewModelProvider,
     );
 
     return Column(

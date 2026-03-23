@@ -1,17 +1,36 @@
-import 'package:econoris_app/domain/use_cases/operations/operation_screen_usecase.dart';
-import 'package:flutter/foundation.dart';
+import 'package:econoris_app/domain/models/operations/operation.dart';
+import 'package:econoris_app/domain/use_cases/operations/operation_body_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Provider d'etat asynchrone pour les operations de l'ecran d'accueil.
+final operationViewModelProvider =
+    AsyncNotifierProvider<OperationViewModel, List<Operation>>(
+      OperationViewModel.new,
+    );
 
-/// Fournit une instance de [OperationBodyViewModel].
-final operationBodyViewModelProvider = Provider<OperationBodyViewModel>((ref) {
-  final operationScreenUseCase = ref.read(operationBodyUseCaseProvider);
-  return OperationBodyViewModel(operationScreenUseCase: operationScreenUseCase);
-});
+/// ViewModel pour l'ecran d'accueil.
+class OperationViewModel extends AsyncNotifier<List<Operation>> {
+  late final OperationBodyUseCase _useCase;
 
-/// ViewModel pour l'écran d'opérations, gérant la logique métier et les interactions avec les cas d'utilisation.
-class OperationBodyViewModel extends ChangeNotifier {
-  OperationBodyViewModel({required this.operationScreenUseCase});
+  @override
+  Future<List<Operation>> build() async {
+    _useCase = ref.read(operationBodyUseCaseProvider);
+    return _useCase.getOperations();
+  }
 
-  final OperationBodyUseCase operationScreenUseCase;
+  /// Recharge la liste complete depuis la source de donnees.
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = AsyncData(await _useCase.getOperations());
+  }
+
+  /// Cree une operation cote serveur puis met a jour l'etat local.
+  Future<void> addOperation(Operation body) async {
+    final createdOperation = await _useCase.addOperation(body);
+    final currentOperations = switch (state) {
+      AsyncData<List<Operation>>(:final value) => value,
+      _ => <Operation>[],
+    };
+    state = AsyncData([...currentOperations, createdOperation]);
+  }
 }

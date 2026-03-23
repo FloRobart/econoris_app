@@ -12,9 +12,9 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return BaseApp(
       onRefresh: () async {
-        await ref.read(homeOperationsProvider.notifier).refresh();
+        await ref.read(homeBodyViewModelProvider.notifier).refresh();
       },
-      body: HomeBody(),
+      body: const HomeBody(),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
