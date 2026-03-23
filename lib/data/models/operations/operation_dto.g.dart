@@ -18,7 +18,7 @@ _OperationDto _$OperationDtoFromJson(Map<String, dynamic> json) =>
       costs: (json['costs'] as num).toDouble(),
       isValidate: json['is_validate'] as bool,
       userId: (json['user_id'] as num).toInt(),
-      subscriptionId: json['subscription_id'] as String?,
+      subscriptionId: (json['subscription_id'] as num?)?.toInt(),
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
     );

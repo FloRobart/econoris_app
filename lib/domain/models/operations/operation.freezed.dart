@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Operation {
 
- int get id;@JsonKey(name: 'levy_date') DateTime get levyDate; String get label; double get amount; String get category; String? get source; String? get destination; double get costs;@JsonKey(name: 'is_validate') bool get isValidate;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'subscription_id') String? get subscriptionId;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt; bool get isSelected;
+ int get id;@JsonKey(name: 'levy_date') DateTime get levyDate; String get label; double get amount; String get category; String? get source; String? get destination; double get costs;@JsonKey(name: 'is_validate') bool get isValidate;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'subscription_id') int? get subscriptionId;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt; bool get isSelected;
 /// Create a copy of Operation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $OperationCopyWith<$Res>  {
   factory $OperationCopyWith(Operation value, $Res Function(Operation) _then) = _$OperationCopyWithImpl;
 @useResult
 $Res call({
- int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
+ int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') int? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
 });
 
 
@@ -75,7 +75,7 @@ as String?,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_t
 as double,isValidate: null == isValidate ? _self.isValidate : isValidate // ignore: cast_nullable_to_non_nullable
 as bool,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,subscriptionId: freezed == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isSelected: null == isSelected ? _self.isSelected : isSelected // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -163,7 +163,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  int? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Operation() when $default != null:
 return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
@@ -184,7 +184,7 @@ return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  int? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)  $default,) {final _that = this;
 switch (_that) {
 case _Operation():
 return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
@@ -204,7 +204,7 @@ return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'levy_date')  DateTime levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  int? subscriptionId, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  bool isSelected)?  $default,) {final _that = this;
 switch (_that) {
 case _Operation() when $default != null:
 return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt,_that.isSelected);case _:
@@ -232,7 +232,7 @@ class _Operation implements Operation {
 @override final  double costs;
 @override@JsonKey(name: 'is_validate') final  bool isValidate;
 @override@JsonKey(name: 'user_id') final  int userId;
-@override@JsonKey(name: 'subscription_id') final  String? subscriptionId;
+@override@JsonKey(name: 'subscription_id') final  int? subscriptionId;
 @override@JsonKey(name: 'created_at') final  DateTime createdAt;
 @override@JsonKey(name: 'updated_at') final  DateTime updatedAt;
 @override final  bool isSelected;
@@ -267,7 +267,7 @@ abstract mixin class _$OperationCopyWith<$Res> implements $OperationCopyWith<$Re
   factory _$OperationCopyWith(_Operation value, $Res Function(_Operation) _then) = __$OperationCopyWithImpl;
 @override @useResult
 $Res call({
- int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
+ int id,@JsonKey(name: 'levy_date') DateTime levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') int? subscriptionId,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, bool isSelected
 });
 
 
@@ -297,7 +297,7 @@ as String?,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_t
 as double,isValidate: null == isValidate ? _self.isValidate : isValidate // ignore: cast_nullable_to_non_nullable
 as bool,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,subscriptionId: freezed == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isSelected: null == isSelected ? _self.isSelected : isSelected // ignore: cast_nullable_to_non_nullable
 as bool,

@@ -1,7 +1,7 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
+import 'package:econoris_app/ui/core/ui/operations/widgets/operation_management_index.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operations_table.dart';
 import 'package:econoris_app/ui/home/view_models/home_body_viewmodel.dart';
-import 'package:econoris_app/ui/home/widgets/home_stats.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,10 +19,10 @@ class HomeBody extends ConsumerWidget {
       data: (operations) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// Affiche les statistiques globales des opérations
+          /// Affiche l'index de gestion d'argent
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: HomeStats(),
+            child: OperationManagementIndex(),
           ),
 
           const SizedBox(height: 12),

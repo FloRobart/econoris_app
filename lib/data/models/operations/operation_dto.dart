@@ -16,7 +16,7 @@ abstract class OperationDto with _$OperationDto {
     required double costs,
     @JsonKey(name: 'is_validate') required bool isValidate,
     @JsonKey(name: 'user_id') required int userId,
-    @JsonKey(name: 'subscription_id') required String? subscriptionId,
+    @JsonKey(name: 'subscription_id') required int? subscriptionId,
     @JsonKey(name: 'created_at') required String createdAt,
     @JsonKey(name: 'updated_at') required String updatedAt,
   }) = _OperationDto;

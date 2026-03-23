@@ -11,6 +11,13 @@ final homeOperationsProvider =
 /// ViewModel pour l'ecran d'accueil.
 class HomeOperationsViewModel extends AsyncNotifier<List<Operation>> {
   late final HomeBodyUseCase _useCase;
+  int monthOffset = 3;
+
+  int get currentMonthOffset => monthOffset;
+  void setMonthOffset(int offset) {
+    monthOffset = offset;
+    refresh();
+  }
 
   @override
   Future<List<Operation>> build() async {

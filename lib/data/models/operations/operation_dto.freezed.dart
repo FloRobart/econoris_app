@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OperationDto {
 
- int get id;@JsonKey(name: 'levy_date') String get levyDate; String get label; double get amount; String get category; String? get source; String? get destination; double get costs;@JsonKey(name: 'is_validate') bool get isValidate;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'subscription_id') String? get subscriptionId;@JsonKey(name: 'created_at') String get createdAt;@JsonKey(name: 'updated_at') String get updatedAt;
+ int get id;@JsonKey(name: 'levy_date') String get levyDate; String get label; double get amount; String get category; String? get source; String? get destination; double get costs;@JsonKey(name: 'is_validate') bool get isValidate;@JsonKey(name: 'user_id') int get userId;@JsonKey(name: 'subscription_id') int? get subscriptionId;@JsonKey(name: 'created_at') String get createdAt;@JsonKey(name: 'updated_at') String get updatedAt;
 /// Create a copy of OperationDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $OperationDtoCopyWith<$Res>  {
   factory $OperationDtoCopyWith(OperationDto value, $Res Function(OperationDto) _then) = _$OperationDtoCopyWithImpl;
 @useResult
 $Res call({
- int id,@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
+ int id,@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') int? subscriptionId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
 });
 
 
@@ -78,7 +78,7 @@ as String?,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_t
 as double,isValidate: null == isValidate ? _self.isValidate : isValidate // ignore: cast_nullable_to_non_nullable
 as bool,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,subscriptionId: freezed == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -165,7 +165,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  int? subscriptionId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OperationDto() when $default != null:
 return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt);case _:
@@ -186,7 +186,7 @@ return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  int? subscriptionId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _OperationDto():
 return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt);case _:
@@ -206,7 +206,7 @@ return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  String? subscriptionId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category,  String? source,  String? destination,  double costs, @JsonKey(name: 'is_validate')  bool isValidate, @JsonKey(name: 'user_id')  int userId, @JsonKey(name: 'subscription_id')  int? subscriptionId, @JsonKey(name: 'created_at')  String createdAt, @JsonKey(name: 'updated_at')  String updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _OperationDto() when $default != null:
 return $default(_that.id,_that.levyDate,_that.label,_that.amount,_that.category,_that.source,_that.destination,_that.costs,_that.isValidate,_that.userId,_that.subscriptionId,_that.createdAt,_that.updatedAt);case _:
@@ -234,7 +234,7 @@ class _OperationDto implements OperationDto {
 @override final  double costs;
 @override@JsonKey(name: 'is_validate') final  bool isValidate;
 @override@JsonKey(name: 'user_id') final  int userId;
-@override@JsonKey(name: 'subscription_id') final  String? subscriptionId;
+@override@JsonKey(name: 'subscription_id') final  int? subscriptionId;
 @override@JsonKey(name: 'created_at') final  String createdAt;
 @override@JsonKey(name: 'updated_at') final  String updatedAt;
 
@@ -271,7 +271,7 @@ abstract mixin class _$OperationDtoCopyWith<$Res> implements $OperationDtoCopyWi
   factory _$OperationDtoCopyWith(_OperationDto value, $Res Function(_OperationDto) _then) = __$OperationDtoCopyWithImpl;
 @override @useResult
 $Res call({
- int id,@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') String? subscriptionId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
+ int id,@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category, String? source, String? destination, double costs,@JsonKey(name: 'is_validate') bool isValidate,@JsonKey(name: 'user_id') int userId,@JsonKey(name: 'subscription_id') int? subscriptionId,@JsonKey(name: 'created_at') String createdAt,@JsonKey(name: 'updated_at') String updatedAt
 });
 
 
@@ -301,7 +301,7 @@ as String?,costs: null == costs ? _self.costs : costs // ignore: cast_nullable_t
 as double,isValidate: null == isValidate ? _self.isValidate : isValidate // ignore: cast_nullable_to_non_nullable
 as bool,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,subscriptionId: freezed == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));

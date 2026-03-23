@@ -15,7 +15,7 @@ abstract class Operation with _$Operation {
     required double costs,
     @JsonKey(name: 'is_validate') required bool isValidate,
     @JsonKey(name: 'user_id') required int userId,
-    @JsonKey(name: 'subscription_id') required String? subscriptionId,
+    @JsonKey(name: 'subscription_id') required int? subscriptionId,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
     required bool isSelected,
