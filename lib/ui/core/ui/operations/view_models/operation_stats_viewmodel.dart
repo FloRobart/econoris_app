@@ -21,7 +21,7 @@ final operationStatsProvider = Provider<AsyncValue<OperationStatsViewModel>>((
 class OperationStatsViewModel {
   const OperationStatsViewModel({
     required this.startMonthDate,
-    required this.nextMonthStartDate,
+    required this.endMonthDate,
 
     required this.monthlyOperationsCount,
     required this.monthlyOperationsAmount,
@@ -37,7 +37,7 @@ class OperationStatsViewModel {
   });
 
   final DateTime startMonthDate;
-  final DateTime nextMonthStartDate;
+  final DateTime endMonthDate;
 
   final int monthlyOperationsCount;
   final double monthlyOperationsAmount;
@@ -56,15 +56,15 @@ class OperationStatsViewModel {
     List<Operation> operations,
     int monthOffset,
   ) {
-    final now = DateTime.now();
     final startMonthDate = _resolveFinancialMonthStartDate(
       operations,
       monthOffset,
     );
+
     var nextMonthStartDate = _resolveFinancialMonthStartDate(
       operations,
       monthOffset + 1,
-    ).subtract(const Duration(days: 1));
+    );
 
     double operationsAmount = 0;
     int operationsCount = 0;
@@ -107,7 +107,7 @@ class OperationStatsViewModel {
     /// On retourne un objet de stats avec tous les calculs déjà faits pour éviter de les refaire dans le widget.
     return OperationStatsViewModel(
       startMonthDate: startMonthDate,
-      nextMonthStartDate: nextMonthStartDate,
+      endMonthDate: nextMonthStartDate.subtract(const Duration(days: 1)),
       monthlyOperationsCount: operationsCount,
       monthlyOperationsAmount: operationsAmount,
       monthlyPositiveOperationsCount: positiveOperationsCount,

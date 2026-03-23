@@ -168,7 +168,7 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
     final asyncNextMonthStartDate = ref.watch(
       operationStatsProvider.select(
         (asyncStats) =>
-            asyncStats.whenData((stats) => stats.nextMonthStartDate),
+            asyncStats.whenData((stats) => stats.endMonthDate),
       ),
     );
 
