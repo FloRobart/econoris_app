@@ -4,8 +4,8 @@ import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
 
 /// Écran d'accueil de l'application.
-class OperationsTable extends StatelessWidget {
-  const OperationsTable({super.key, required this.operations});
+class OperationsList extends StatelessWidget {
+  const OperationsList({super.key, required this.operations});
 
   final List<Operation> operations;
 

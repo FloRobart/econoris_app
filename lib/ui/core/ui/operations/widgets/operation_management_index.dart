@@ -165,7 +165,7 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
       ),
     );
 
-    final asyncNextMonthStartDate = ref.watch(
+    final asyncEndMonthDate = ref.watch(
       operationStatsProvider.select(
         (asyncStats) =>
             asyncStats.whenData((stats) => stats.endMonthDate),
@@ -180,10 +180,10 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
       error: (error, stackTrace) => 'Mois inconnu',
     );
 
-    final nextMonthDate = asyncNextMonthStartDate.when(
-      data: (nextMonthDate) =>
+    final endMonthDate = asyncEndMonthDate.when(
+      data: (endMonthDate) =>
           formatDate(
-            nextMonthDate,
+            endMonthDate,
             customFormat: 'dd MMMM yyyy',
           ) ??
           'Mois inconnu',
@@ -205,7 +205,7 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
           ),
           const TextSpan(text: ' au '),
           TextSpan(
-            text: nextMonthDate,
+            text: endMonthDate,
             style:
                 Theme.of(
                   context,
