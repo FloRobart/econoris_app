@@ -190,7 +190,7 @@ class FinancialDate {
 
     /// On filtre les opérations pour ne garder que celles qui ont un montant supérieur ou égal au montant moyen des opérations positives dans la fenêtre de recherche.
     final salaryCandidates = positiveOperationsInWindow
-        .where((operation) => operation.amount >= (averageSalaryAmount * 1.5))
+        .where((operation) => operation.amount >= (averageSalaryAmount * 1.2))
         .toList();
 
     /// Si aucune opération ne correspond au critère de montant, on retourne la date théorique du début du mois financier.
@@ -216,6 +216,7 @@ class FinancialDate {
     return operationWithMaxAmount.levyDate;
   }
 
+  /// Détermine la date de fin du mois financier en se basant sur la date de début du mois financier et en cherchant la date de début du mois financier suivant. Si la date de début du mois financier suivant est trop proche ou trop éloignée de la date de début du mois financier actuel, on considère que la date de fin du mois financier actuel est la date de début du mois financier actuel plus 1 mois.
   DateTime _resolveFinancialMonthEndDate(
     List<Operation> operations,
     int monthOffset,
@@ -225,6 +226,8 @@ class FinancialDate {
       operations,
       monthOffset + 1,
     );
+
+    debugPrint('Financial month start date diff in day : ${startNextFinancialDate.difference(financialMonthStartDate).inDays}');
 
     /// Si l'écart entre la date de début du mois financier suivant et la date de début du mois financier actuel est inférieur à 1 mois - 4 jours ou supérieur à 1 mois + 4 jours, on considère que la date de fin du mois financier actuel est la date de début du mois financier actuel plus 1 mois.
     if (startNextFinancialDate.difference(financialMonthStartDate).inDays <
