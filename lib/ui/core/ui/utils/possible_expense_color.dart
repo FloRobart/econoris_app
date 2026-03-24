@@ -4,6 +4,6 @@ import 'package:flutter/material.dart';
 Color getPossibleExpenseColor(double amount) {
   if (amount < 0) { return Colors.red; }
   if (amount < 100) { return Colors.orange; }
-  if (amount < 200) { return Colors.yellow; }
+  if (amount < 200) { return Colors.amberAccent; }
   return Colors.green;
 }

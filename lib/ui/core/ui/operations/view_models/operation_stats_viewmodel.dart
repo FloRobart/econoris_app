@@ -1,7 +1,7 @@
 import 'package:econoris_app/config/constantes.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
-import 'package:econoris_app/ui/home/view_models/home_body_viewmodel.dart';
 import 'package:econoris_app/ui/operations/view_models/month_change_card_viewmodel.dart';
+import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final operationStatsProvider = Provider<AsyncValue<OperationStatsViewModel>>((
   ref,
 ) {
-  final asyncOperations = ref.watch(homeBodyViewModelProvider);
+  final asyncOperations = ref.watch(operationViewModelProvider);
   final monthOffset = ref.watch(
     monthChangeCardViewModelProvider.select((state) => state.monthOffset),
   );
@@ -116,14 +116,10 @@ class OperationStatsViewModel {
       monthlyPossibleExpenses: possibleExpenses,
     );
   }
-
-  // /// Détermine la date de début du mois financier en se basant sur les opérations positives (salaires) les plus récentes dans une fenêtre de recherche autour de la date théorique du début du mois financier.
-  // static DateTime _resolveFinancialMonthStartDate(
-  //   List<Operation> operations,
-  //   int monthOffset,
-  // ) {}
 }
 
+/// Classe utilitaire pour calculer les dates de début et de fin du mois financier en se basant sur les opérations et le décalage de mois.
+/// Le mois financier est défini comme la période entre deux opérations positives (salaires) successives. Si aucune opération positive n'est trouvée, on considère que le mois financier correspond au mois calendaire.
 class FinancialDate {
   FinancialDate(List<Operation> operations, int monthOffset) {
     _startDate = _resolveFinancialMonthStartDate(operations, monthOffset);

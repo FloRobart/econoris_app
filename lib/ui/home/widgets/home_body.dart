@@ -2,7 +2,7 @@ import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_management_index.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_monthly_stats.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operations_list.dart';
-import 'package:econoris_app/ui/home/view_models/home_body_viewmodel.dart';
+import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +14,7 @@ class HomeBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final AsyncValue<List<Operation>> asyncOperations = ref.watch(
-      homeBodyViewModelProvider,
+      operationViewModelProvider,
     );
 
     return Column(
