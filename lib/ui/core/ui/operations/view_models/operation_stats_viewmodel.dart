@@ -62,7 +62,7 @@ class OperationStatsViewModel {
     FinancialDate financialDate = FinancialDate(operations, monthOffset);
 
     final startMonthDate = financialDate.startDate;
-    final nextMonthStartDate = financialDate.endDate;
+    final endMonthDate = financialDate.endDate;
 
     double operationsAmount = 0;
     int operationsCount = 0;
@@ -77,7 +77,7 @@ class OperationStatsViewModel {
 
     for (final operation in operations) {
       if (operation.levyDate.isBefore(startMonthDate) ||
-          !operation.levyDate.isBefore(nextMonthStartDate)) {
+          !operation.levyDate.isBefore(endMonthDate)) {
         continue;
       }
 
@@ -105,7 +105,7 @@ class OperationStatsViewModel {
     /// On retourne un objet de stats avec tous les calculs déjà faits pour éviter de les refaire dans le widget.
     return OperationStatsViewModel(
       startMonthDate: startMonthDate,
-      endMonthDate: nextMonthStartDate.subtract(const Duration(days: 1)),
+      endMonthDate: endMonthDate,
       monthlyOperationsCount: operationsCount,
       monthlyOperationsAmount: operationsAmount,
       monthlyPositiveOperationsCount: positiveOperationsCount,
@@ -175,6 +175,10 @@ class FinancialDate {
             .toList()
           ..sort((a, b) => a.levyDate.compareTo(b.levyDate));
 
+    debugPrint(
+      'Positive operations in window: ${positiveOperationsInWindow.toString()}',
+    );
+
     /// Si aucune opération positive n'est trouvée dans la fenêtre de recherche, on retourne la date théorique du début du mois financier, c'est à dire le premier de la date actuelle avec le décalage de mois appliqué.
     if (positiveOperationsInWindow.isEmpty) {
       return DateTime(now.year, now.month + monthOffset);
@@ -188,10 +192,18 @@ class FinancialDate {
             .reduce((a, b) => a + b) /
         positiveOperationsInWindow.length;
 
+    debugPrint('Average salary amount: $averageSalaryAmount');
+
     /// On filtre les opérations pour ne garder que celles qui ont un montant supérieur ou égal au montant moyen des opérations positives dans la fenêtre de recherche.
+    final minAmountForSalaryCandidate = positiveOperationsInWindow
+        .map((operation) => operation.amount)
+        .reduce((a, b) => a > b ? a : b) / 3;
+
     final salaryCandidates = positiveOperationsInWindow
-        .where((operation) => operation.amount >= (averageSalaryAmount * 1.2))
+        .where((operation) => operation.amount >= minAmountForSalaryCandidate && operation.amount >= averageSalaryAmount)
         .toList();
+
+    debugPrint('Salary candidates: ${salaryCandidates.toString()}');
 
     /// Si aucune opération ne correspond au critère de montant, on retourne la date théorique du début du mois financier.
     if (salaryCandidates.isEmpty) {
@@ -227,7 +239,9 @@ class FinancialDate {
       monthOffset + 1,
     );
 
-    debugPrint('Financial month start date diff in day : ${startNextFinancialDate.difference(financialMonthStartDate).inDays}');
+    debugPrint(
+      'Financial month start date diff in day : ${startNextFinancialDate.difference(financialMonthStartDate).inDays}',
+    );
 
     /// Si l'écart entre la date de début du mois financier suivant et la date de début du mois financier actuel est inférieur à 1 mois - 4 jours ou supérieur à 1 mois + 4 jours, on considère que la date de fin du mois financier actuel est la date de début du mois financier actuel plus 1 mois.
     if (startNextFinancialDate.difference(financialMonthStartDate).inDays <
