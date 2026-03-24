@@ -3,7 +3,7 @@ import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_management_index.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_monthly_stats.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operations_list.dart';
-import 'package:econoris_app/ui/home/view_models/home_viewmodel.dart';
+import 'package:econoris_app/ui/home/view_models/home_body_viewmodel.dart';
 import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,8 +71,10 @@ class HomeBody extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: asyncOperations.when(
             data: (operations) {
-              HomeViewmodel homeViewmodel = HomeViewmodel(operations);
-              return OperationsList(operations: homeViewmodel.upComingOperations);
+              HomeBodyViewmodel homeViewmodel = HomeBodyViewmodel(operations);
+              return OperationsList(
+                operations: homeViewmodel.upComingOperations,
+              );
             },
             error: (error, stackTrace) =>
                 const Center(child: Text('Error loading operations')),
@@ -115,7 +117,7 @@ class HomeBody extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: asyncOperations.when(
             data: (operations) {
-              HomeViewmodel homeViewmodel = HomeViewmodel(operations);
+              HomeBodyViewmodel homeViewmodel = HomeBodyViewmodel(operations);
               return OperationsList(operations: homeViewmodel.pastOperations);
             },
             error: (error, stackTrace) =>

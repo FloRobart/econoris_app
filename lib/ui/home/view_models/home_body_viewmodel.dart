@@ -1,7 +1,7 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
 
-class HomeViewmodel {
-  HomeViewmodel(List<Operation> operations) : _operations = operations;
+class HomeBodyViewmodel {
+  HomeBodyViewmodel(List<Operation> operations) : _operations = operations;
 
   /* Attributes */
   final List<Operation> _operations;
