@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 
 /// État du formulaire de connexion et d'inscription.
 class LoginForm extends ConsumerStatefulWidget {
-  const LoginForm({required this.initialEmail, this.errorMessage});
+  const LoginForm({super.key, required this.initialEmail, this.errorMessage});
 
   final String? initialEmail;
   final String? errorMessage;

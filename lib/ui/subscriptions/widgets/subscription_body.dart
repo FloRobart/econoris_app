@@ -1,5 +1,4 @@
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
-import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/ui/subscriptions/widgets/subscription_monthly_stats.dart';
 import 'package:econoris_app/ui/core/ui/subscriptions/widgets/subscriptions_list.dart';
 import 'package:econoris_app/ui/subscriptions/view_models/subscription_body_viewmodel.dart';
