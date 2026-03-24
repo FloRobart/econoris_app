@@ -1,4 +1,5 @@
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
+import 'package:econoris_app/ui/core/ui/widgets/app_tooltip.dart';
 import 'package:econoris_app/ui/operations/view_models/month_change_card_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,15 +30,22 @@ class MonthChangeCard extends ConsumerWidget {
               ),
 
               /// Affiche le mois et l'année courants
-              Text(
-                formatDate(
-                      state.currentMonth,
-                      customFormat: 'MMMM yyyy',
-                    )?.toUpperCase() ??
-                    DateFormat(
-                      'MMMM yyyy',
-                    ).format(DateTime.now()).toUpperCase(),
-                style: Theme.of(context).textTheme.titleLarge,
+              TextButton(
+                onPressed: viewModel.resetMonth,
+                child: AppTooltip(
+                  message:
+                      'Cliquez pour revenir au mois de ${formatDate(DateTime.now(), customFormat: 'MMMM yyyy')?.toUpperCase() ?? DateFormat('MMMM yyyy').format(DateTime.now()).toUpperCase()}',
+                  child: Text(
+                    formatDate(
+                          state.currentMonth,
+                          customFormat: 'MMMM yyyy',
+                        )?.toUpperCase() ??
+                        DateFormat(
+                          'MMMM yyyy',
+                        ).format(DateTime.now()).toUpperCase(),
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
               ),
 
               /// Bouton pour aller au mois suivant

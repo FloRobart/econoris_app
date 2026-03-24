@@ -22,6 +22,11 @@ class MonthChangeCardViewmodel extends Notifier<MonthChangeCardState> {
     _setMonthOffset(state.monthOffset - 1);
   }
 
+  /// Permet de revenir au mois courant en réinitialisant l'offset de mois à 0.
+  void resetMonth() {
+    _setMonthOffset(0);
+  }
+
   /// Permet de passer au mois suivant en incrémentant l'offset de mois.
   void nextMonth() {
     _setMonthOffset(state.monthOffset + 1);
