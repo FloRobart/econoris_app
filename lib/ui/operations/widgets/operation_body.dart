@@ -2,7 +2,7 @@ import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_management_index.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_monthly_stats.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operations_list.dart';
-import 'package:econoris_app/ui/operations/view_models/operation_body_viewmodel.dart';
+import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
 import 'package:econoris_app/ui/operations/widgets/month_change_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

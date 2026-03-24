@@ -1,5 +1,5 @@
 import 'package:econoris_app/ui/core/ui/widgets/base_app.dart';
-import 'package:econoris_app/ui/operations/view_models/operation_body_viewmodel.dart';
+import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
 import 'package:econoris_app/ui/operations/widgets/operation_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
