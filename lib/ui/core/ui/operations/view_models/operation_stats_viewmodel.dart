@@ -2,6 +2,7 @@ import 'package:econoris_app/config/constantes.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/home/view_models/home_body_viewmodel.dart';
 import 'package:econoris_app/ui/operations/view_models/month_change_card_viewmodel.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider derive unique qui calcule les statistiques de la home.
@@ -58,15 +59,10 @@ class OperationStatsViewModel {
     List<Operation> operations,
     int monthOffset,
   ) {
-    final startMonthDate = _resolveFinancialMonthStartDate(
-      operations,
-      monthOffset,
-    );
+    FinancialDate financialDate = FinancialDate(operations, monthOffset);
 
-    var nextMonthStartDate = _resolveFinancialMonthStartDate(
-      operations,
-      monthOffset + 1,
-    );
+    final startMonthDate = financialDate.startDate;
+    final nextMonthStartDate = financialDate.endDate;
 
     double operationsAmount = 0;
     int operationsCount = 0;
@@ -121,8 +117,30 @@ class OperationStatsViewModel {
     );
   }
 
-  /// Détermine la date de début du mois financier en se basant sur les opérations positives (salaires) les plus récentes dans une fenêtre de recherche autour de la date théorique du début du mois financier.
-  static DateTime _resolveFinancialMonthStartDate(
+  // /// Détermine la date de début du mois financier en se basant sur les opérations positives (salaires) les plus récentes dans une fenêtre de recherche autour de la date théorique du début du mois financier.
+  // static DateTime _resolveFinancialMonthStartDate(
+  //   List<Operation> operations,
+  //   int monthOffset,
+  // ) {}
+}
+
+class FinancialDate {
+  FinancialDate(List<Operation> operations, int monthOffset) {
+    _startDate = _resolveFinancialMonthStartDate(operations, monthOffset);
+    _endDate = _resolveFinancialMonthEndDate(
+      operations,
+      monthOffset,
+      _startDate!,
+    );
+  }
+
+  DateTime? _startDate;
+  DateTime? _endDate;
+
+  DateTime get startDate => _startDate ?? DateTime.now();
+  DateTime get endDate => _endDate ?? DateTime.now();
+
+  DateTime _resolveFinancialMonthStartDate(
     List<Operation> operations,
     int monthOffset,
   ) {
@@ -132,15 +150,18 @@ class OperationStatsViewModel {
     final windowStart = DateTime(
       now.year,
       now.month + monthOffset - 1,
-      now.day,
+      now.day, // - Constantes.salaryDistanceThresholdDays
     ).subtract(const Duration(days: Constantes.salaryWindowSafetyMarginDays));
 
     /// On définit la date de fin de la fenêtre de recherche. En réalité, on cherche la date de début du mois financier suivant à laquelle on soustrait un jour pour trouver la date de fin du mois financier actuel.
     final windowEnd = DateTime(
       now.year,
       now.month + monthOffset,
-      now.day,
+      now.day, // + Constantes.salaryDistanceThresholdDays
     ).add(const Duration(days: Constantes.salaryWindowSafetyMarginDays));
+
+    debugPrint('Window start: $windowStart');
+    debugPrint('Window end: $windowEnd');
 
     /// On filtre les opérations pour ne garder que celles qui sont dans la fenêtre de recherche et qui sont positives (les salaires). Ensuite, on trie ces opérations par date pour trouver la plus récente.
     final positiveOperationsInWindow =
@@ -159,21 +180,64 @@ class OperationStatsViewModel {
       return DateTime(now.year, now.month + monthOffset);
     }
 
-    /// On récupère l'opération avec le montant positif le plus élevé dans la fenêtre de recherche. En cas d'égalité sur le montant, on prend l'opération la plus récente. On considère que c'est cette opération qui correspond au salaire et donc au début du mois financier.
-    final operationWithMaxAmount = positiveOperationsInWindow.reduce((
-      currentMax,
-      operation,
-    ) {
-      if (operation.amount > currentMax.amount) {
-        return operation;
-      }
-      if (operation.amount == currentMax.amount &&
-          operation.levyDate.isAfter(currentMax.levyDate)) {
-        return operation;
-      }
-      return currentMax;
-    });
+    /// On calcule le montant moyen des opérations positives dans la fenêtre de recherche pour filtrer les opérations candidates au salaire.
+    /// En effet, on considère que le salaire est une opération positive qui a un montant supérieur ou égal au montant moyen des opérations positives dans la fenêtre de recherche.
+    final averageSalaryAmount =
+        positiveOperationsInWindow
+            .map((operation) => operation.amount)
+            .reduce((a, b) => a + b) /
+        positiveOperationsInWindow.length;
+
+    /// On filtre les opérations pour ne garder que celles qui ont un montant supérieur ou égal au montant moyen des opérations positives dans la fenêtre de recherche.
+    final salaryCandidates = positiveOperationsInWindow
+        .where((operation) => operation.amount >= (averageSalaryAmount * 1.5))
+        .toList();
+
+    /// Si aucune opération ne correspond au critère de montant, on retourne la date théorique du début du mois financier.
+    if (salaryCandidates.isEmpty) {
+      return DateTime(now.year, now.month + monthOffset);
+    }
+
+    /// On considère que la date de début du mois financier est la date de l'opération candidate au salaire la moins récente.
+    final operationWithMaxAmount = salaryCandidates.reduce(
+      (a, b) => a.levyDate.isBefore(b.levyDate) ? a : b,
+    );
+
+    debugPrint(
+      'Operation windowStart.subtract : ${(windowStart.subtract(const Duration(days: Constantes.salaryWindowSafetyMarginDays)))}',
+    );
+    debugPrint(
+      'Operation windowEnd.add : ${(windowEnd.add(const Duration(days: Constantes.salaryWindowSafetyMarginDays)))}',
+    );
+
+    debugPrint('Operation with max amount: ${operationWithMaxAmount.levyDate}');
+    debugPrint('=================================================');
 
     return operationWithMaxAmount.levyDate;
+  }
+
+  DateTime _resolveFinancialMonthEndDate(
+    List<Operation> operations,
+    int monthOffset,
+    DateTime financialMonthStartDate,
+  ) {
+    DateTime startNextFinancialDate = _resolveFinancialMonthStartDate(
+      operations,
+      monthOffset + 1,
+    );
+
+    /// Si l'écart entre la date de début du mois financier suivant et la date de début du mois financier actuel est inférieur à 1 mois - 4 jours ou supérieur à 1 mois + 4 jours, on considère que la date de fin du mois financier actuel est la date de début du mois financier actuel plus 1 mois.
+    if (startNextFinancialDate.difference(financialMonthStartDate).inDays <
+            22 ||
+        startNextFinancialDate.difference(financialMonthStartDate).inDays >
+            38) {
+      return DateTime(
+        financialMonthStartDate.year,
+        financialMonthStartDate.month + 1,
+        financialMonthStartDate.day,
+      );
+    }
+
+    return startNextFinancialDate.subtract(const Duration(days: 1));
   }
 }
