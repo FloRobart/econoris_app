@@ -1,5 +1,5 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
-import 'package:econoris_app/domain/use_cases/operations/operation_body_usecase.dart';
+import 'package:econoris_app/domain/use_cases/operations/operation_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider d'etat asynchrone pour les operations de l'ecran d'accueil.
@@ -10,11 +10,11 @@ final operationViewModelProvider =
 
 /// ViewModel pour l'ecran d'accueil.
 class OperationViewModel extends AsyncNotifier<List<Operation>> {
-  late final OperationBodyUseCase _useCase;
+  late final OperationUseCase _useCase;
 
   @override
   Future<List<Operation>> build() async {
-    _useCase = ref.read(operationBodyUseCaseProvider);
+    _useCase = ref.read(operationUseCaseProvider);
     return _useCase.getOperations();
   }
 

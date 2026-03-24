@@ -4,6 +4,7 @@ import 'package:econoris_app/data/repositories/subscriptions/subscription_reposi
 import 'package:econoris_app/data/repositories/subscriptions/subscription_repository_local.dart';
 import 'package:econoris_app/data/repositories/subscriptions/subscription_repository_remote.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
+import 'package:econoris_app/domain/models/subscriptions/subscription_mapper.dart';
 
 /// Repository interface for subscriptions data.
 class SubscriptionRepositoryImpl implements SubscriptionRepository {
@@ -30,9 +31,10 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
   /// Adds a new subscription to the remote API.
   @override
-  Future<Subscription> addSubscription(SubscriptionDto body) async {
+  Future<Subscription> addSubscription(Subscription body) async {
     try {
-      final subscriptionDto = await remote.addSubscription(body);
+      final bodyDto = body.toDto();
+      final subscriptionDto = await remote.addSubscription(bodyDto);
       local.saveSubscriptions([subscriptionDto]);
       return subscriptionDto.toDomain();
     } catch (e) {
@@ -42,11 +44,9 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
   /// Updates an existing subscription in the remote API.
   @override
-  Future<Subscription> updateSubscription(int id, SubscriptionDto body) async {
-    final subscriptionDto = await remote.updateSubscription(
-      id,
-      body,
-    );
+  Future<Subscription> updateSubscription(int id, Subscription body) async {
+    final bodyDto = body.toDto();
+    final subscriptionDto = await remote.updateSubscription(id, bodyDto);
     local.updateSubscription(id, subscriptionDto);
     return subscriptionDto.toDomain();
   }

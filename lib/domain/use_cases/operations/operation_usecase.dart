@@ -4,20 +4,20 @@ import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Fournit une instance de [OperationBodyUseCase].
-final operationBodyUseCaseProvider = Provider<OperationBodyUseCase>((ref) {
+/// Fournit une instance de [OperationUseCase].
+final operationUseCaseProvider = Provider<OperationUseCase>((ref) {
   final operationRepository = ref.read(operationRepositoryProvider);
   final subscriptionRepository = ref.read(subscriptionRepositoryProvider);
 
-  return OperationBodyUseCase(
+  return OperationUseCase(
     operationRepository: operationRepository,
     subscriptionRepository: subscriptionRepository,
   );
 });
 
 /// Use case class for the home screen
-class OperationBodyUseCase {
-  OperationBodyUseCase({
+class OperationUseCase {
+  OperationUseCase({
     required this.operationRepository,
     required this.subscriptionRepository,
   });

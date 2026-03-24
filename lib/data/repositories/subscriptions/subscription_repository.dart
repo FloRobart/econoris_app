@@ -1,4 +1,3 @@
-import 'package:econoris_app/data/models/subscriptions/subscription_dto.dart';
 import 'package:econoris_app/data/services/api/subscriptions/subscription_api_client.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/data/repositories/subscriptions/subscription_repository_impl.dart';
@@ -17,7 +16,7 @@ final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
 /// Repository interface for subscriptions data.
 abstract class SubscriptionRepository {
   Future<List<Subscription>> getSubscriptions();
-  Future<Subscription> addSubscription(SubscriptionDto body);
-  Future<Subscription> updateSubscription(int id, SubscriptionDto body);
+  Future<Subscription> addSubscription(Subscription body);
+  Future<Subscription> updateSubscription(int id, Subscription body);
   Future<Subscription> deleteSubscription(int id);
 }

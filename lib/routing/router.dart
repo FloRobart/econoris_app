@@ -5,7 +5,7 @@ import 'package:econoris_app/ui/auth/login/widgets/login_screen.dart';
 import 'package:econoris_app/ui/home/widgets/home_screen.dart';
 import 'package:econoris_app/ui/operations/widgets/operation_screen.dart';
 import 'package:econoris_app/ui/profile/widgets/profile_screen.dart';
-import 'package:econoris_app/ui/subscriptions/widgets/subscriptions_screen.dart';
+import 'package:econoris_app/ui/subscriptions/widgets/subscription_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,7 +60,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.subscriptions,
-        builder: (_, _) => const SubscriptionsScreen(),
+        builder: (_, _) => const SubscriptionScreen(),
       ),
     ],
   );
