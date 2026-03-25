@@ -2,7 +2,6 @@ import 'package:econoris_app/config/constantes.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/operations/view_models/month_change_card_viewmodel.dart';
 import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider derive unique qui calcule les statistiques de la home.

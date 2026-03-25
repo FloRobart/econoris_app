@@ -1,6 +1,5 @@
 import 'package:econoris_app/data/services/api/api_client.dart';
 import 'package:econoris_app/config/app_config.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance asynchrone d'[AuthApiClient].
