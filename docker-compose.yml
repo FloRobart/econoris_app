@@ -3,10 +3,13 @@ services:
   econoris-app-web:
     image: florobart/econoris-app-web:latest
     restart: always
-    env_file:
-      - ./.env
     volumes:
-      - ./.env:/usr/share/nginx/html/assets/.env:ro
+      - type: bind
+        source: ./.env
+        target: /usr/share/nginx/html/assets/.env
+        read_only: true
+        bind:
+          create_host_path: false
     networks:
       - flower-garden-net
     ports:

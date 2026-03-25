@@ -1,22 +1,101 @@
+import 'package:econoris_app/config/assets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+/// Centralizes authentication endpoints used by the application.
+abstract class CompiledAppConfig {
+  static const String fallbackAppName = 'Econoris2';
+  static const String fallbackAuthUrl = 'http://localhost:26001';
+  static const String fallbackDataUrl = 'http://localhost:26002';
+  static const String fallbackLocalization = 'fr_FR';
+
+  static const String appName = String.fromEnvironment(
+    'APP_NAME',
+    defaultValue: fallbackAppName,
+  );
+  static const String authUrl = String.fromEnvironment(
+    'AUTH_URL',
+    defaultValue: fallbackAuthUrl,
+  );
+  static const String dataUrl = String.fromEnvironment(
+    'DATA_URL',
+    defaultValue: fallbackDataUrl,
+  );
+  static const String localization = String.fromEnvironment(
+    'LOCALIZATION',
+    defaultValue: fallbackLocalization,
+  );
+}
 
 /// Configuration globale de l'application, chargée à partir du fichier .env.
 class AppConfig {
   static late final String appName;
   static late final String dataUrl;
   static late final String authUrl;
+  static late final String localization;
   static String appVersion = 'Inconnu';
 
-  /* Charge les variables de configuration à partir du fichier .env. */
-  static void load() {
-    appName = 'Econoris';//dotenv.get('APP_NAME', fallback: 'Econoris');
-    authUrl = 'http://192.168.1.91:26001';//dotenv.get('AUTH_URL', fallback: 'http://192.168.1.91:26001');
-    dataUrl = 'http://192.168.1.91:26002';//dotenv.get('DATA_URL', fallback: 'http://192.168.1.91:26002');
+  /// Charge les variables de configuration dans cet ordre de priorité :
+  /// 1) fichier `.env` optionnel servi à runtime et chargé par flutter_dotenv
+  /// 2) valeurs passées à la compilation avec `--dart-define`
+  /// 3) valeurs de fallback codées en dur
+  static Future<void> load() async {
+    final overrides = await _loadRuntimeOverrides();
 
-    /// Récupère la version de l'application à partir des informations du package.
-    PackageInfo.fromPlatform().then(
-      (packageInfo) => appVersion = '${packageInfo.version}+${packageInfo.buildNumber}',
+    appName = _resolveConfigValue(
+      key: 'APP_NAME',
+      compileTimeValue: CompiledAppConfig.appName,
+      overrides: overrides,
     );
+    authUrl = _resolveConfigValue(
+      key: 'AUTH_URL',
+      compileTimeValue: CompiledAppConfig.authUrl,
+      overrides: overrides,
+    );
+    dataUrl = _resolveConfigValue(
+      key: 'DATA_URL',
+      compileTimeValue: CompiledAppConfig.dataUrl,
+      overrides: overrides,
+    );
+    localization = _resolveConfigValue(
+      key: 'LOCALIZATION',
+      compileTimeValue: CompiledAppConfig.localization,
+      overrides: overrides,
+    );
+
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      appVersion = '${packageInfo.version}+${packageInfo.buildNumber}';
+    } catch (e) {
+      debugPrint('Erreur lors du chargement des informations de version: $e');
+    }
+  }
+
+  /// Charge les variables de configuration à partir de différentes sources au runtime.
+  static Future<Map<String, String>> _loadRuntimeOverrides() async {
+    final overrides = <String, String>{};
+
+    try {
+      await dotenv.load(fileName: Assets.webDotEnvPath, isOptional: true);
+      overrides.addAll(dotenv.env);
+    } catch (e) {
+      debugPrint('Erreur lors du chargement du fichier .env: $e');
+    }
+
+    return overrides;
+  }
+
+  /// Résout la valeur de configuration finale en respectant l'ordre de priorité.
+  static String _resolveConfigValue({
+    required String key,
+    required String compileTimeValue,
+    required Map<String, String> overrides,
+  }) {
+    final runtimeValue = overrides[key]?.trim();
+    if (runtimeValue != null && runtimeValue.isNotEmpty) {
+      return runtimeValue;
+    }
+    return compileTimeValue;
   }
 }

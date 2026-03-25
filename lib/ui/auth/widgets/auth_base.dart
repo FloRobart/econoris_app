@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/app_config.dart';
 import 'package:econoris_app/config/assets.dart';
 import 'package:flutter/material.dart';
 
@@ -50,7 +51,7 @@ class AuthBase extends StatelessWidget {
                         const SizedBox(height: 16),
 
                         Text(
-                          'Bienvenue sur Econoris',
+                          'Bienvenue sur ${AppConfig.appName}',
                           textAlign: TextAlign.center,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w700,

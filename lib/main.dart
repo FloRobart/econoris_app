@@ -28,15 +28,12 @@ void main() {
         if (details.stack != null) debugPrint(details.stack.toString());
       };
 
-      // Load environment variables from .env
-      // await dotenv.load(fileName: '.env');
-
-      // Initialize immutable Config values from dotenv
-      AppConfig.load();
+      // Initialize config from runtime + compile-time sources.
+      await AppConfig.load();
 
       // Initialize intl locale data for formatting dates/numbers (French)
-      await initializeDateFormatting('fr_FR');
-      Intl.defaultLocale = 'fr_FR';
+      await initializeDateFormatting(AppConfig.localization);
+      Intl.defaultLocale = AppConfig.localization;
 
       runApp(const ProviderScope(child: App()));
     },

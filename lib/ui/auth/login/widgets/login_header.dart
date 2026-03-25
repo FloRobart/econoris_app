@@ -1,3 +1,4 @@
+import 'package:econoris_app/config/app_config.dart';
 import 'package:flutter/material.dart';
 
 class LoginHeader extends StatelessWidget {
@@ -78,12 +79,12 @@ class LoginHeader extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Flexible(
               child: Text(
-                'Econoris est gratuit, sans publicité, et respecte votre vie privée.',
+                '${AppConfig.appName} est gratuit, sans publicité, et respecte votre vie privée.',
                 textAlign: TextAlign.center,
               ),
             ),
