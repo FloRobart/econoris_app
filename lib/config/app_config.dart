@@ -35,6 +35,7 @@ class AppConfig {
   static late final String authUrl;
   static late final String localization;
   static String appVersion = 'Inconnu';
+  static late final String currency;
 
   /// Charge les variables de configuration dans cet ordre de priorité :
   /// 1) fichier `.env` optionnel servi à runtime et chargé par flutter_dotenv
@@ -63,6 +64,8 @@ class AppConfig {
       compileTimeValue: CompiledAppConfig.localization,
       overrides: overrides,
     );
+
+    currency = localization.contains('fr') ? '€' : '\$';
 
     try {
       final packageInfo = await PackageInfo.fromPlatform();

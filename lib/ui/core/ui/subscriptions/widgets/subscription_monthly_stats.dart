@@ -1,4 +1,5 @@
 import 'package:econoris_app/ui/core/ui/subscriptions/view_models/subscription_stats_viewmodel.dart';
+import 'package:econoris_app/ui/core/ui/utils/format_amount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,7 +65,7 @@ class _StatsTilesSection extends ConsumerWidget {
               loading: () => '0',
               error: (error, stackTrace) => '0',
             ),
-            subtitle: _formatAmount(
+            subtitle: formatAmount(
               asyncStats.when(
                 data: (stats) => stats.subscriptionsAmount,
                 loading: () => 0,
@@ -84,7 +85,7 @@ class _StatsTilesSection extends ConsumerWidget {
               loading: () => '0',
               error: (error, stackTrace) => '0',
             ),
-            subtitle: _formatAmount(
+            subtitle: formatAmount(
               asyncStats.when(
                 data: (stats) => stats.positiveSubscriptionsAmount,
                 loading: () => 0,
@@ -104,7 +105,7 @@ class _StatsTilesSection extends ConsumerWidget {
               loading: () => '0',
               error: (error, stackTrace) => '0',
             ),
-            subtitle: _formatAmount(
+            subtitle: formatAmount(
               asyncStats.when(
                 data: (stats) => stats.negativeSubscriptionsAmount,
                 loading: () => 0,
@@ -182,11 +183,4 @@ class _StatTile extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Utilitaire pour formater un montant en string avec le signe + ou - et deux décimales, en remplaçant le point par une virgule.
-String _formatAmount(double amount) {
-  final sign = amount >= 0 ? '+' : '-';
-  final absolute = amount.abs().toStringAsFixed(2).replaceAll('.', ',');
-  return '$sign$absolute €';
 }

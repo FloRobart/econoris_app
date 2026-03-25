@@ -1,4 +1,5 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
+import 'package:econoris_app/ui/core/ui/utils/format_amount.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,6 @@ class OperationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final String amount = '${operation.amount.toStringAsFixed(2)} €';
     final String operationDate =
         formatDate(operation.levyDate, customFormat: 'dd MMMM yyyy') ?? '-';
 
@@ -66,7 +66,7 @@ class OperationDetails extends StatelessWidget {
             detailRow(label: 'Date', value: operationDate),
             detailRow(
               label: 'Montant',
-              value: '${operation.amount > 0 ? '+' : ''}$amount',
+              value: formatAmount(operation.amount),
             ),
             detailRow(label: 'Catégorie', value: operation.category),
             detailRow(label: 'Source', value: operation.source ?? '-'),

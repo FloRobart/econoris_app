@@ -1,4 +1,5 @@
 import 'package:econoris_app/ui/core/ui/operations/view_models/operation_stats_viewmodel.dart';
+import 'package:econoris_app/ui/core/ui/utils/format_amount.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:econoris_app/ui/core/ui/utils/possible_expense_color.dart';
 import 'package:econoris_app/ui/core/ui/widgets/app_tooltip.dart';
@@ -140,7 +141,7 @@ class _StatsTilesSection extends ConsumerWidget {
               loading: () => '0',
               error: (error, stackTrace) => '0',
             ),
-            subtitle: _formatAmount(
+            subtitle: formatAmount(
               asyncStats.when(
                 data: (stats) => stats.monthlyOperationsAmount,
                 loading: () => 0,
@@ -160,7 +161,7 @@ class _StatsTilesSection extends ConsumerWidget {
               loading: () => '0',
               error: (error, stackTrace) => '0',
             ),
-            subtitle: _formatAmount(
+            subtitle: formatAmount(
               asyncStats.when(
                 data: (stats) => stats.monthlyPositiveOperationsAmount,
                 loading: () => 0,
@@ -180,7 +181,7 @@ class _StatsTilesSection extends ConsumerWidget {
               loading: () => '0',
               error: (error, stackTrace) => '0',
             ),
-            subtitle: _formatAmount(
+            subtitle: formatAmount(
               asyncStats.when(
                 data: (stats) => stats.monthlyNegativeOperationsAmount,
                 loading: () => 0,
@@ -333,9 +334,9 @@ class _PossibleExpensesBanner extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Text(
                       asyncMonthlyPossibleExpenses.when(
-                        data: (amount) => _formatAmount(amount),
-                        loading: () => _formatAmount(0),
-                        error: (error, stackTrace) => _formatAmount(0),
+                        data: (amount) => formatAmount(amount),
+                        loading: () => formatAmount(0),
+                        error: (error, stackTrace) => formatAmount(0),
                       ),
                       textAlign: TextAlign.right,
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -352,11 +353,4 @@ class _PossibleExpensesBanner extends ConsumerWidget {
       ),
     );
   }
-}
-
-/// Utilitaire pour formater un montant en string avec le signe + ou - et deux décimales, en remplaçant le point par une virgule.
-String _formatAmount(double amount) {
-  final sign = amount >= 0 ? '+' : '-';
-  final absolute = amount.abs().toStringAsFixed(2).replaceAll('.', ',');
-  return '$sign$absolute €';
 }

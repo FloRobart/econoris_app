@@ -1,5 +1,6 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/core/themes/theme.dart';
+import 'package:econoris_app/ui/core/ui/utils/format_amount.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,6 @@ class OperationCard extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     final String operationDate =
         formatDate(operation.levyDate, customFormat: 'dd MMMM yyyy') ?? '';
-    final String amountText = '${operation.amount.toStringAsFixed(2)} €';
 
     return SizedBox(
       width: double.infinity,
@@ -79,7 +79,7 @@ class OperationCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  '${operation.amount > 0 ? "+" : ""}$amountText',
+                  formatAmount(operation.amount),
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/ui/core/themes/theme.dart';
+import 'package:econoris_app/ui/core/ui/utils/format_amount.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,6 @@ class SubscriptionCard extends StatelessWidget {
           customFormat: 'dd MMMM yyyy',
         ) ??
         '';
-    final String amountText = '${subscription.amount.toStringAsFixed(2)} €';
 
     return SizedBox(
       width: double.infinity,
@@ -73,7 +73,7 @@ class SubscriptionCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                '${subscription.amount > 0 ? "+" : ""}$amountText',
+                formatAmount(subscription.amount),
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
