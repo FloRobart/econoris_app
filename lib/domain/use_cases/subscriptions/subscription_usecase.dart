@@ -40,4 +40,7 @@ class SubscriptionUseCase {
   /*========*/
   /* DELETE */
   /*========*/
+  Future<void> deleteSubscription(int id) {
+    return repository.deleteSubscription(id);
+  }
 }

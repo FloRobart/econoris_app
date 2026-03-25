@@ -1,13 +1,19 @@
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/ui/core/ui/subscriptions/widgets/subscription_card.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
+import 'package:econoris_app/ui/subscriptions/view_models/subscription_action.dart';
 import 'package:flutter/material.dart';
 
 /// Écran d'accueil de l'application.
 class SubscriptionsList extends StatelessWidget {
-  const SubscriptionsList({super.key, required this.subscriptions});
+  const SubscriptionsList({
+    super.key,
+    required this.subscriptions,
+    required this.subscriptionAction,
+  });
 
   final List<Subscription> subscriptions;
+  final SubscriptionAction subscriptionAction;
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +23,17 @@ class SubscriptionsList extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final List<Subscription> displayedSubscriptions = List<Subscription>.generate(
-      subscriptions.length,
-      (index) => subscriptions[index],
-    );
+    final List<Subscription> displayedSubscriptions =
+        List<Subscription>.generate(
+          subscriptions.length,
+          (index) => subscriptions[index],
+        );
 
     final Map<DateTime, int> subscriptionCountByDate = <DateTime, int>{};
     for (final Subscription subscription in displayedSubscriptions) {
       final DateTime dateKey = DateUtils.dateOnly(subscription.startDate);
-      subscriptionCountByDate[dateKey] = (subscriptionCountByDate[dateKey] ?? 0) + 1;
+      subscriptionCountByDate[dateKey] =
+          (subscriptionCountByDate[dateKey] ?? 0) + 1;
     }
 
     return ListView.builder(
@@ -71,7 +79,10 @@ class SubscriptionsList extends StatelessWidget {
               const Divider(height: 1),
               const SizedBox(height: 4),
             ],
-            SubscriptionCard(subscription: subscription),
+            SubscriptionCard(
+              subscription: subscription,
+              subscriptionAction: subscriptionAction,
+            ),
           ],
         );
       },

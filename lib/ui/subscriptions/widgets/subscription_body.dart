@@ -1,6 +1,7 @@
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/ui/core/ui/subscriptions/widgets/subscription_monthly_stats.dart';
 import 'package:econoris_app/ui/core/ui/subscriptions/widgets/subscriptions_list.dart';
+import 'package:econoris_app/ui/subscriptions/view_models/subscription_action.dart';
 import 'package:econoris_app/ui/subscriptions/view_models/subscription_body_viewmodel.dart';
 import 'package:econoris_app/ui/subscriptions/view_models/subscription_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,11 @@ class SubscriptionBody extends ConsumerWidget {
     final theme = Theme.of(context);
     final AsyncValue<List<Subscription>> asyncSubscriptions = ref.watch(
       subscriptionViewModelProvider,
+    );
+
+    SubscriptionAction subscriptionAction = SubscriptionAction(
+      ref.read(subscriptionViewModelProvider.notifier).deleteSubscription,
+      context,
     );
 
     return Column(
@@ -65,6 +71,7 @@ class SubscriptionBody extends ConsumerWidget {
               );
               return SubscriptionsList(
                 subscriptions: viewModel.sortedSubscriptions,
+                subscriptionAction: subscriptionAction,
               );
             },
             error: (error, stackTrace) =>

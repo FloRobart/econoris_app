@@ -1,23 +1,23 @@
-import 'package:econoris_app/domain/models/operations/operation.dart';
+import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_amount.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:flutter/material.dart';
 
-class OperationDetails extends StatelessWidget {
-  const OperationDetails({
+class SubscriptionDetails extends StatelessWidget {
+  const SubscriptionDetails({
     super.key,
-    required this.operation,
-    required this.onDeleteOperation
+    required this.subscription,
+    required this.onDeleteSubscription,
   });
 
-  final Operation operation;
-  final Future<void> Function(int id) onDeleteOperation;
+  final Subscription subscription;
+  final Future<void> Function(int id) onDeleteSubscription;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final String operationDate =
-        formatDate(operation.levyDate, customFormat: 'dd MMMM yyyy') ?? '-';
+    final String subscriptionDate =
+        formatDate(subscription.lastGeneratedAt, customFormat: 'dd MMMM yyyy') ?? '-';
 
     Widget detailRow({required String label, required String value}) {
       return Padding(
@@ -59,29 +59,29 @@ class OperationDetails extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Détails de l\'opération', style: theme.textTheme.titleLarge),
+            Text('Détails de l\'abonnement', style: theme.textTheme.titleLarge),
             const SizedBox(height: 16),
-            detailRow(label: 'Libellé', value: operation.label),
-            detailRow(label: 'Date', value: operationDate),
+            detailRow(label: 'Libellé', value: subscription.label),
+            detailRow(label: 'Date', value: subscriptionDate),
             detailRow(
               label: 'Montant',
-              value: formatAmount(operation.amount),
+              value: formatAmount(subscription.amount),
             ),
-            detailRow(label: 'Catégorie', value: operation.category),
-            detailRow(label: 'Source', value: operation.source ?? '-'),
+            detailRow(label: 'Catégorie', value: subscription.category),
+            detailRow(label: 'Source', value: subscription.source ?? '-'),
             detailRow(
               label: 'Destination',
-              value: operation.destination ?? '-',
+              value: subscription.destination ?? '-',
             ),
             detailRow(
               label: 'Statut',
-              value: operation.isValidate ? 'Validée' : 'En attente',
+              value: subscription.active ? 'Actif' : 'Inactif',
             ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: FilledButton.tonalIcon(
-                onPressed: () => onDeleteOperation(operation.id),
+                onPressed: () => onDeleteSubscription(subscription.id),
                 style: FilledButton.styleFrom(
                   backgroundColor: theme.colorScheme.error,
                   foregroundColor: theme.colorScheme.onError,

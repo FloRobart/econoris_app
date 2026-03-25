@@ -33,4 +33,19 @@ class SubscriptionViewModel extends AsyncNotifier<List<Subscription>> {
     };
     state = AsyncData([...currentSubscriptions, createdSubscription]);
   }
+
+  /// Supprime une Subscription cote serveur puis met a jour l'etat local.
+  Future<void> deleteSubscription(int id) async {
+    await _useCase.deleteSubscription(id);
+    final currentSubscriptions = switch (state) {
+      AsyncData<List<Subscription>>(:final value) => value,
+      _ => <Subscription>[],
+    };
+
+    state = AsyncData(
+      currentSubscriptions
+          .where((subscription) => subscription.id != id)
+          .toList(),
+    );
+  }
 }
