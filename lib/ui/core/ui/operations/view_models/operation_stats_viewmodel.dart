@@ -37,6 +37,8 @@ class OperationStatsViewModel {
 
     required this.monthlyMoneyManagementIndex,
     required this.monthlyPossibleExpenses,
+
+    required this.monthlyPossibleExpensesRatio,
   });
 
   final DateTime startMonthDate;
@@ -53,6 +55,8 @@ class OperationStatsViewModel {
 
   final double monthlyMoneyManagementIndex;
   final double monthlyPossibleExpenses;
+
+  final double monthlyPossibleExpensesRatio;
 
   /// Calcule les statistiques à partir de la liste d'opérations en un seul parcours.
   factory OperationStatsViewModel.fromOperations(
@@ -102,6 +106,10 @@ class OperationStatsViewModel {
     double possibleExpenses =
         positiveOperationsAmount + negativeOperationsAmount;
 
+    double possibleExpensesRatio = positiveOperationsAmount <= 0
+        ? 0
+        : possibleExpenses / positiveOperationsAmount;
+
     /// On retourne un objet de stats avec tous les calculs déjà faits pour éviter de les refaire dans le widget.
     return OperationStatsViewModel(
       startMonthDate: startMonthDate,
@@ -114,6 +122,7 @@ class OperationStatsViewModel {
       monthlyNegativeOperationsAmount: negativeOperationsAmount,
       monthlyMoneyManagementIndex: moneyManagementIndex,
       monthlyPossibleExpenses: possibleExpenses,
+      monthlyPossibleExpensesRatio: possibleExpensesRatio,
     );
   }
 }
@@ -191,12 +200,18 @@ class FinancialDate {
     debugPrint('Average salary amount: $averageSalaryAmount');
 
     /// On filtre les opérations pour ne garder que celles qui ont un montant supérieur ou égal au montant moyen des opérations positives dans la fenêtre de recherche.
-    final minAmountForSalaryCandidate = positiveOperationsInWindow
-        .map((operation) => operation.amount)
-        .reduce((a, b) => a > b ? a : b) / 3;
+    final minAmountForSalaryCandidate =
+        positiveOperationsInWindow
+            .map((operation) => operation.amount)
+            .reduce((a, b) => a > b ? a : b) /
+        3;
 
     final salaryCandidates = positiveOperationsInWindow
-        .where((operation) => operation.amount >= minAmountForSalaryCandidate && operation.amount >= averageSalaryAmount)
+        .where(
+          (operation) =>
+              operation.amount >= minAmountForSalaryCandidate &&
+              operation.amount >= averageSalaryAmount,
+        )
         .toList();
 
     debugPrint('Salary candidates: ${salaryCandidates.toString()}');

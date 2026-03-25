@@ -85,9 +85,7 @@ class _MoneyManagementIndexValue extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncViewModel = ref.watch(
-      operationManagementIndexViewmodelProvider,
-    );
+    final asyncViewModel = ref.watch(operationManagementIndexViewmodelProvider);
 
     final indexColor = getMoneyManagementIndexColor(
       asyncViewModel
@@ -109,7 +107,9 @@ class _MoneyManagementIndexValue extends ConsumerWidget {
           TextSpan(
             text:
                 asyncViewModel
-                    .whenData((viewmodel) => viewmodel.moneyManagementIndexPercentage)
+                    .whenData(
+                      (viewmodel) => viewmodel.moneyManagementIndexPercentage,
+                    )
                     .value
                     ?.toStringAsFixed(0) ??
                 '0',
@@ -179,7 +179,12 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
           formatDate(startMonthDate, customFormat: 'dd MMMM yyyy') ??
           'Mois inconnu',
       loading: () => '...',
-      error: (error, stackTrace) => 'Mois inconnu',
+      error: (error, stackTrace) =>
+          formatDate(
+            DateTime(DateTime.now().year, DateTime.now().month, 1),
+            customFormat: 'dd MMMM yyyy',
+          ) ??
+          'Mois inconnu',
     );
 
     final endMonthDate = asyncEndMonthDate.when(
@@ -187,7 +192,12 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
           formatDate(endMonthDate, customFormat: 'dd MMMM yyyy') ??
           'Mois inconnu',
       loading: () => '...',
-      error: (error, stackTrace) => 'Mois inconnu',
+      error: (error, stackTrace) =>
+          formatDate(
+            DateTime(DateTime.now().year, DateTime.now().month + 1, 0),
+            customFormat: 'dd MMMM yyyy',
+          ) ??
+          'Mois inconnu',
     );
 
     return Text.rich(

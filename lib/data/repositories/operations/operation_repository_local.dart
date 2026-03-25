@@ -52,7 +52,9 @@ class OperationRepositoryLocal {
     final operationsList = await getOperations();
 
     /* Find the operation to delete before removing it from the list */
-    final operationToDelete = operationsList.firstWhere((operation) => operation.id == id);
+    final operationToDelete = operationsList.firstWhere(
+      (operation) => operation.id == id,
+    );
     operationsList.removeWhere((operation) => operation.id == id);
 
     /* Save the updated list back to local storage */
@@ -64,7 +66,9 @@ class OperationRepositoryLocal {
   /// Saves the list of operations to local storage.
   Future<void> saveOperations(List<OperationDto> operations) async {
     final sharedPreferences = await SharedPreferences.getInstance();
-    final operationsJson = jsonEncode(operations.map((operation) => operation.toJson()).toList());
+    final operationsJson = jsonEncode(
+      operations.map((operation) => operation.toJson()).toList(),
+    );
     await sharedPreferences.setString(_operationsKey, operationsJson);
   }
 }

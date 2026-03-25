@@ -1,6 +1,7 @@
 import 'package:econoris_app/ui/core/ui/operations/view_models/operation_stats_viewmodel.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
 import 'package:econoris_app/ui/core/ui/utils/possible_expense_color.dart';
+import 'package:econoris_app/ui/core/ui/widgets/app_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -79,7 +80,12 @@ class _TextDate extends ConsumerWidget {
                   formatDate(startDate, customFormat: 'dd MMMM yyyy') ??
                   'Mois inconnu',
               loading: () => '...',
-              error: (error, stackTrace) => 'Mois inconnu',
+              error: (error, stackTrace) =>
+                  formatDate(
+                    DateTime(DateTime.now().year, DateTime.now().month, 1),
+                    customFormat: 'dd MMMM yyyy',
+                  ) ??
+                  'Mois inconnu',
             ),
             style:
                 theme.textTheme.bodyMedium?.copyWith(
@@ -94,7 +100,12 @@ class _TextDate extends ConsumerWidget {
                   formatDate(endDate, customFormat: 'dd MMMM yyyy') ??
                   'Mois inconnu',
               loading: () => '...',
-              error: (error, stackTrace) => 'Mois inconnu',
+              error: (error, stackTrace) =>
+                  formatDate(
+                    DateTime(DateTime.now().year, DateTime.now().month + 1, 0),
+                    customFormat: 'dd MMMM yyyy',
+                  ) ??
+                  'Mois inconnu',
             ),
             style:
                 theme.textTheme.bodyMedium?.copyWith(
@@ -263,6 +274,13 @@ class _PossibleExpensesBanner extends ConsumerWidget {
       ),
     );
 
+    final asyncMonthlyPossibleExpensesRatio = ref.watch(
+      operationStatsProvider.select(
+        (asyncStats) =>
+            asyncStats.whenData((stats) => stats.monthlyPossibleExpensesRatio),
+      ),
+    );
+
     final isPositive =
         asyncMonthlyPossibleExpenses
             .whenData((double amount) => amount >= 0)
@@ -270,8 +288,11 @@ class _PossibleExpensesBanner extends ConsumerWidget {
         true;
 
     final bannerColor = getPossibleExpenseColor(
-      asyncMonthlyPossibleExpenses.whenData((double amount) => amount).value ??
-          0,
+      (asyncMonthlyPossibleExpensesRatio
+                  .whenData((double ratio) => ratio)
+                  .value ??
+              0) *
+          100,
     );
 
     return DecoratedBox(
@@ -280,47 +301,53 @@ class _PossibleExpensesBanner extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: bannerColor.withValues(alpha: .15)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Row(
-          children: [
-            Icon(
-              isPositive ? Icons.wallet_outlined : Icons.warning_amber_rounded,
-              size: 18,
-              color: bannerColor,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      isPositive
-                          ? 'Reste possible à dépenser'
-                          : 'Dépassement du budget',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: bannerColor,
-                        fontWeight: FontWeight.w600,
+      child: AppTooltip(
+        message:
+            'Vous pouvez dépenser ${((asyncMonthlyPossibleExpensesRatio.whenData((double ratio) => ratio).value ?? 0) * 100).toStringAsFixed(2)}% de votre budget mensuel',
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              Icon(
+                isPositive
+                    ? Icons.wallet_outlined
+                    : Icons.warning_amber_rounded,
+                size: 18,
+                color: bannerColor,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        isPositive
+                            ? 'Reste possible à dépenser'
+                            : 'Dépassement du budget',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: bannerColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    asyncMonthlyPossibleExpenses.when(
-                      data: (amount) => _formatAmount(amount),
-                      loading: () => _formatAmount(0),
-                      error: (error, stackTrace) => _formatAmount(0),
+                    const SizedBox(width: 8),
+                    Text(
+                      asyncMonthlyPossibleExpenses.when(
+                        data: (amount) => _formatAmount(amount),
+                        loading: () => _formatAmount(0),
+                        error: (error, stackTrace) => _formatAmount(0),
+                      ),
+                      textAlign: TextAlign.right,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: bannerColor,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    textAlign: TextAlign.right,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: bannerColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

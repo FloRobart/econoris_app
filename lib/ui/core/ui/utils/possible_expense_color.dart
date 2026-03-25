@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
 /// Utilitaire pour déterminer la couleur à utiliser pour afficher les dépenses possibles en fonction de leur montant.
-Color getPossibleExpenseColor(double amount) {
-  if (amount < 0) { return Colors.red; }
-  if (amount < 100) { return Colors.orange; }
-  if (amount < 200) { return Colors.amberAccent; }
+Color getPossibleExpenseColor(double percentage) {
+  if (percentage <= 3) {
+    return Colors.red;
+  }
+  if (percentage < 8) {
+    return Colors.orange;
+  }
+  if (percentage < 12) {
+    return Colors.amberAccent;
+  }
   return Colors.green;
 }
