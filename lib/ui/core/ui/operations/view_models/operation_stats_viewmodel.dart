@@ -165,9 +165,6 @@ class FinancialDate {
       now.day, // + Constantes.salaryDistanceThresholdDays
     ).add(const Duration(days: Constantes.salaryWindowSafetyMarginDays));
 
-    debugPrint('Window start: $windowStart');
-    debugPrint('Window end: $windowEnd');
-
     /// On filtre les opérations pour ne garder que celles qui sont dans la fenêtre de recherche et qui sont positives (les salaires). Ensuite, on trie ces opérations par date pour trouver la plus récente.
     final positiveOperationsInWindow =
         operations
@@ -179,10 +176,6 @@ class FinancialDate {
             )
             .toList()
           ..sort((a, b) => a.levyDate.compareTo(b.levyDate));
-
-    debugPrint(
-      'Positive operations in window: ${positiveOperationsInWindow.toString()}',
-    );
 
     /// Si aucune opération positive n'est trouvée dans la fenêtre de recherche, on retourne la date théorique du début du mois financier, c'est à dire le premier de la date actuelle avec le décalage de mois appliqué.
     if (positiveOperationsInWindow.isEmpty) {
@@ -196,8 +189,6 @@ class FinancialDate {
             .map((operation) => operation.amount)
             .reduce((a, b) => a + b) /
         positiveOperationsInWindow.length;
-
-    debugPrint('Average salary amount: $averageSalaryAmount');
 
     /// On filtre les opérations pour ne garder que celles qui ont un montant supérieur ou égal au montant moyen des opérations positives dans la fenêtre de recherche.
     final minAmountForSalaryCandidate =
@@ -214,8 +205,6 @@ class FinancialDate {
         )
         .toList();
 
-    debugPrint('Salary candidates: ${salaryCandidates.toString()}');
-
     /// Si aucune opération ne correspond au critère de montant, on retourne la date théorique du début du mois financier.
     if (salaryCandidates.isEmpty) {
       return DateTime(now.year, now.month + monthOffset);
@@ -225,16 +214,6 @@ class FinancialDate {
     final operationWithMaxAmount = salaryCandidates.reduce(
       (a, b) => a.levyDate.isBefore(b.levyDate) ? a : b,
     );
-
-    debugPrint(
-      'Operation windowStart.subtract : ${(windowStart.subtract(const Duration(days: Constantes.salaryWindowSafetyMarginDays)))}',
-    );
-    debugPrint(
-      'Operation windowEnd.add : ${(windowEnd.add(const Duration(days: Constantes.salaryWindowSafetyMarginDays)))}',
-    );
-
-    debugPrint('Operation with max amount: ${operationWithMaxAmount.levyDate}');
-    debugPrint('=================================================');
 
     return operationWithMaxAmount.levyDate;
   }
@@ -248,10 +227,6 @@ class FinancialDate {
     DateTime startNextFinancialDate = _resolveFinancialMonthStartDate(
       operations,
       monthOffset + 1,
-    );
-
-    debugPrint(
-      'Financial month start date diff in day : ${startNextFinancialDate.difference(financialMonthStartDate).inDays}',
     );
 
     /// Si l'écart entre la date de début du mois financier suivant et la date de début du mois financier actuel est inférieur à 1 mois - 4 jours ou supérieur à 1 mois + 4 jours, on considère que la date de fin du mois financier actuel est la date de début du mois financier actuel plus 1 mois.

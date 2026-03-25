@@ -49,9 +49,6 @@ class AuthApiClient {
       body: body,
     );
 
-    debugPrint('Response data: ${response.data}');
-    debugPrint("Response JWT : ${response.data['jwt']}");
-
     return response.data['jwt'];
   }
 
