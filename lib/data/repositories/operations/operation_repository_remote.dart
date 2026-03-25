@@ -1,3 +1,4 @@
+import 'package:econoris_app/data/models/operations/create/operation_create_dto.dart';
 import 'package:econoris_app/data/models/operations/operation_dto.dart';
 import 'package:econoris_app/data/services/api/operations/operation_api_client.dart';
 
@@ -14,7 +15,7 @@ class OperationRepositoryRemote {
   }
 
   /// Adds a new operation to the remote API.
-  Future<OperationDto> addOperation(OperationDto body) async {
+  Future<OperationDto> addOperation(OperationCreateDto body) async {
     final operation = await operationApiClient.addOperation(body.toJson());
     return OperationDto.fromJson(operation);
   }

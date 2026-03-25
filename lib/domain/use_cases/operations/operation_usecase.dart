@@ -1,4 +1,5 @@
 import 'package:econoris_app/data/repositories/operations/operation_repository.dart';
+import 'package:econoris_app/domain/models/operations/create/operation_create.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +31,7 @@ class OperationUseCase {
   /*======*/
   /* POST */
   /*======*/
-  Future<Operation> addOperation(Operation body) {
+  Future<Operation> addOperation(OperationCreate body) {
     return operationRepository.addOperation(body);
   }
 

@@ -1,3 +1,4 @@
+import 'package:econoris_app/domain/models/operations/create/operation_create.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/domain/use_cases/operations/operation_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +26,7 @@ class OperationViewModel extends AsyncNotifier<List<Operation>> {
   }
 
   /// Cree une operation cote serveur puis met a jour l'etat local.
-  Future<void> addOperation(Operation body) async {
+  Future<void> addOperation(OperationCreate body) async {
     final createdOperation = await _useCase.addOperation(body);
     final currentOperations = switch (state) {
       AsyncData<List<Operation>>(:final value) => value,

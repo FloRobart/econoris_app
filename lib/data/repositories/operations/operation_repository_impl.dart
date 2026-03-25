@@ -3,6 +3,8 @@ import 'package:econoris_app/data/models/operations/operation_dto_mapper.dart';
 import 'package:econoris_app/data/repositories/operations/operation_repository.dart';
 import 'package:econoris_app/data/repositories/operations/operation_repository_local.dart';
 import 'package:econoris_app/data/repositories/operations/operation_repository_remote.dart';
+import 'package:econoris_app/domain/models/operations/create/operation_create.dart';
+import 'package:econoris_app/domain/models/operations/create/operation_create_mapper.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/domain/models/operations/operation_mapper.dart';
 import 'package:econoris_app/ui/core/ui/utils/operation_sort.dart';
@@ -33,10 +35,10 @@ class OperationRepositoryImpl implements OperationRepository {
 
   /// Adds a new operation to the remote API.
   @override
-  Future<Operation> addOperation(Operation body) async {
+  Future<Operation> addOperation(OperationCreate body) async {
     try {
-      final operationDto = body.toDto();
-      final repOperationDto = await remote.addOperation(operationDto);
+      final operationCreateDto = body.toDto();
+      final repOperationDto = await remote.addOperation(operationCreateDto);
       local.saveOperations([repOperationDto]);
       return repOperationDto.toDomain();
     } catch (e) {
