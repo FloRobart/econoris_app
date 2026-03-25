@@ -7,16 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final operationUseCaseProvider = Provider<OperationUseCase>((ref) {
   final operationRepository = ref.read(operationRepositoryProvider);
 
-  return OperationUseCase(
-    operationRepository: operationRepository,
-  );
+  return OperationUseCase(operationRepository: operationRepository);
 });
 
 /// Use case class for the home screen
 class OperationUseCase {
-  OperationUseCase({
-    required this.operationRepository,
-  });
+  OperationUseCase({required this.operationRepository});
 
   final OperationRepository operationRepository;
 
@@ -45,4 +41,7 @@ class OperationUseCase {
   /*========*/
   /* DELETE */
   /*========*/
+  Future<Operation> deleteOperation(int id) {
+    return operationRepository.deleteOperation(id);
+  }
 }

@@ -5,9 +5,14 @@ import 'package:flutter/material.dart';
 
 /// Écran d'accueil de l'application.
 class OperationsList extends StatelessWidget {
-  const OperationsList({super.key, required this.operations});
+  const OperationsList({
+    super.key,
+    required this.operations,
+    this.onTapOperation,
+  });
 
   final List<Operation> operations;
+  final void Function(Operation operation)? onTapOperation;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +76,12 @@ class OperationsList extends StatelessWidget {
               const Divider(height: 1),
               const SizedBox(height: 4),
             ],
-            OperationCard(operation: operation),
+            OperationCard(
+              operation: operation,
+              onTap: onTapOperation == null
+                  ? null
+                  : () => onTapOperation!(operation),
+            ),
           ],
         );
       },

@@ -34,4 +34,17 @@ class OperationViewModel extends AsyncNotifier<List<Operation>> {
     };
     state = AsyncData([...currentOperations, createdOperation]);
   }
+
+  /// Supprime une operation cote serveur puis met a jour l'etat local.
+  Future<void> deleteOperation(int id) async {
+    await _useCase.deleteOperation(id);
+    final currentOperations = switch (state) {
+      AsyncData<List<Operation>>(:final value) => value,
+      _ => <Operation>[],
+    };
+
+    state = AsyncData(
+      currentOperations.where((operation) => operation.id != id).toList(),
+    );
+  }
 }

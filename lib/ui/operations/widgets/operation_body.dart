@@ -6,6 +6,7 @@ import 'package:econoris_app/ui/core/ui/operations/widgets/operations_list.dart'
 import 'package:econoris_app/ui/operations/view_models/operation_body_viewmodel.dart';
 import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
 import 'package:econoris_app/ui/operations/widgets/month_change_card.dart';
+import 'package:econoris_app/ui/operations/widgets/operation_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +20,29 @@ class OperationBody extends ConsumerWidget {
     final AsyncValue<List<Operation>> asyncOperations = ref.watch(
       operationViewModelProvider,
     );
+
+    Future<void> openOperationDetails(Operation operation) async {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (context) => OperationDetails(
+          operation: operation,
+          deleteOperation: (id) async {
+            try {
+              await ref.read(operationViewModelProvider.notifier).deleteOperation(id);
+            } catch (e) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Error lors de la suppression de l\'opération')),
+                );
+              }
+            }
+          },
+        ),
+      );
+          
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -84,6 +108,7 @@ class OperationBody extends ConsumerWidget {
                   OperationBodyViewmodel(operations);
               return OperationsList(
                 operations: operationViewmodel.upComingOperations,
+                onTapOperation: openOperationDetails,
               );
             },
             error: (error, stackTrace) =>
@@ -131,6 +156,7 @@ class OperationBody extends ConsumerWidget {
                   OperationBodyViewmodel(operations);
               return OperationsList(
                 operations: operationViewmodel.pastOperations,
+                onTapOperation: openOperationDetails,
               );
             },
             error: (error, stackTrace) =>
