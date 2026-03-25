@@ -5,12 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:econoris_app/config/app_config.dart';
 import 'package:econoris_app/data/services/interceptors/auth_interceptor.dart';
 
-
 /// Fournit une instance asynchrone d'[Dio] configurée avec les interceptors nécessaires.
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(baseUrl: AppConfig.dataUrl));
+  dio.interceptors.add(
+    AuthInterceptor(authNotifier: ref.read(authNotifierProvider.notifier)),
+  );
   dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
-  dio.interceptors.add(AuthInterceptor(authNotifier: ref.read(authNotifierProvider.notifier)));
 
   return dio;
 });
@@ -74,6 +75,8 @@ class ApiClient {
           );
           break;
       }
+    } on DioException {
+      rethrow;
     } catch (e) {
       throw Exception('Failed to make authenticated request: $e');
     }

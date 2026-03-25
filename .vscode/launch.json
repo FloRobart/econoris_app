@@ -7,19 +7,22 @@
         {
             "name": "econoris_app",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": ["--dart-define-from-file", "${workspaceFolder}/.env"]
         },
         {
             "name": "econoris_app (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "args": ["--dart-define-from-file", "${workspaceFolder}/.env"]
         },
         {
             "name": "econoris_app (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "args": ["--dart-define-from-file", "${workspaceFolder}/.env"]
         }
     ]
 }

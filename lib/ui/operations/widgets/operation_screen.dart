@@ -8,6 +8,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class OperationScreen extends ConsumerWidget {
   const OperationScreen({super.key});
 
+  void _openOperationForm() {
+    // final formData = await showModalBottomSheet<OperationFormData>(
+    //   context: context,
+    //   isScrollControlled: true,
+    //   showDragHandle: true,
+    //   builder: (context) => const OperationForm(),
+    // );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return BaseApp(
@@ -17,7 +26,7 @@ class OperationScreen extends ConsumerWidget {
       body: OperationBody(),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: _openOperationForm,
         tooltip: 'Ajouter une opération',
         child: const Icon(Icons.add),
       ),

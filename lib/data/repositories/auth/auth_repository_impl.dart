@@ -38,7 +38,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final String email = await local.getEmail() ?? '';
       final String token = await local.getLoginToken() ?? '';
       final String jwt = await remote.confirmLoginCode(email, token, secret);
-      globalAuthNotifier.setAuthenticated(jwt);
+      await globalAuthNotifier.setAuthenticated(jwt);
 
       return true;
     } catch (_) {

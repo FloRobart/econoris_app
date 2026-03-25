@@ -15,11 +15,12 @@ class CodeEntryBodyViewModel {
 
   final CodeEntryUseCase codeEntryUseCase;
 
-  String code = "0";
+  String code = "";
 
   Future<bool> verifyCode() async {
     try {
-      return await codeEntryUseCase.verifyCode(code);
+      final cleanedCode = code.trim().replaceAll(RegExp(r'\s+'), '');
+      return await codeEntryUseCase.verifyCode(cleanedCode);
     } catch (e) {
       return false;
     }

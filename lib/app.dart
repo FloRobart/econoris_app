@@ -24,10 +24,6 @@ class App extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
 
-      /* Local and internationalization */
-      // supportedLocales: const [Locale('fr', 'FR')],
-      // locale: const Locale('fr', 'FR'),
-
       /* Routing */
       routerConfig: ref.watch(routerProvider),
 
