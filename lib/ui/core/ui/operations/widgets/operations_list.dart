@@ -1,6 +1,7 @@
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_card.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
+import 'package:econoris_app/ui/operations/view_models/operation_action.dart';
 import 'package:flutter/material.dart';
 
 /// Écran d'accueil de l'application.
@@ -8,11 +9,11 @@ class OperationsList extends StatelessWidget {
   const OperationsList({
     super.key,
     required this.operations,
-    this.onTapOperation,
+    required this.operationAction
   });
 
   final List<Operation> operations;
-  final void Function(Operation operation)? onTapOperation;
+  final OperationAction operationAction;
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +79,7 @@ class OperationsList extends StatelessWidget {
             ],
             OperationCard(
               operation: operation,
-              onTap: onTapOperation == null
-                  ? null
-                  : () => onTapOperation!(operation),
+              operationAction: operationAction,
             ),
           ],
         );

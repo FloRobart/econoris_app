@@ -2,14 +2,15 @@ import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_amount.dart';
 import 'package:econoris_app/ui/core/ui/utils/format_date.dart';
+import 'package:econoris_app/ui/operations/view_models/operation_action.dart';
 import 'package:flutter/material.dart';
 
 /// Écran d'accueil de l'application.
 class OperationCard extends StatelessWidget {
-  const OperationCard({super.key, required this.operation, this.onTap});
+  const OperationCard({super.key, required this.operation, required this.operationAction});
 
   final Operation operation;
-  final VoidCallback? onTap;
+  final OperationAction operationAction;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,8 @@ class OperationCard extends StatelessWidget {
       width: double.infinity,
       child: Card(
         child: InkWell(
-          onTap: onTap,
+          onTap: () => operationAction.showDetails(operation),
+          onLongPress: () => operationAction.onDeleteOperation(operation.id),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

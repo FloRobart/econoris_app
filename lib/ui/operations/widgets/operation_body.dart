@@ -3,10 +3,10 @@ import 'package:econoris_app/ui/core/themes/theme.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_management_index.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operation_monthly_stats.dart';
 import 'package:econoris_app/ui/core/ui/operations/widgets/operations_list.dart';
+import 'package:econoris_app/ui/operations/view_models/operation_action.dart';
 import 'package:econoris_app/ui/operations/view_models/operation_body_viewmodel.dart';
 import 'package:econoris_app/ui/operations/view_models/operation_viewmodel.dart';
 import 'package:econoris_app/ui/operations/widgets/month_change_card.dart';
-import 'package:econoris_app/ui/operations/widgets/operation_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,28 +21,10 @@ class OperationBody extends ConsumerWidget {
       operationViewModelProvider,
     );
 
-    Future<void> openOperationDetails(Operation operation) async {
-      await showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        showDragHandle: true,
-        builder: (context) => OperationDetails(
-          operation: operation,
-          deleteOperation: (id) async {
-            try {
-              await ref.read(operationViewModelProvider.notifier).deleteOperation(id);
-            } catch (e) {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Error lors de la suppression de l\'opération')),
-                );
-              }
-            }
-          },
-        ),
-      );
-          
-    }
+    OperationAction operationAction = OperationAction(
+      ref.read(operationViewModelProvider.notifier).deleteOperation,
+      context,
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -108,7 +90,7 @@ class OperationBody extends ConsumerWidget {
                   OperationBodyViewmodel(operations);
               return OperationsList(
                 operations: operationViewmodel.upComingOperations,
-                onTapOperation: openOperationDetails,
+                operationAction: operationAction,
               );
             },
             error: (error, stackTrace) =>
@@ -156,7 +138,7 @@ class OperationBody extends ConsumerWidget {
                   OperationBodyViewmodel(operations);
               return OperationsList(
                 operations: operationViewmodel.pastOperations,
-                onTapOperation: openOperationDetails,
+                operationAction: operationAction,
               );
             },
             error: (error, stackTrace) =>
