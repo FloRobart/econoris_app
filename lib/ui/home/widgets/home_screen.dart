@@ -14,15 +14,18 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     /// Ouvre le formulaire de création d'une opération et ajoute l'opération créée à la liste.
     void openOperationCreateForm() async {
-      final OperationCreate? operationCreate = await showModalBottomSheet<OperationCreate>(
-        context: context,
-        isScrollControlled: true,
-        showDragHandle: true,
-        builder: (context) => const OperationCreateForm(),
-      );
+      final OperationCreate? operationCreate =
+          await showModalBottomSheet<OperationCreate>(
+            context: context,
+            isScrollControlled: true,
+            showDragHandle: true,
+            builder: (context) => const OperationCreateForm(),
+          );
 
       if (operationCreate != null) {
-        await ref.read(operationViewModelProvider.notifier).addOperation(operationCreate);
+        await ref
+            .read(operationViewModelProvider.notifier)
+            .addOperation(operationCreate);
       }
     }
 

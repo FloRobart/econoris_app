@@ -49,7 +49,9 @@ class SubscriptionApiClient {
 
   /// Add a new subscription.
   /// The server is expected to return the created subscription with its id if the JWT is valid and the request body is correct.
-  Future<Map<String, dynamic>> addSubscription(Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> addSubscription(
+    Map<String, dynamic> body,
+  ) async {
     final response = await apiClient.request(
       HttpMethod.post,
       _baseUrl,

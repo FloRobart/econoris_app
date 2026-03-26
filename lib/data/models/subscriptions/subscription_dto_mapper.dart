@@ -18,7 +18,9 @@ extension SubscriptionDtoMapper on SubscriptionDto {
       startDate: DateTime.parse(startDate),
       endDate: endDate != null ? DateTime.parse(endDate!) : null,
       dayOfMonth: dayOfMonth,
-      lastGeneratedAt: lastGeneratedAt != null ? DateTime.parse(lastGeneratedAt!) : null,
+      lastGeneratedAt: lastGeneratedAt != null
+          ? DateTime.parse(lastGeneratedAt!)
+          : null,
       userId: userId,
       createdAt: DateTime.parse(createdAt),
       updatedAt: DateTime.parse(updatedAt),

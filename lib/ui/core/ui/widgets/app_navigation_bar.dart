@@ -26,7 +26,9 @@ class AppNavigationBar extends StatelessWidget {
 
   /* Gére la navigation lors du tap sur un item de la barre de navigation */
   void _onTap(BuildContext context, int index) {
-    if (index < 0 || index >= orderedRoutes.length) { return; }
+    if (index < 0 || index >= orderedRoutes.length) {
+      return;
+    }
 
     final nextRoute = orderedRoutes[index];
 
@@ -49,17 +51,26 @@ class AppNavigationBar extends StatelessWidget {
       items: [
         BottomNavigationBarItem(
           icon: const Icon(Icons.home_outlined),
-          activeIcon: Icon(Icons.home_outlined, color: theme.textSelectionTheme.selectionColor),
+          activeIcon: Icon(
+            Icons.home_outlined,
+            color: theme.textSelectionTheme.selectionColor,
+          ),
           label: 'Accueil',
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.list_alt),
-          activeIcon: Icon(Icons.list_alt, color: theme.textSelectionTheme.selectionColor),
+          activeIcon: Icon(
+            Icons.list_alt,
+            color: theme.textSelectionTheme.selectionColor,
+          ),
           label: 'Opérations',
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.repeat),
-          activeIcon: Icon(Icons.repeat, color: theme.textSelectionTheme.selectionColor),
+          activeIcon: Icon(
+            Icons.repeat,
+            color: theme.textSelectionTheme.selectionColor,
+          ),
           label: 'Abonnements',
         ),
       ],

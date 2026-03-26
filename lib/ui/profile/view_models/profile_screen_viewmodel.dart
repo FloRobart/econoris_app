@@ -9,7 +9,9 @@ final profileScreenViewModelProvider = Provider<ProfileScreenViewmodel>((ref) {
 });
 
 /// Provider asynchrone de l'utilisateur courant.
-final profileCurrentUserProvider = FutureProvider.autoDispose<User>((ref) async {
+final profileCurrentUserProvider = FutureProvider.autoDispose<User>((
+  ref,
+) async {
   return ref.read(profileScreenViewModelProvider).getCurrentUser;
 });
 
@@ -19,7 +21,6 @@ class ProfileScreenViewmodel {
 
   final ProfileScreenUsecase useCase;
   late User _user;
-
 
   /* Getters */
   Future<User> get getCurrentUser => useCase.getCurrentUser();

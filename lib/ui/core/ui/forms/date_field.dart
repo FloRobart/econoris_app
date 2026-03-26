@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Champ de formulaire pour sélectionner une date.
 class DateField extends StatelessWidget {
-  const DateField({
-    super.key,
-    required this.selectedDate,
-    required this.onTap,
-  });
+  const DateField({super.key, required this.selectedDate, required this.onTap});
 
   final DateTime selectedDate;
   final Future<DateTime?> Function() onTap;

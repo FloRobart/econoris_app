@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 /// Champ de formulaire pour saisir un nom.
 class LabelField extends StatelessWidget {
-  const LabelField({super.key, required this.controller, required this.hintText});
+  const LabelField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+  });
 
   final TextEditingController controller;
   final String hintText;

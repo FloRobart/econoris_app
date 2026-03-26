@@ -45,7 +45,9 @@ class UserRepositoryImpl extends UserRepository {
       await remote.logoutAll();
       await authNotifier.logout();
     } catch (e) {
-      debugPrint('UserRepositoryImpl: Logout from all devices failed : error $e');
+      debugPrint(
+        'UserRepositoryImpl: Logout from all devices failed : error $e',
+      );
       throw Exception('Failed to logout from all devices');
     }
   }

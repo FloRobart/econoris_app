@@ -52,7 +52,8 @@ class ThemeSection extends ConsumerWidget {
                   height: 24,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                error: (e, s) => const Icon(Icons.error, color: AppTheme.errorColor),
+                error: (e, s) =>
+                    const Icon(Icons.error, color: AppTheme.errorColor),
               ),
             ],
           ),

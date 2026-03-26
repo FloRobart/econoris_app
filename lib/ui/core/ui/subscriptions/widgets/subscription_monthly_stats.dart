@@ -45,7 +45,6 @@ class SubscriptionMonthlyStats extends StatelessWidget {
   }
 }
 
-
 /// Section affichant les différentes statistiques du mois sous forme de cartes.
 class _StatsTilesSection extends ConsumerWidget {
   const _StatsTilesSection();

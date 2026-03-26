@@ -15,7 +15,6 @@ class AuthApiClient {
 
   static final String _baseUrl = '${AppConfig.authUrl}/users';
 
-
   /// Request a login code to be sent to the given email. The server is expected
   /// Return the token associated with the login code, which will be used in the next step of the login process.
   Future<String> requestLoginCode(String email) async {
@@ -59,7 +58,8 @@ class AuthApiClient {
       authenticated: true,
     );
 
-    if (response.statusCode != null && (response.statusCode! < 200 || response.statusCode! >= 300)) {
+    if (response.statusCode != null &&
+        (response.statusCode! < 200 || response.statusCode! >= 300)) {
       throw Exception('Failed to logout');
     }
   }

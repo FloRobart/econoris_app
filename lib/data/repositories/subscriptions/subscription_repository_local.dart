@@ -17,7 +17,9 @@ class SubscriptionRepositoryLocal {
     }
 
     final subscriptionsList = (jsonDecode(subscriptionsJson) as List<dynamic>);
-    return subscriptionsList.map((subscriptionJson) => SubscriptionDto.fromJson(subscriptionJson)).toList();
+    return subscriptionsList
+        .map((subscriptionJson) => SubscriptionDto.fromJson(subscriptionJson))
+        .toList();
   }
 
   /// Adds a new subscription to the local storage.
@@ -34,7 +36,10 @@ class SubscriptionRepositoryLocal {
   }
 
   /// Updates an existing subscription in the local storage.
-  Future<SubscriptionDto> updateSubscription(int id, SubscriptionDto body) async {
+  Future<SubscriptionDto> updateSubscription(
+    int id,
+    SubscriptionDto body,
+  ) async {
     final subscriptionsList = await getSubscriptions();
 
     /* Remove the old subscription from the list and add the updated one */
@@ -52,7 +57,9 @@ class SubscriptionRepositoryLocal {
     final subscriptionsList = await getSubscriptions();
 
     /* Find the subscription to delete before removing it from the list */
-    final subscriptionToDelete = subscriptionsList.firstWhere((subscription) => subscription.id == id);
+    final subscriptionToDelete = subscriptionsList.firstWhere(
+      (subscription) => subscription.id == id,
+    );
     subscriptionsList.removeWhere((subscription) => subscription.id == id);
 
     /* Save the updated list back to local storage */
@@ -64,7 +71,9 @@ class SubscriptionRepositoryLocal {
   /// Saves the list of subscriptions to local storage.
   Future<void> saveSubscriptions(List<SubscriptionDto> subscriptions) async {
     final sharedPreferences = await SharedPreferences.getInstance();
-    final subscriptionsJson = jsonEncode(subscriptions.map((subscription) => subscription.toJson()).toList());
+    final subscriptionsJson = jsonEncode(
+      subscriptions.map((subscription) => subscription.toJson()).toList(),
+    );
     await sharedPreferences.setString(_subscriptionsKey, subscriptionsJson);
   }
 }

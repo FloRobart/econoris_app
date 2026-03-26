@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance de [LoginBodyViewModel].
 final loginBodyViewModelProvider = Provider<LoginBodyViewModel>((ref) {
-  return LoginBodyViewModel(
-    authScreenUseCase: ref.read(loginUseCaseProvider),
-  );
+  return LoginBodyViewModel(authScreenUseCase: ref.read(loginUseCaseProvider));
 });
 
 /// Fournit l'email par défaut pour l'écran d'authentification.
@@ -13,7 +11,6 @@ final authInitialEmailProvider = FutureProvider<String?>((ref) async {
   final viewModel = ref.read(loginBodyViewModelProvider);
   return viewModel.getEmail;
 });
-
 
 /// ViewModel pour la logique de l'écran de connexion.
 class LoginBodyViewModel {

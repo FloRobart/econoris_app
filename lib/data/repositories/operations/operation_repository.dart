@@ -8,7 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance asynchrone d'[OperationRepository].
 final operationRepositoryProvider = Provider<OperationRepository>((ref) {
-  final remote = OperationRepositoryRemote(operationApiClient: ref.read(operationApiClientProvider));
+  final remote = OperationRepositoryRemote(
+    operationApiClient: ref.read(operationApiClientProvider),
+  );
   final local = OperationRepositoryLocal();
 
   return OperationRepositoryImpl(remote: remote, local: local);

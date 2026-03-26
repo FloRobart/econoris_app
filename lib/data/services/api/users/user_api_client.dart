@@ -26,7 +26,7 @@ class UserApiClient {
     final response = await apiClient.request(
       HttpMethod.put,
       _baseUrl,
-      body: {'email': email,'pseudo': newPseudo},
+      body: {'email': email, 'pseudo': newPseudo},
     );
     return response.data['jwt'];
   }

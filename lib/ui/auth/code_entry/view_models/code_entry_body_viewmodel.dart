@@ -9,9 +9,7 @@ final codeEntryBodyViewModelProvider = Provider<CodeEntryBodyViewModel>((ref) {
 });
 
 class CodeEntryBodyViewModel {
-  CodeEntryBodyViewModel({
-    required this.codeEntryUseCase,
-  });
+  CodeEntryBodyViewModel({required this.codeEntryUseCase});
 
   final CodeEntryUseCase codeEntryUseCase;
 

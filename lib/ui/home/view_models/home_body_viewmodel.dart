@@ -11,8 +11,10 @@ class HomeBodyViewmodel {
   List<Operation>? _pastOperations;
 
   /* Getters */
-  List<Operation> get upComingOperations => _upComingOperations ??= buildUpComingOperations();
-  List<Operation> get pastOperations => _pastOperations ??= buildPastOperations();
+  List<Operation> get upComingOperations =>
+      _upComingOperations ??= buildUpComingOperations();
+  List<Operation> get pastOperations =>
+      _pastOperations ??= buildPastOperations();
 
   /* Builders */
   /// Retourne les opérations à venir, triées par date croissante.

@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 
 /// Écran d'accueil de l'application.
 class OperationCard extends StatelessWidget {
-  const OperationCard({super.key, required this.operation, required this.operationAction});
+  const OperationCard({
+    super.key,
+    required this.operation,
+    required this.operationAction,
+  });
 
   final Operation operation;
   final OperationAction operationAction;

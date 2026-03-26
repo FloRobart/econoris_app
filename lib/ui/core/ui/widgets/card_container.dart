@@ -16,18 +16,18 @@ class CardContainer extends StatelessWidget {
   final Color? color;
   final ShapeBorder? shape;
 
-
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: elevation,
       color: color,
-      shape: shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape:
+          shape ??
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
         padding: padding ?? const EdgeInsets.all(16.0),
         child: child,
       ),
     );
   }
-
 }

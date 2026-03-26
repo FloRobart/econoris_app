@@ -9,7 +9,7 @@ class OperationsList extends StatelessWidget {
   const OperationsList({
     super.key,
     required this.operations,
-    required this.operationAction
+    required this.operationAction,
   });
 
   final List<Operation> operations;

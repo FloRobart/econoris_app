@@ -16,9 +16,7 @@ class AmountTypeSwitchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedType = isExpense
-        ? AmountType.expense
-        : AmountType.income;
+    final selectedType = isExpense ? AmountType.expense : AmountType.income;
 
     return Row(
       children: [

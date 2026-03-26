@@ -14,7 +14,11 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
   );
   final local = UserRepositoryLocal();
 
-  return UserRepositoryImpl(remote: remote, local: local, authNotifier: ref.read(authNotifierProvider.notifier));
+  return UserRepositoryImpl(
+    remote: remote,
+    local: local,
+    authNotifier: ref.read(authNotifierProvider.notifier),
+  );
 });
 
 /// Repository interface for users data.

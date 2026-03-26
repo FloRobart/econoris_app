@@ -11,7 +11,9 @@ class OperationRepositoryRemote {
   /// Fetches a list of operations from the remote API.
   Future<List<OperationDto>> getOperations() async {
     final operationsDtoList = await operationApiClient.getOperations();
-    return operationsDtoList.map((operation) => OperationDto.fromJson(operation)).toList();
+    return operationsDtoList
+        .map((operation) => OperationDto.fromJson(operation))
+        .toList();
   }
 
   /// Adds a new operation to the remote API.
@@ -22,7 +24,10 @@ class OperationRepositoryRemote {
 
   /// Updates an existing operation in the remote API.
   Future<OperationDto> updateOperation(int id, OperationDto body) async {
-    final operation = await operationApiClient.updateOperation(id, body.toJson());
+    final operation = await operationApiClient.updateOperation(
+      id,
+      body.toJson(),
+    );
     return OperationDto.fromJson(operation);
   }
 

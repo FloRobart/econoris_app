@@ -3,7 +3,10 @@ import 'package:econoris_app/data/services/api/users/user_api_client.dart';
 import 'package:econoris_app/data/services/auth/auth_manager.dart';
 
 class UserRepositoryRemote {
-  UserRepositoryRemote({required this.userApiClient, required this.authManager});
+  UserRepositoryRemote({
+    required this.userApiClient,
+    required this.authManager,
+  });
 
   final UserApiClient userApiClient;
   final AuthManager authManager;

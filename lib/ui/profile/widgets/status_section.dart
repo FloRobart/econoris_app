@@ -42,10 +42,10 @@ class StatusSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            Text(
-              'Statut du compte',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+          Text(
+            'Statut du compte',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
 
           const SizedBox(height: 12),
 
@@ -54,7 +54,9 @@ class StatusSection extends StatelessWidget {
             children: [
               Icon(
                 Icons.link,
-                color: isConnected ? AppTheme.successColor : AppTheme.errorColor,
+                color: isConnected
+                    ? AppTheme.successColor
+                    : AppTheme.errorColor,
               ),
               const SizedBox(width: 8),
               Flexible(child: Text('${!isConnected ? 'Non ' : ''}Connecté')),
@@ -68,7 +70,9 @@ class StatusSection extends StatelessWidget {
             children: [
               Icon(
                 Icons.email,
-                color: isEmailVerified ? AppTheme.successColor : AppTheme.warningColor,
+                color: isEmailVerified
+                    ? AppTheme.successColor
+                    : AppTheme.warningColor,
               ),
               const SizedBox(width: 8),
               Flexible(

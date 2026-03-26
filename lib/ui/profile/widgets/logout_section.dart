@@ -6,7 +6,11 @@ class LogoutSection extends StatelessWidget {
   final VoidCallback onLogout;
   final VoidCallback onLogoutAll;
 
-  const LogoutSection({super.key, required this.onLogout, required this.onLogoutAll});
+  const LogoutSection({
+    super.key,
+    required this.onLogout,
+    required this.onLogoutAll,
+  });
 
   @override
   Widget build(BuildContext context) {

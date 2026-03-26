@@ -37,7 +37,10 @@ class OperationViewModel extends AsyncNotifier<List<Operation>> {
 
   /// Met a jour une operation cote serveur puis met a jour l'etat local.
   Future<void> editOperation(Operation operation) async {
-    final updatedOperation = await _useCase.updateOperation(operation.id, operation);
+    final updatedOperation = await _useCase.updateOperation(
+      operation.id,
+      operation,
+    );
     final currentOperations = switch (state) {
       AsyncData<List<Operation>>(:final value) => value,
       _ => <Operation>[],
