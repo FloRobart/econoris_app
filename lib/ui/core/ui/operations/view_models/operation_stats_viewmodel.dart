@@ -154,14 +154,14 @@ class FinancialDate {
     final windowStart = DateTime(
       now.year,
       now.month + monthOffset - 1,
-      now.day, // - Constantes.salaryDistanceThresholdDays
+      now.day,
     ).subtract(const Duration(days: Constantes.salaryWindowSafetyMarginDays));
 
     /// On définit la date de fin de la fenêtre de recherche. En réalité, on cherche la date de début du mois financier suivant à laquelle on soustrait un jour pour trouver la date de fin du mois financier actuel.
     final windowEnd = DateTime(
       now.year,
       now.month + monthOffset,
-      now.day, // + Constantes.salaryDistanceThresholdDays
+      now.day,
     ).add(const Duration(days: Constantes.salaryWindowSafetyMarginDays));
 
     /// On filtre les opérations pour ne garder que celles qui sont dans la fenêtre de recherche et qui sont positives (les salaires). Ensuite, on trie ces opérations par date pour trouver la plus récente.

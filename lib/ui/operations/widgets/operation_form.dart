@@ -2,9 +2,13 @@ import 'dart:async';
 
 import 'package:econoris_app/config/constantes.dart';
 import 'package:econoris_app/domain/models/operations/create/operation_create.dart';
-import 'package:econoris_app/ui/core/themes/theme.dart';
+import 'package:econoris_app/ui/core/ui/forms/amount_field.dart';
+import 'package:econoris_app/ui/core/ui/forms/amount_type_switch_field.dart';
+import 'package:econoris_app/ui/core/ui/forms/categories_field.dart';
+import 'package:econoris_app/ui/core/ui/forms/date_field.dart';
+import 'package:econoris_app/ui/core/ui/forms/label_field.dart';
+import 'package:econoris_app/ui/core/ui/forms/submit_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Formulaire de création d'une opération.
@@ -21,11 +25,7 @@ class OperationCreateForm extends StatefulWidget {
 
 /// State du formulaire de création d'une opération.
 class _OperationCreateFormState extends State<OperationCreateForm> {
-  static const _draftAmountKey = 'operation_create_draft_amount';
-  static const _draftLabelKey = 'operation_create_draft_label';
-  static const _draftDateKey = 'operation_create_draft_date';
-  static const _draftCategoryKey = 'operation_create_draft_category';
-  static const _draftIsExpenseKey = 'operation_create_draft_is_expense';
+  
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _amountController;
@@ -105,11 +105,11 @@ class _OperationCreateFormState extends State<OperationCreateForm> {
 
     _isRestoringDraft = true;
     final prefs = await SharedPreferences.getInstance();
-    final draftAmount = prefs.getString(_draftAmountKey);
-    final draftLabel = prefs.getString(_draftLabelKey);
-    final draftDateRaw = prefs.getString(_draftDateKey);
-    final draftCategory = prefs.getString(_draftCategoryKey);
-    final draftIsExpense = prefs.getBool(_draftIsExpenseKey);
+    final draftAmount = prefs.getString(Constantes.draftOperationAmountKey);
+    final draftLabel = prefs.getString(Constantes.draftOperationLabelKey);
+    final draftDateRaw = prefs.getString(Constantes.draftOperationDateKey);
+    final draftCategory = prefs.getString(Constantes.draftOperationCategoryKey);
+    final draftIsExpense = prefs.getBool(Constantes.draftOperationIsExpenseKey);
 
     _lastSavedAmount = draftAmount;
     _lastSavedLabel = draftLabel;
@@ -164,34 +164,34 @@ class _OperationCreateFormState extends State<OperationCreateForm> {
     final draftIsExpense = _isExpense;
 
     if (_lastSavedAmount != draftAmount) {
-      await prefs.setString(_draftAmountKey, draftAmount);
+      await prefs.setString(Constantes.draftOperationAmountKey, draftAmount);
       _lastSavedAmount = draftAmount;
     }
     if (_lastSavedLabel != draftLabel) {
-      await prefs.setString(_draftLabelKey, draftLabel);
+      await prefs.setString(Constantes.draftOperationLabelKey, draftLabel);
       _lastSavedLabel = draftLabel;
     }
     if (_lastSavedDate != draftDate) {
-      await prefs.setString(_draftDateKey, draftDate);
+      await prefs.setString(Constantes.draftOperationDateKey, draftDate);
       _lastSavedDate = draftDate;
     }
     if (_lastSavedCategory != draftCategory) {
-      await prefs.setString(_draftCategoryKey, draftCategory);
+      await prefs.setString(Constantes.draftOperationCategoryKey, draftCategory);
       _lastSavedCategory = draftCategory;
     }
     if (_lastSavedIsExpense != draftIsExpense) {
-      await prefs.setBool(_draftIsExpenseKey, draftIsExpense);
+      await prefs.setBool(Constantes.draftOperationIsExpenseKey, draftIsExpense);
       _lastSavedIsExpense = draftIsExpense;
     }
   }
 
   Future<void> _clearDraft() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_draftAmountKey);
-    await prefs.remove(_draftLabelKey);
-    await prefs.remove(_draftDateKey);
-    await prefs.remove(_draftCategoryKey);
-    await prefs.remove(_draftIsExpenseKey);
+    await prefs.remove(Constantes.draftOperationAmountKey);
+    await prefs.remove(Constantes.draftOperationLabelKey);
+    await prefs.remove(Constantes.draftOperationDateKey);
+    await prefs.remove(Constantes.draftOperationCategoryKey);
+    await prefs.remove(Constantes.draftOperationIsExpenseKey);
 
     _lastSavedAmount = null;
     _lastSavedLabel = null;
@@ -227,7 +227,7 @@ class _OperationCreateFormState extends State<OperationCreateForm> {
       return;
     }
 
-    final parsedAmount = _parseAmount(_amountController.text);
+    final parsedAmount = parseAmountForField(_amountController.text);
     if (parsedAmount == null) {
       return;
     }
@@ -261,7 +261,7 @@ class _OperationCreateFormState extends State<OperationCreateForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                OperationTypeSwitchField(
+                AmountTypeSwitchField(
                   isExpense: _isExpense,
                   onChanged: (value) {
                     setState(() {
@@ -271,11 +271,11 @@ class _OperationCreateFormState extends State<OperationCreateForm> {
                   },
                 ),
                 const SizedBox(height: 16),
-                AmountFormField(controller: _amountController),
+                AmountField(controller: _amountController),
                 const SizedBox(height: 16),
-                LabelFormField(controller: _labelController),
+                LabelField(controller: _labelController, hintText: 'Nom de l\'operation'),
                 const SizedBox(height: 16),
-                CategoriesHorizontalField(
+                CategoriesField(
                   categories: Constantes.operationCategories,
                   selectedCategory: _selectedCategory,
                   onCategorySelected: (value) {
@@ -286,9 +286,9 @@ class _OperationCreateFormState extends State<OperationCreateForm> {
                   },
                 ),
                 const SizedBox(height: 16),
-                DateFormField(selectedDate: _selectedDate, onTap: _pickDate),
+                DateField(selectedDate: _selectedDate, onTap: _pickDate),
                 const SizedBox(height: 20),
-                SubmitOperationButton(onPressed: _submit),
+                SubmitButton(onPressed: _submit),
               ],
             ),
           ),
@@ -296,278 +296,6 @@ class _OperationCreateFormState extends State<OperationCreateForm> {
       ),
     );
   }
-}
-
-class OperationTypeSwitchField extends StatelessWidget {
-  const OperationTypeSwitchField({
-    super.key,
-    required this.isExpense,
-    required this.onChanged,
-  });
-
-  final bool isExpense;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final selectedType = isExpense
-        ? OperationType.expense
-        : OperationType.income;
-
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            isExpense ? 'Depense' : 'Revenu',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: isExpense ? AppTheme.errorColor : AppTheme.successColor,
-            ),
-          ),
-        ),
-        SegmentedButton<OperationType>(
-          segments: const [
-            ButtonSegment<OperationType>(
-              value: OperationType.expense,
-              icon: Icon(Icons.arrow_downward_rounded),
-              label: Text('Depense'),
-            ),
-            ButtonSegment<OperationType>(
-              value: OperationType.income,
-              icon: Icon(Icons.arrow_upward_rounded),
-              label: Text('Revenu'),
-            ),
-          ],
-          selected: {selectedType},
-          style: SegmentedButton.styleFrom(
-            selectedForegroundColor: isExpense
-                ? AppTheme.errorColor
-                : AppTheme.successColor,
-          ),
-          showSelectedIcon: false,
-          onSelectionChanged: (selection) {
-            if (selection.isEmpty) {
-              return;
-            }
-
-            onChanged(selection.first == OperationType.expense);
-          },
-        ),
-      ],
-    );
-  }
-}
-
-enum OperationType { expense, income }
-
-class AmountFormField extends StatelessWidget {
-  const AmountFormField({super.key, required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      textInputAction: TextInputAction.next,
-      inputFormatters: const [AmountInputFormatter()],
-      decoration: const InputDecoration(
-        labelText: 'Montant',
-        hintText: 'Ex: 42.50',
-        border: OutlineInputBorder(),
-      ),
-      validator: (value) {
-        final trimmedValue = value?.trim() ?? '';
-        if (trimmedValue.isEmpty) {
-          return 'Le montant est obligatoire';
-        }
-
-        final parsedAmount = _parseAmount(trimmedValue);
-        if (parsedAmount == null) {
-          return 'Montant invalide';
-        }
-
-        if (parsedAmount <= 0) {
-          return 'Le montant doit etre superieur a 0';
-        }
-
-        return null;
-      },
-    );
-  }
-}
-
-class LabelFormField extends StatelessWidget {
-  const LabelFormField({super.key, required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      textInputAction: TextInputAction.next,
-      maxLength: 200,
-      decoration: const InputDecoration(
-        labelText: 'Nom',
-        hintText: 'Nom de l\'operation',
-        border: OutlineInputBorder(),
-      ),
-      validator: (value) {
-        final trimmedValue = value?.trim() ?? '';
-        if (trimmedValue.isEmpty) {
-          return 'Le nom est obligatoire';
-        }
-
-        return null;
-      },
-    );
-  }
-}
-
-class CategoriesHorizontalField extends StatelessWidget {
-  const CategoriesHorizontalField({
-    super.key,
-    required this.categories,
-    required this.selectedCategory,
-    required this.onCategorySelected,
-  });
-
-  final List<String> categories;
-  final String selectedCategory;
-  final ValueChanged<String> onCategorySelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return FormField<String>(
-      initialValue: selectedCategory,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'La categorie est obligatoire';
-        }
-
-        return null;
-      },
-      builder: (state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            labelText: 'Categorie',
-            border: const OutlineInputBorder(),
-            errorText: state.errorText,
-          ),
-          child: SizedBox(
-            height: 44,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  for (var index = 0; index < categories.length; index++) ...[
-                    if (index > 0) const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: Text(categories[index]),
-                      selected: categories[index] == selectedCategory,
-                      onSelected: (_) {
-                        onCategorySelected(categories[index]);
-                        state.didChange(categories[index]);
-                      },
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class DateFormField extends StatelessWidget {
-  const DateFormField({
-    super.key,
-    required this.selectedDate,
-    required this.onTap,
-  });
-
-  final DateTime selectedDate;
-  final Future<DateTime?> Function() onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return FormField<DateTime>(
-      initialValue: selectedDate,
-      validator: (value) {
-        if (value == null) {
-          return 'La date est obligatoire';
-        }
-
-        return null;
-      },
-      builder: (state) {
-        final dateText = MaterialLocalizations.of(
-          context,
-        ).formatCompactDate(selectedDate);
-
-        return InkWell(
-          onTap: () async {
-            final pickedDate = await onTap();
-            if (pickedDate != null) {
-              state.didChange(pickedDate);
-            }
-          },
-          borderRadius: BorderRadius.circular(4),
-          child: InputDecorator(
-            decoration: InputDecoration(
-              labelText: 'Date',
-              border: const OutlineInputBorder(),
-              suffixIcon: const Icon(Icons.calendar_today),
-              errorText: state.errorText,
-            ),
-            child: Text(dateText),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class SubmitOperationButton extends StatelessWidget {
-  const SubmitOperationButton({super.key, required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-      child: const Text('Valider'),
-    );
-  }
-}
-
-class AmountInputFormatter extends TextInputFormatter {
-  const AmountInputFormatter();
-
-  static final _validPattern = RegExp(r'^\d*([\.,]\d{0,2})?$');
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    if (newValue.text.isEmpty || _validPattern.hasMatch(newValue.text)) {
-      return newValue;
-    }
-
-    return oldValue;
-  }
-}
-
-double? _parseAmount(String rawAmount) {
-  final normalized = rawAmount.trim().replaceAll(',', '.');
-  return double.tryParse(normalized);
 }
 
 String _formatAmountWithoutSign(double amount) {
