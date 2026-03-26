@@ -1,6 +1,7 @@
 import 'package:econoris_app/domain/models/operations/create/operation_create.dart';
 import 'package:econoris_app/domain/models/operations/operation.dart';
 import 'package:econoris_app/domain/use_cases/operations/operation_usecase.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider d'etat asynchrone pour les operations de l'ecran d'accueil.
@@ -16,6 +17,12 @@ class OperationViewModel extends AsyncNotifier<List<Operation>> {
   @override
   Future<List<Operation>> build() async {
     _useCase = ref.read(operationUseCaseProvider);
+
+    final authStatus = ref.watch(authNotifierProvider);
+    if (authStatus != AuthStatus.authenticated) {
+      return <Operation>[];
+    }
+
     return _useCase.getOperations();
   }
 

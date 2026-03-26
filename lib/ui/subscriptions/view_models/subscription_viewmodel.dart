@@ -1,6 +1,7 @@
 import 'package:econoris_app/domain/models/subscriptions/create/subscription_create.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/domain/use_cases/subscriptions/subscription_usecase.dart';
+import 'package:econoris_app/data/services/auth/auth_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider d'etat asynchrone pour les Subscriptions.
@@ -16,6 +17,12 @@ class SubscriptionViewModel extends AsyncNotifier<List<Subscription>> {
   @override
   Future<List<Subscription>> build() async {
     _useCase = ref.read(subscriptionUseCaseProvider);
+
+    final authStatus = ref.watch(authNotifierProvider);
+    if (authStatus != AuthStatus.authenticated) {
+      return <Subscription>[];
+    }
+
     return _useCase.getSubscriptions();
   }
 

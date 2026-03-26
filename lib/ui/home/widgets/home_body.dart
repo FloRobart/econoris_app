@@ -85,7 +85,7 @@ class HomeBody extends ConsumerWidget {
               );
             },
             error: (error, stackTrace) =>
-                const Center(child: Text('Error loading operations')),
+                const Center(child: Text('Error de chargement des opérations, Rechargez la page')),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),
@@ -132,7 +132,7 @@ class HomeBody extends ConsumerWidget {
               );
             },
             error: (error, stackTrace) =>
-                const Center(child: Text('Error loading operations')),
+                const Center(child: Text('Error de chargement des opérations, Rechargez la page')),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),
