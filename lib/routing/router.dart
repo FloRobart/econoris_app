@@ -16,6 +16,9 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.home,
     debugLogDiagnostics: true,
+    onException: (context, state, router) {
+      router.go(AppRoutes.home);
+    },
 
     redirect: (context, state) {
       final isAuth = authStatus == AuthStatus.authenticated;
