@@ -1,3 +1,4 @@
+import 'package:econoris_app/domain/models/subscriptions/create/subscription_create.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/domain/use_cases/subscriptions/subscription_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,13 +26,34 @@ class SubscriptionViewModel extends AsyncNotifier<List<Subscription>> {
   }
 
   /// Cree une Subscription cote serveur puis met a jour l'etat local.
-  Future<void> addSubscription(Subscription body) async {
+  Future<void> addSubscription(SubscriptionCreate body) async {
     final createdSubscription = await _useCase.addSubscription(body);
     final currentSubscriptions = switch (state) {
       AsyncData<List<Subscription>>(:final value) => value,
       _ => <Subscription>[],
     };
     state = AsyncData([...currentSubscriptions, createdSubscription]);
+  }
+
+  /// Met a jour une subscription cote serveur puis met a jour l'etat local.
+  Future<void> editSubscription(Subscription subscription) async {
+    final updatedSubscription = await _useCase.updateSubscription(
+      subscription.id,
+      subscription,
+    );
+    final currentSubscriptions = switch (state) {
+      AsyncData<List<Subscription>>(:final value) => value,
+      _ => <Subscription>[],
+    };
+
+    state = AsyncData(
+      currentSubscriptions
+          .map(
+            (sub) =>
+                sub.id == updatedSubscription.id ? updatedSubscription : sub,
+          )
+          .toList(),
+    );
   }
 
   /// Supprime une Subscription cote serveur puis met a jour l'etat local.

@@ -32,7 +32,7 @@ class SubscriptionCard extends StatelessWidget {
         child: InkWell(
           onTap: () => subscriptionAction.showDetails(subscription),
           onLongPress: () =>
-              subscriptionAction.onDeleteSubscription(subscription.id),
+              subscriptionAction.onDeleteSubscription(subscription.id, 0),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

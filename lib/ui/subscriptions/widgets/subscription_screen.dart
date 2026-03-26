@@ -1,6 +1,8 @@
+import 'package:econoris_app/domain/models/subscriptions/create/subscription_create.dart';
 import 'package:econoris_app/ui/core/ui/widgets/base_app.dart';
 import 'package:econoris_app/ui/subscriptions/view_models/subscription_viewmodel.dart';
 import 'package:econoris_app/ui/subscriptions/widgets/subscription_body.dart';
+import 'package:econoris_app/ui/subscriptions/widgets/subscription_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +12,22 @@ class SubscriptionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void openSubscriptionCreateForm() async {
+      final SubscriptionCreate? subscriptionCreate =
+          await showModalBottomSheet<SubscriptionCreate>(
+            context: context,
+            isScrollControlled: true,
+            showDragHandle: true,
+            builder: (context) => const SubscriptionCreateForm(),
+          );
+
+      if (subscriptionCreate != null) {
+        await ref
+            .read(subscriptionViewModelProvider.notifier)
+            .addSubscription(subscriptionCreate);
+      }
+    }
+
     return BaseApp(
       onRefresh: () async {
         await ref.read(subscriptionViewModelProvider.notifier).refresh();
@@ -17,7 +35,7 @@ class SubscriptionScreen extends ConsumerWidget {
       body: SubscriptionBody(),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: openSubscriptionCreateForm,
         tooltip: 'Ajouter un abonnement',
         child: const Icon(Icons.add),
       ),

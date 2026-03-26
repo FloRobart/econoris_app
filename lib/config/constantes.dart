@@ -19,7 +19,16 @@ class Constantes {
   static const draftSubscriptionLabelKey = 'draft_subscription_label_key';
   static const draftSubscriptionDateKey = 'draft_subscription_date_key';
   static const draftSubscriptionCategoryKey = 'draft_subscription_category_key';
-  static const draftSubscriptionIsExpenseKey = 'draft_subscription_is_expense_key';
+  static const draftSubscriptionIsExpenseKey =
+      'draft_subscription_is_expense_key';
+
+  /* Récurrences disponibles pour les abonnements. */
+  static const List<String> subscriptionRecurrences = [
+    'mensuel',
+    'trimestriel',
+    'semestriel',
+    'annuel',
+  ];
 
   /* Liste des catégories d'opérations disponibles dans l'application. (Temporaire) */
   static const List<String> operationCategories = [

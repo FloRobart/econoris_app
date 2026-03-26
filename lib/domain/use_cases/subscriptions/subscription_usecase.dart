@@ -1,7 +1,7 @@
 import 'package:econoris_app/data/repositories/subscriptions/subscription_repository.dart';
+import 'package:econoris_app/domain/models/subscriptions/create/subscription_create.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 /// Fournit une instance de [SubscriptionUseCase].
 final subscriptionUseCaseProvider = Provider<SubscriptionUseCase>((ref) {
@@ -26,21 +26,21 @@ class SubscriptionUseCase {
   /*======*/
   /* POST */
   /*======*/
-  Future<Subscription> addSubscription(Subscription body) {
+  Future<Subscription> addSubscription(SubscriptionCreate body) {
     return repository.addSubscription(body);
   }
 
   /*=====*/
   /* PUT */
   /*=====*/
-  // Future<Subscription> updateSubscription(int id, Subscription body) {
-  //   return repository.updateSubscription(id, body);
-  // }
+  Future<Subscription> updateSubscription(int id, Subscription body) {
+    return repository.updateSubscription(id, body);
+  }
 
   /*========*/
   /* DELETE */
   /*========*/
-  Future<void> deleteSubscription(int id) {
+  Future<Subscription> deleteSubscription(int id) {
     return repository.deleteSubscription(id);
   }
 }

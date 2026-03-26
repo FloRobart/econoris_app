@@ -19,6 +19,7 @@ class SubscriptionBody extends ConsumerWidget {
 
     SubscriptionAction subscriptionAction = SubscriptionAction(
       ref.read(subscriptionViewModelProvider.notifier).deleteSubscription,
+      ref.read(subscriptionViewModelProvider.notifier).editSubscription,
       context,
     );
 

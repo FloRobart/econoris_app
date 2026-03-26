@@ -1,3 +1,4 @@
+import 'package:econoris_app/data/models/subscriptions/create/subscription_create_dto.dart';
 import 'package:econoris_app/data/models/subscriptions/subscription_dto.dart';
 import 'package:econoris_app/data/services/api/subscriptions/subscription_api_client.dart';
 
@@ -10,18 +11,28 @@ class SubscriptionRepositoryRemote {
   /// Fetches a list of subscriptions from the remote API.
   Future<List<SubscriptionDto>> getSubscriptions() async {
     final subscriptionsDtoList = await subscriptionApiClient.getSubscriptions();
-    return subscriptionsDtoList.map((subscription) => SubscriptionDto.fromJson(subscription)).toList();
+    return subscriptionsDtoList
+        .map((subscription) => SubscriptionDto.fromJson(subscription))
+        .toList();
   }
 
   /// Adds a new subscription to the remote API.
-  Future<SubscriptionDto> addSubscription(SubscriptionDto body) async {
-    final subscription = await subscriptionApiClient.addSubscription(body.toJson());
+  Future<SubscriptionDto> addSubscription(SubscriptionCreateDto body) async {
+    final subscription = await subscriptionApiClient.addSubscription(
+      body.toJson(),
+    );
     return SubscriptionDto.fromJson(subscription);
   }
 
   /// Updates an existing subscription in the remote API.
-  Future<SubscriptionDto> updateSubscription(int id, SubscriptionDto body) async {
-    final subscription = await subscriptionApiClient.updateSubscription(id, body.toJson());
+  Future<SubscriptionDto> updateSubscription(
+    int id,
+    SubscriptionDto body,
+  ) async {
+    final subscription = await subscriptionApiClient.updateSubscription(
+      id,
+      body.toJson(),
+    );
     return SubscriptionDto.fromJson(subscription);
   }
 

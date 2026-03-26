@@ -3,6 +3,8 @@ import 'package:econoris_app/data/models/subscriptions/subscription_dto_mapper.d
 import 'package:econoris_app/data/repositories/subscriptions/subscription_repository.dart';
 import 'package:econoris_app/data/repositories/subscriptions/subscription_repository_local.dart';
 import 'package:econoris_app/data/repositories/subscriptions/subscription_repository_remote.dart';
+import 'package:econoris_app/domain/models/subscriptions/create/subscription_create.dart';
+import 'package:econoris_app/domain/models/subscriptions/create/subscription_create_mapper.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription.dart';
 import 'package:econoris_app/domain/models/subscriptions/subscription_mapper.dart';
 
@@ -31,11 +33,11 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
   /// Adds a new subscription to the remote API.
   @override
-  Future<Subscription> addSubscription(Subscription body) async {
+  Future<Subscription> addSubscription(SubscriptionCreate body) async {
     try {
       final bodyDto = body.toDto();
       final subscriptionDto = await remote.addSubscription(bodyDto);
-      local.saveSubscriptions([subscriptionDto]);
+      local.addSubscription(subscriptionDto);
       return subscriptionDto.toDomain();
     } catch (e) {
       rethrow;
