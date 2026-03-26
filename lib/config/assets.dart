@@ -1,5 +1,5 @@
 class Assets {
-  static const webDotEnvPath = ['.env', 'config/.env.econoris_app'];
+  static const webDotEnvPath = '.env';
 
   static const logo_32 = 'assets/icons/icon-32.png';
   static const logo_192 = 'assets/icons/icon-192.png';

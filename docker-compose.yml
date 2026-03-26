@@ -5,7 +5,7 @@ services:
     restart: always
     volumes:
       - type: bind
-        source: ./.env
+        source: ./config/.env.econoris_app
         target: /usr/share/nginx/html/assets/.env
         read_only: true
         bind:
