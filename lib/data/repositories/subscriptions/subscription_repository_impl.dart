@@ -21,9 +21,10 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
     List<SubscriptionDto> subscriptionsDtoList = [];
     try {
       subscriptionsDtoList = await remote.getSubscriptions();
-      local.saveSubscriptions(subscriptionsDtoList);
+      // local.saveSubscriptions(subscriptionsDtoList);
     } catch (e) {
-      subscriptionsDtoList = await local.getSubscriptions();
+      // subscriptionsDtoList = await local.getSubscriptions();
+      rethrow;
     }
 
     return subscriptionsDtoList
@@ -37,7 +38,7 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
     try {
       final bodyDto = body.toDto();
       final subscriptionDto = await remote.addSubscription(bodyDto);
-      local.addSubscription(subscriptionDto);
+      // local.addSubscription(subscriptionDto);
       return subscriptionDto.toDomain();
     } catch (e) {
       rethrow;
@@ -47,17 +48,25 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
   /// Updates an existing subscription in the remote API.
   @override
   Future<Subscription> updateSubscription(int id, Subscription body) async {
-    final bodyDto = body.toDto();
-    final subscriptionDto = await remote.updateSubscription(id, bodyDto);
-    local.updateSubscription(id, subscriptionDto);
-    return subscriptionDto.toDomain();
+    try {
+      final bodyDto = body.toDto();
+      final subscriptionDto = await remote.updateSubscription(id, bodyDto);
+      // local.updateSubscription(id, subscriptionDto);
+      return subscriptionDto.toDomain();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Deletes an subscription from the remote API.
   @override
   Future<Subscription> deleteSubscription(int id) async {
-    final subscriptionDto = await remote.deleteSubscription(id);
-    local.deleteSubscription(id);
-    return subscriptionDto.toDomain();
+    try {
+      final subscriptionDto = await remote.deleteSubscription(id);
+      // local.deleteSubscription(id);
+      return subscriptionDto.toDomain();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

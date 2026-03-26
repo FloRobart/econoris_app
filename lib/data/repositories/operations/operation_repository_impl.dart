@@ -22,9 +22,10 @@ class OperationRepositoryImpl implements OperationRepository {
     List<OperationDto> operationsDtoList = [];
     try {
       operationsDtoList = await remote.getOperations();
-      local.saveOperations(operationsDtoList);
+      // local.saveOperations(operationsDtoList);
     } catch (_) {
-      operationsDtoList = await local.getOperations();
+      // operationsDtoList = await local.getOperations();
+      rethrow;
     }
 
     return operationsDtoList
@@ -39,7 +40,7 @@ class OperationRepositoryImpl implements OperationRepository {
     try {
       final operationCreateDto = body.toDto();
       final repOperationDto = await remote.addOperation(operationCreateDto);
-      local.addOperation(repOperationDto);
+      // local.addOperation(repOperationDto);
       return repOperationDto.toDomain();
     } catch (e) {
       rethrow;
@@ -49,17 +50,25 @@ class OperationRepositoryImpl implements OperationRepository {
   /// Updates an existing operation in the remote API.
   @override
   Future<Operation> updateOperation(int id, Operation body) async {
-    final operationDto = body.toDto();
-    final repOperationDto = await remote.updateOperation(id, operationDto);
-    local.updateOperation(id, repOperationDto);
-    return repOperationDto.toDomain();
+    try {
+      final operationDto = body.toDto();
+      final repOperationDto = await remote.updateOperation(id, operationDto);
+      // local.updateOperation(id, repOperationDto);
+      return repOperationDto.toDomain();
+    } catch (_) {
+      rethrow;
+    }
   }
 
   /// Deletes an operation from the remote API.
   @override
   Future<Operation> deleteOperation(int id) async {
-    final operationDto = await remote.deleteOperation(id);
-    local.deleteOperation(id);
-    return operationDto.toDomain();
+    try {
+      final operationDto = await remote.deleteOperation(id);
+      // local.deleteOperation(id);
+      return operationDto.toDomain();
+    } catch (_) {
+      rethrow;
+    }
   }
 }
