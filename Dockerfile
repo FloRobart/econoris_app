@@ -3,24 +3,31 @@ FROM dart:stable AS builder
 WORKDIR /app
 COPY . .
 
+# Suppression des fichiers inutiles pour le build
+RUN rm -rf .env .git .github .vscode .idea .dart_tool build
+
 # Installer Flutter SDK (branche stable) et précharger le SDK web
-RUN apt-get update && \
-    apt-get install -y git curl unzip xz-utils ca-certificates && \
-    git clone --branch stable --depth 1 https://github.com/flutter/flutter.git /flutter && \
-    chmod -R a+rX /flutter && \
-    /flutter/bin/flutter --version && \
-    /flutter/bin/flutter precache --web
+ENV CI=true \
+    FLUTTER_SUPPRESS_ANALYTICS=true \
+    PUB_ENVIRONMENT=docker
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl unzip xz-utils ca-certificates
+RUN git clone --branch stable --depth 1 https://github.com/flutter/flutter.git /flutter
+RUN chmod -R a+rX /flutter
+RUN /flutter/bin/flutter config --no-analytics
+RUN /flutter/bin/flutter --suppress-analytics --version
+RUN /flutter/bin/flutter --suppress-analytics precache --web
 
 # Activer Flutter Web et mettre le PATH
 ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
-RUN flutter config --enable-web
+RUN flutter --suppress-analytics config --enable-web
 
-# Tenter de mettre à jour automatiquement les dépendances majeures (peut résoudre des incompatibilités)
-RUN flutter pub upgrade --major-versions || true
-RUN flutter pub get --offline || flutter pub get
+# Installer les dépendances du projet de manière déterministe
+RUN flutter --suppress-analytics pub get
 
 # Build web
-RUN flutter build web --release
+RUN flutter --suppress-analytics build web --release
 
 # Étape 2 : Image finale avec NGINX
 FROM nginx:alpine

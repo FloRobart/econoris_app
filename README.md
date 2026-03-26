@@ -1,16 +1,35 @@
-# econoris_app
+# Econoris
 
-A new Flutter project.
+Econoris est une application mobile de gestion de budget personnel.
 
-## Getting Started
+## Configuration des environnements
 
-This project is a starting point for a Flutter application.
+L'application charge la configuration dans cet ordre de priorite:
 
-A few resources to get you started if this is your first Flutter project:
+1. Fichier `.env` optionnel servi au runtime chargé par `flutter_dotenv`
+2. Valeurs de compilation via `--dart-define`
+3. Valeurs de fallback dans le code
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Variables supportees:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- `APP_NAME`
+- `AUTH_URL`
+- `DATA_URL`
+- `LOCALIZATION`
+
+### Android (recommande): valeurs a la compilation
+
+Exemple:
+
+```bash
+flutter build apk --dart-define-from-file=.env
+```
+
+### Web: override au runtime via `.env`
+
+1. Copier `.env.example` vers `.env`
+2. Modifier les valeurs selon l'environnement cible
+3. Build/deployer l'app web normalement
+
+Le fichier `.env` est lu au demarrage (requete sur `/assets/.env`) et permet de
+changer les URLs sans recompiler le code Dart.

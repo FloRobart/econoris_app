@@ -1,24 +1,45 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
+
 import 'app.dart';
-import 'config.dart';
-import 'services/theme_manager.dart';
+import 'config/app_config.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Load environment variables from .env (falls back to defaults in Config)
-  await dotenv.load(fileName: '.env');
+void main() {
+  /// Keep binding initialization and runApp in the same zone.
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize immutable Config values from dotenv
-  Config.load();
+      /// Set system UI mode to manual to control status bar and navigation bar visibility
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+      );
 
-  await ThemeManager.instance.load();
-  // initialize notifier with loaded value
-  ThemeManager.instance.notifier.value = ThemeManager.instance.mode;
-  // Initialize intl locale data for formatting dates/numbers (French)
-  await initializeDateFormatting('fr_FR');
-  Intl.defaultLocale = 'fr_FR';
-  runApp(const EconorisApp());
+      /// Capture Flutter framework errors
+      FlutterError.onError = (details) {
+        FlutterError.presentError(details);
+        debugPrint('FlutterError caught: ${details.exceptionAsString()}');
+        if (details.stack != null) debugPrint(details.stack.toString());
+      };
+
+      // Initialize config from runtime + compile-time sources.
+      await AppConfig.load();
+
+      // Initialize intl locale data for formatting dates/numbers (French)
+      await initializeDateFormatting(AppConfig.localization);
+      Intl.defaultLocale = AppConfig.localization;
+
+      runApp(const ProviderScope(child: App()));
+    },
+    (error, stack) {
+      debugPrint('Uncaught zone error: $error');
+      debugPrint(stack.toString());
+    },
+  );
 }

@@ -1,115 +1,57 @@
+import 'package:econoris_app/routing/router.dart';
+import 'package:econoris_app/ui/core/themes/theme.dart';
+import 'package:econoris_app/ui/core/themes/theme_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'navigation/app_routes.dart';
-import 'pages/login_page.dart';
-import 'pages/code_entry_page.dart';
-import 'pages/home_page.dart';
-import 'pages/profile_page.dart';
-import 'pages/operations_page.dart';
-import 'pages/subscriptions_page.dart';
-import 'pages/placeholder_page.dart';
-import 'routes/root_router.dart';
-import 'config.dart';
+import 'config/app_config.dart';
 
-import 'services/theme_manager.dart';
+/// Racine de l'application.
+class App extends ConsumerWidget {
+  const App({super.key});
 
-class EconorisApp extends StatelessWidget {
-  const EconorisApp({super.key});
+  Locale _buildLocaleFromConfig(String localeConfig) {
+    final normalized = localeConfig.trim().replaceAll('-', '_');
+    final parts = normalized.split('_');
+    final languageCode = parts.isNotEmpty && parts.first.isNotEmpty
+        ? parts.first.toLowerCase()
+        : 'fr';
+    final countryCode = parts.length > 1 && parts[1].isNotEmpty
+        ? parts[1].toUpperCase()
+        : null;
+    return Locale(languageCode, countryCode);
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: ThemeManager.instance.notifier,
-      builder: (context, mode, _) {
-        return MaterialApp(
-          title: Config.appName,
-          theme: ThemeData.light().copyWith(
-      primaryColor: Colors.amber,
-      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber)
-        .copyWith(surface: Colors.white, primary: Colors.amber, onPrimary: Colors.white),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFBB80A),
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                elevation: 2,
-              ),
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
-              ),
-            ),
-            outlinedButtonTheme: OutlinedButtonThemeData(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.black,
-                side: const BorderSide(color: Color(0xFFFBB80A)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-              ),
-            ),
-            floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              backgroundColor: Color(0xFFFBB80A),
-              foregroundColor: Colors.black,
-            ),
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-      primaryColor: Colors.amber.shade700,
-      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber, brightness: Brightness.dark)
-        .copyWith(primary: Colors.amber.shade700, onPrimary: Colors.white),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFBB80A),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                elevation: 2,
-              ),
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-              ),
-            ),
-            outlinedButtonTheme: OutlinedButtonThemeData(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: Color(0xFFFBB80A)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-              ),
-            ),
-            floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              backgroundColor: Color(0xFFFBB80A),
-              foregroundColor: Colors.white,
-            ),
-          ),
-          themeMode: mode,
-          initialRoute: AppRoutes.root,
-          routes: {
-            AppRoutes.root: (ctx) => const RootRouter(),
-            AppRoutes.login: (ctx) {
-              final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
-              final error = args?['error'] as String?;
-              return LoginPage.login(initialError: error);
-            },
-            AppRoutes.home: (ctx) => const HomePage(),
-            AppRoutes.operations: (ctx) => const OperationsPage(),
-            AppRoutes.subscriptions: (ctx) => const SubscriptionsPage(),
-            AppRoutes.profile: (ctx) => const ProfilePage(),
-            AppRoutes.codeEntry: (ctx) {
-              final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
-              final email = args?['email'] as String?;
-              final name = args?['name'] as String?;
-              return CodeEntryPage(email: email, name: name);
-            },
-            AppRoutes.placeholder: (ctx) {
-              final args = ModalRoute.of(ctx)!.settings.arguments as Map<String, dynamic>?;
-              final title = args?['title'] as String? ?? 'Placeholder';
-              return PlaceholderPage(title: title);
-            },
-          },
-          debugShowCheckedModeBanner: false,
-        );
-      }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeModeAsync = ref.watch(themeControllerProvider);
+    final themeMode = themeModeAsync.value ?? ThemeMode.system;
+    final appLocale = _buildLocaleFromConfig(AppConfig.localization);
+
+    return MaterialApp.router(
+      /* Title */
+      title: AppConfig.appName,
+
+      /* Localization */
+      locale: appLocale,
+      supportedLocales: [appLocale],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
+      /* Theming */
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: themeMode,
+
+      /* Routing */
+      routerConfig: ref.watch(routerProvider),
+
+      /* Debug */
+      debugShowCheckedModeBanner: false,
     );
   }
 }
