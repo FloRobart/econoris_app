@@ -62,10 +62,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     void handleLoginResult(bool loginRequestSuccess) {
       if (!loginRequestSuccess) {
         displayLoginError('Échec de la connexion. Veuillez réessayer.');
+        return;
       }
 
-      if (!mounted) return;
-      context.go(AppRoutes.codeEntry);
+      if (context.mounted) {
+        context.go(AppRoutes.codeEntry);
+      }
     }
 
     /// Envoie la requête de connexion et gère le résultat.
