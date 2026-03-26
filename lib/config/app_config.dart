@@ -80,7 +80,9 @@ class AppConfig {
     final overrides = <String, String>{};
 
     try {
-      await dotenv.load(fileName: Assets.webDotEnvPath, isOptional: true);
+      for (final path in Assets.webDotEnvPath) {
+        await dotenv.load(fileName: path, isOptional: true);
+      }
       overrides.addAll(dotenv.env);
     } catch (e) {
       debugPrint('Erreur lors du chargement du fichier .env: $e');
