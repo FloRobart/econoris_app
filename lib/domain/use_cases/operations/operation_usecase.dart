@@ -34,9 +34,9 @@ class OperationUseCase {
   /*=====*/
   /* PUT */
   /*=====*/
-  // Future<Operation> updateOperation(int id, Operation body) {
-  //   return operationRepository.updateOperation(id, body);
-  // }
+  Future<Operation> updateOperation(int id, Operation body) {
+    return operationRepository.updateOperation(id, body);
+  }
 
   /*========*/
   /* DELETE */

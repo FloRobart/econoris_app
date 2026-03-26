@@ -9,5 +9,6 @@ abstract class OperationCreate with _$OperationCreate {
     required String label,
     required double amount,
     required String category,
+    @JsonKey(name: 'is_validate') @Default(false) bool isValidate,
   }) = _OperationCreate;
 }

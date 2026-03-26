@@ -8,6 +8,7 @@ extension OperationCreateDtoMapper on OperationCreateDto {
       label: label,
       amount: amount,
       category: category,
+      isValidate: isValidate,
     );
   }
 }

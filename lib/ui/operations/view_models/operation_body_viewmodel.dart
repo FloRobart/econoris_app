@@ -22,7 +22,7 @@ class OperationBodyViewmodel {
     final now = DateTime.now();
     final upcoming =
         _operations.where((op) => op.levyDate.isAfter(now)).toList()
-          ..sort((a, b) => a.levyDate.compareTo(b.levyDate));
+          ..sort((a, b) => b.levyDate.compareTo(a.levyDate));
     return upcoming.toList();
   }
 

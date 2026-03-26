@@ -10,6 +10,7 @@ abstract class OperationCreateDto with _$OperationCreateDto {
     required String label,
     required double amount,
     required String category,
+    @JsonKey(name: 'is_validate') @Default(true) bool isValidate,
   }) = _OperationCreateDto;
 
   factory OperationCreateDto.fromJson(Map<String, dynamic> json) =>

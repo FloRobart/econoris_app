@@ -22,6 +22,7 @@ class HomeBody extends ConsumerWidget {
 
     OperationAction operationAction = OperationAction(
       ref.read(operationViewModelProvider.notifier).deleteOperation,
+      ref.read(operationViewModelProvider.notifier).editOperation,
       context,
     );
 

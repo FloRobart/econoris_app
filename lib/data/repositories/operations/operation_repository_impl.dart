@@ -39,7 +39,7 @@ class OperationRepositoryImpl implements OperationRepository {
     try {
       final operationCreateDto = body.toDto();
       final repOperationDto = await remote.addOperation(operationCreateDto);
-      local.saveOperations([repOperationDto]);
+      local.addOperation(repOperationDto);
       return repOperationDto.toDomain();
     } catch (e) {
       rethrow;

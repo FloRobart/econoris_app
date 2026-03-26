@@ -8,6 +8,7 @@ extension OperationCreateMapper on OperationCreate {
       label: label,
       amount: amount,
       category: category,
+      isValidate: isValidate,
     );
   }
 }

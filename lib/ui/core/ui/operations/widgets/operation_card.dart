@@ -23,7 +23,7 @@ class OperationCard extends StatelessWidget {
       child: Card(
         child: InkWell(
           onTap: () => operationAction.showDetails(operation),
-          onLongPress: () => operationAction.onDeleteOperation(operation.id),
+          onLongPress: () => operationAction.onDeleteOperation(operation.id, 0),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

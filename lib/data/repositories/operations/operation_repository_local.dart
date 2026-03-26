@@ -17,7 +17,9 @@ class OperationRepositoryLocal {
     }
 
     final operationsList = (jsonDecode(operationsJson) as List<dynamic>);
-    return operationsList.map((operationJson) => OperationDto.fromJson(operationJson)).toList();
+    return operationsList
+        .map((operationJson) => OperationDto.fromJson(operationJson))
+        .toList();
   }
 
   /// Adds a new operation to the local storage.
@@ -34,33 +36,41 @@ class OperationRepositoryLocal {
   }
 
   /// Updates an existing operation in the local storage.
-  Future<OperationDto> updateOperation(int id, OperationDto body) async {
-    final operationsList = await getOperations();
+  Future<OperationDto?> updateOperation(int id, OperationDto body) async {
+    try {
+      final operationsList = await getOperations();
 
-    /* Remove the old operation from the list and add the updated one */
-    operationsList.removeWhere((operation) => operation.id == id);
-    operationsList.add(body);
+      /* Remove the old operation from the list and add the updated one */
+      operationsList.removeWhere((operation) => operation.id == id);
+      operationsList.add(body);
 
-    /* Save the updated list back to local storage */
-    await saveOperations(operationsList);
+      /* Save the updated list back to local storage */
+      await saveOperations(operationsList);
 
-    return body;
+      return body;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Deletes an operation from the local storage.
-  Future<OperationDto> deleteOperation(int id) async {
-    final operationsList = await getOperations();
+  Future<OperationDto?> deleteOperation(int id) async {
+    try {
+      final operationsList = await getOperations();
 
-    /* Find the operation to delete before removing it from the list */
-    final operationToDelete = operationsList.firstWhere(
-      (operation) => operation.id == id,
-    );
-    operationsList.removeWhere((operation) => operation.id == id);
+      /* Find the operation to delete before removing it from the list */
+      final operationToDelete = operationsList.firstWhere(
+        (operation) => operation.id == id,
+      );
+      operationsList.removeWhere((operation) => operation.id == id);
 
-    /* Save the updated list back to local storage */
-    await saveOperations(operationsList);
+      /* Save the updated list back to local storage */
+      await saveOperations(operationsList);
 
-    return operationToDelete;
+      return operationToDelete;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Saves the list of operations to local storage.

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OperationCreateDto {
 
-@JsonKey(name: 'levy_date') String get levyDate; String get label; double get amount; String get category;
+@JsonKey(name: 'levy_date') String get levyDate; String get label; double get amount; String get category;@JsonKey(name: 'is_validate') bool get isValidate;
 /// Create a copy of OperationCreateDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $OperationCreateDtoCopyWith<OperationCreateDto> get copyWith => _$OperationCreat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OperationCreateDto&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OperationCreateDto&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.isValidate, isValidate) || other.isValidate == isValidate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,levyDate,label,amount,category);
+int get hashCode => Object.hash(runtimeType,levyDate,label,amount,category,isValidate);
 
 @override
 String toString() {
-  return 'OperationCreateDto(levyDate: $levyDate, label: $label, amount: $amount, category: $category)';
+  return 'OperationCreateDto(levyDate: $levyDate, label: $label, amount: $amount, category: $category, isValidate: $isValidate)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $OperationCreateDtoCopyWith<$Res>  {
   factory $OperationCreateDtoCopyWith(OperationCreateDto value, $Res Function(OperationCreateDto) _then) = _$OperationCreateDtoCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category
+@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category,@JsonKey(name: 'is_validate') bool isValidate
 });
 
 
@@ -65,13 +65,14 @@ class _$OperationCreateDtoCopyWithImpl<$Res>
 
 /// Create a copy of OperationCreateDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,Object? isValidate = null,}) {
   return _then(_self.copyWith(
 levyDate: null == levyDate ? _self.levyDate : levyDate // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,
+as String,isValidate: null == isValidate ? _self.isValidate : isValidate // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -156,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category, @JsonKey(name: 'is_validate')  bool isValidate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OperationCreateDto() when $default != null:
-return $default(_that.levyDate,_that.label,_that.amount,_that.category);case _:
+return $default(_that.levyDate,_that.label,_that.amount,_that.category,_that.isValidate);case _:
   return orElse();
 
 }
@@ -177,10 +178,10 @@ return $default(_that.levyDate,_that.label,_that.amount,_that.category);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category, @JsonKey(name: 'is_validate')  bool isValidate)  $default,) {final _that = this;
 switch (_that) {
 case _OperationCreateDto():
-return $default(_that.levyDate,_that.label,_that.amount,_that.category);case _:
+return $default(_that.levyDate,_that.label,_that.amount,_that.category,_that.isValidate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +198,10 @@ return $default(_that.levyDate,_that.label,_that.amount,_that.category);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'levy_date')  String levyDate,  String label,  double amount,  String category, @JsonKey(name: 'is_validate')  bool isValidate)?  $default,) {final _that = this;
 switch (_that) {
 case _OperationCreateDto() when $default != null:
-return $default(_that.levyDate,_that.label,_that.amount,_that.category);case _:
+return $default(_that.levyDate,_that.label,_that.amount,_that.category,_that.isValidate);case _:
   return null;
 
 }
@@ -212,13 +213,14 @@ return $default(_that.levyDate,_that.label,_that.amount,_that.category);case _:
 @JsonSerializable()
 
 class _OperationCreateDto implements OperationCreateDto {
-  const _OperationCreateDto({@JsonKey(name: 'levy_date') required this.levyDate, required this.label, required this.amount, required this.category});
+  const _OperationCreateDto({@JsonKey(name: 'levy_date') required this.levyDate, required this.label, required this.amount, required this.category, @JsonKey(name: 'is_validate') this.isValidate = true});
   factory _OperationCreateDto.fromJson(Map<String, dynamic> json) => _$OperationCreateDtoFromJson(json);
 
 @override@JsonKey(name: 'levy_date') final  String levyDate;
 @override final  String label;
 @override final  double amount;
 @override final  String category;
+@override@JsonKey(name: 'is_validate') final  bool isValidate;
 
 /// Create a copy of OperationCreateDto
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OperationCreateDto&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OperationCreateDto&&(identical(other.levyDate, levyDate) || other.levyDate == levyDate)&&(identical(other.label, label) || other.label == label)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.category, category) || other.category == category)&&(identical(other.isValidate, isValidate) || other.isValidate == isValidate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,levyDate,label,amount,category);
+int get hashCode => Object.hash(runtimeType,levyDate,label,amount,category,isValidate);
 
 @override
 String toString() {
-  return 'OperationCreateDto(levyDate: $levyDate, label: $label, amount: $amount, category: $category)';
+  return 'OperationCreateDto(levyDate: $levyDate, label: $label, amount: $amount, category: $category, isValidate: $isValidate)';
 }
 
 
@@ -253,7 +255,7 @@ abstract mixin class _$OperationCreateDtoCopyWith<$Res> implements $OperationCre
   factory _$OperationCreateDtoCopyWith(_OperationCreateDto value, $Res Function(_OperationCreateDto) _then) = __$OperationCreateDtoCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category
+@JsonKey(name: 'levy_date') String levyDate, String label, double amount, String category,@JsonKey(name: 'is_validate') bool isValidate
 });
 
 
@@ -270,13 +272,14 @@ class __$OperationCreateDtoCopyWithImpl<$Res>
 
 /// Create a copy of OperationCreateDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? levyDate = null,Object? label = null,Object? amount = null,Object? category = null,Object? isValidate = null,}) {
   return _then(_OperationCreateDto(
 levyDate: null == levyDate ? _self.levyDate : levyDate // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,
+as String,isValidate: null == isValidate ? _self.isValidate : isValidate // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
