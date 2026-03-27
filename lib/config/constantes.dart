@@ -52,7 +52,7 @@ class Constantes {
     'Sports',
     'Cinémas et culture',
     'Bars',
-    'Loisirs'
+    'Loisirs',
     'Esthétique',
     'Multimédia',
     'Vacances',
