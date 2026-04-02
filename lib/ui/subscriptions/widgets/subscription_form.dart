@@ -154,7 +154,7 @@ class _SubscriptionCreateFormState extends State<SubscriptionCreateForm> {
                     const SizedBox(height: 16),
 
                     DropdownButtonFormField<String>(
-                      value: _viewModel.selectedRecurrence,
+                      initialValue: _viewModel.selectedRecurrence,
                       decoration: const InputDecoration(
                         labelText: 'Récurrence',
                         border: OutlineInputBorder(),

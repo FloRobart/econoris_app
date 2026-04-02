@@ -17,8 +17,15 @@ class CategoriesField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormField<String>(
-      initialValue: selectedCategory,
+    final sortedCategories = [...categories]..sort((a, b) => a.compareTo(b));
+    final dropdownValue = sortedCategories.contains(selectedCategory)
+        ? selectedCategory
+        : null;
+
+    return DropdownButtonFormField<String>(
+      initialValue: dropdownValue,
+      isExpanded: true,
+      menuMaxHeight: kMinInteractiveDimension * 5,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'La categorie est obligatoire';
@@ -26,36 +33,23 @@ class CategoriesField extends StatelessWidget {
 
         return null;
       },
-      builder: (state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            labelText: 'Categorie',
-            border: const OutlineInputBorder(),
-            errorText: state.errorText,
-          ),
-          child: SizedBox(
-            height: 44,
-            child: SingleChildScrollView(
-              scrollDirection: direction,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  for (var index = 0; index < categories.length; index++) ...[
-                    if (index > 0) const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: Text(categories[index]),
-                      selected: categories[index] == selectedCategory,
-                      onSelected: (_) {
-                        onCategorySelected(categories[index]);
-                        state.didChange(categories[index]);
-                      },
-                    ),
-                  ],
-                ],
-              ),
+      decoration: const InputDecoration(
+        labelText: 'Categorie',
+        border: OutlineInputBorder(),
+      ),
+      hint: const Text('Selectionner une categorie'),
+      items: sortedCategories
+          .map(
+            (category) => DropdownMenuItem<String>(
+              value: category,
+              child: Text(category),
             ),
-          ),
-        );
+          )
+          .toList(),
+      onChanged: (value) {
+        if (value != null) {
+          onCategorySelected(value);
+        }
       },
     );
   }
