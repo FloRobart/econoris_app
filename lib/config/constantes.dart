@@ -42,11 +42,12 @@ class Constantes {
 
     /* Investissements et revenus */
     'Salaire',
-    'Epargne',
     'Aides et subventions',
-    'Cryptomonnaies',
     'Remboursements',
+    'Epargne',
+    'Bourse et actions',
     'Dividendes',
+    'Cryptomonnaies',
 
     /* Loisirs et vacances */
     'Sports',
