@@ -43,7 +43,7 @@ class Constantes {
     /* Investissements et revenus */
     'Salaire',
     'Epargne',
-    'Bourses',
+    'Aides et subventions',
     'Cryptomonnaies',
     'Remboursements',
     'Dividendes',
