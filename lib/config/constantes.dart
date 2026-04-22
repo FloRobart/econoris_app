@@ -30,6 +30,16 @@ class Constantes {
     'annuel',
   ];
 
+  static const List<String> unavailableMoneyManagementCategories = [
+    'Salaire',
+    'Aides et subventions',
+    'Remboursements',
+    'Epargne',
+    'Bourse et actions',
+    'Dividendes',
+    'Cryptomonnaies',
+  ];
+
   /* Liste des catégories d'opérations disponibles dans l'application. (Temporaire) */
   static const List<String> operationCategories = [
     /* Achats et shopping */
