@@ -19,7 +19,7 @@ class OperationManagementIndex extends StatelessWidget {
             'Comment fonctionne l\'indice de gestion d\'argent ?',
           ),
           content: const Text(
-            'L\'indice de gestion d\'argent est une mesure qui évalue la performance de votre gestion financière.\n\nGlobalement, plus l\'indice est élevé, meilleure est votre gestion de l\'argent.\n\nSi votre indice est à 100 alors vous dépensez exactement ce que vous gagnez, si il est à 50 alors vous dépensez deux fois plus que ce que vous gagnez, et si il est à 200 alors vous gagnez deux fois plus que ce que vous dépensez.\n\nAttention pour le moment l\'indice ne prend pas en compte l\'épargne, ni les investissements, se qui peux faire baisser votre indice alors que votre situation financière s\'améliore. C\'est une fonctionnalité que nous prévoyons d\'ajouter dans le futur.',
+            'L\'indice de gestion d\'argent est une mesure qui évalue la performance de votre gestion financière.\n\nGlobalement, plus l\'indice est élevé, meilleure est votre gestion de l\'argent.\n\nSi votre indice est à 100 alors vous dépensez exactement ce que vous gagnez, si il est à 50 alors vous dépensez deux fois plus que ce que vous gagnez, et si il est à 200 alors vous gagnez deux fois plus que ce que vous dépensez.',
           ),
           actions: [
             TextButton(

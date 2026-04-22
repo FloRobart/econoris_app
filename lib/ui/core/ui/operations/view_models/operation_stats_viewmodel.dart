@@ -76,6 +76,7 @@ class OperationStatsViewModel {
     int negativeOperationsCount = 0;
     double negativeOperationsAmount = 0;
 
+    double moneyManagementAvailableDepense = 0; 
     double moneyManagementIndex = 0;
 
     for (final operation in operations) {
@@ -93,13 +94,17 @@ class OperationStatsViewModel {
       } else {
         negativeOperationsAmount += operation.amount;
         negativeOperationsCount++;
+
+        if (!Constantes.unavailableMoneyManagementCategories.contains(operation.category)) {
+          moneyManagementAvailableDepense += operation.amount;
+        }
       }
     }
 
     moneyManagementIndex =
         positiveOperationsAmount /
-        (negativeOperationsAmount.abs() != 0
-            ? negativeOperationsAmount.abs()
+        (moneyManagementAvailableDepense.abs() != 0
+            ? moneyManagementAvailableDepense.abs()
             : 1);
 
     double possibleExpenses =
