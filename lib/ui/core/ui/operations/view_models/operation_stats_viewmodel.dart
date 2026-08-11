@@ -169,14 +169,15 @@ class FinancialDate {
       now.day,
     ).add(const Duration(days: Constantes.salaryWindowSafetyMarginDays));
 
-    /// On filtre les opérations pour ne garder que celles qui sont dans la fenêtre de recherche et qui sont positives (les salaires). Ensuite, on trie ces opérations par date pour trouver la plus récente.
+    /// On filtre les opérations pour ne garder que celles qui sont dans la fenêtre de recherche, qui sont positives et de catégorie "Salaire". Ensuite, on trie ces opérations par date pour trouver la plus récente.
     final positiveOperationsInWindow =
         operations
             .where(
               (operation) =>
                   operation.amount > 0 &&
                   operation.levyDate.isAfter(windowStart) &&
-                  operation.levyDate.isBefore(windowEnd),
+                  operation.levyDate.isBefore(windowEnd) &&
+                  operation.category == "Salaire",
             )
             .toList()
           ..sort((a, b) => a.levyDate.compareTo(b.levyDate));

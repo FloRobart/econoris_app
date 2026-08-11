@@ -52,7 +52,9 @@ class Constantes {
 
     /* Investissements et revenus */
     'Salaire',
+    'Primes et bonus',
     'Aides et subventions',
+    'Indemnités',
     'Remboursements',
     'Epargne',
     'Bourse et actions',
@@ -108,5 +110,8 @@ class Constantes {
     'Dépenses professionnelles',
     'Formations',
     'Matériel scolaire',
+
+    /* Autres catégories */
+    'Autre',
   ];
 }
