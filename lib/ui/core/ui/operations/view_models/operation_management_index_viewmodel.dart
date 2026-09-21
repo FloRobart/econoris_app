@@ -25,5 +25,5 @@ class OperationManagementIndexViewmodel {
   final double moneyManagementIndex;
 
   /// Calcule le pourcentage de l'indice de gestion d'argent pour l'affichage.
-  double get moneyManagementIndexPercentage => moneyManagementIndex * 100;
+  double get moneyManagementIndexPercentage => (moneyManagementIndex * 100) - 100;
 }
