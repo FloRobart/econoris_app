@@ -1,4 +1,4 @@
-package com.example.econoris_app
+package fr.econoris.app
 
 import io.flutter.embedding.android.FlutterActivity
 
