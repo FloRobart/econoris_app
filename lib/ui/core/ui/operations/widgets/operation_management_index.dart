@@ -113,17 +113,13 @@ class _MoneyManagementIndexValue extends ConsumerWidget {
                     .value
                     ?.toStringAsFixed(0) ??
                 '0',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: indexColor,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.headlineMedium
+                ?.copyWith(color: indexColor, fontWeight: FontWeight.bold),
           ),
           TextSpan(
             text: ' $indexText',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: indexColor,
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: indexColor, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -207,18 +203,16 @@ class _MoneyManagementIndexDate extends ConsumerWidget {
           TextSpan(
             text: startMonthDate,
             style:
-                Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold) ??
+                Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold) ??
                 TextStyle(fontWeight: FontWeight.bold),
           ),
           const TextSpan(text: ' au '),
           TextSpan(
             text: endMonthDate,
             style:
-                Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold) ??
+                Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold) ??
                 TextStyle(fontWeight: FontWeight.bold),
           ),
         ],

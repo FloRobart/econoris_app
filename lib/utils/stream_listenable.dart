@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 /// Simple adapter to convert a [Stream<T>] into a [Listenable] (via

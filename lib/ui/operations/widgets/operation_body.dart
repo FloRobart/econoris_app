@@ -94,8 +94,11 @@ class OperationBody extends ConsumerWidget {
                 operationAction: operationAction,
               );
             },
-            error: (error, stackTrace) =>
-                const Center(child: Text('Error de chargement des opérations, Rechargez la page')),
+            error: (error, stackTrace) => const Center(
+              child: Text(
+                'Error de chargement des opérations, Rechargez la page',
+              ),
+            ),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),
@@ -142,8 +145,11 @@ class OperationBody extends ConsumerWidget {
                 operationAction: operationAction,
               );
             },
-            error: (error, stackTrace) =>
-                const Center(child: Text('Error de chargement des opérations, Rechargez la page')),
+            error: (error, stackTrace) => const Center(
+              child: Text(
+                'Error de chargement des opérations, Rechargez la page',
+              ),
+            ),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),

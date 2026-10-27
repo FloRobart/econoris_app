@@ -132,9 +132,8 @@ class SubscriptionAction {
       await editSubscription(updatedSubscription);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Abonnement modifié.')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Abonnement modifié.')));
       }
     } catch (_) {
       if (context.mounted) {
