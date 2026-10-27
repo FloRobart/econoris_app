@@ -75,8 +75,11 @@ class SubscriptionBody extends ConsumerWidget {
                 subscriptionAction: subscriptionAction,
               );
             },
-            error: (error, stackTrace) =>
-                const Center(child: Text('Error de chargement des abonnements, Rechargez la page')),
+            error: (error, stackTrace) => const Center(
+              child: Text(
+                'Error de chargement des abonnements, Rechargez la page',
+              ),
+            ),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),

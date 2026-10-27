@@ -40,9 +40,9 @@ class MonthChangeCard extends ConsumerWidget {
                           state.currentMonth,
                           customFormat: 'MMMM yyyy',
                         )?.toUpperCase() ??
-                        DateFormat(
-                          'MMMM yyyy',
-                        ).format(DateTime.now()).toUpperCase(),
+                        DateFormat('MMMM yyyy')
+                            .format(DateTime.now())
+                            .toUpperCase(),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),

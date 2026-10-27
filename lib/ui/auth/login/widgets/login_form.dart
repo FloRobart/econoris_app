@@ -34,9 +34,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         return;
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(errorMessage)));
     });
   }
 
@@ -53,9 +52,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     /* Affichage d'une erreur */
     void displayLoginError(String errorMessage) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(errorMessage)));
     }
 
     /* Resultat de la tentative de connexion */

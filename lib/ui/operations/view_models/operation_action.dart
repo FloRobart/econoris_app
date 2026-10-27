@@ -122,9 +122,8 @@ class OperationAction {
       await editOperation(updatedOperation);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Opération modifiée.')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Opération modifiée.')));
       }
     } catch (_) {
       if (context.mounted) {

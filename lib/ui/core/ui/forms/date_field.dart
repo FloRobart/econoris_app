@@ -19,9 +19,8 @@ class DateField extends StatelessWidget {
         return null;
       },
       builder: (state) {
-        final dateText = MaterialLocalizations.of(
-          context,
-        ).formatCompactDate(selectedDate);
+        final dateText = MaterialLocalizations.of(context)
+            .formatCompactDate(selectedDate);
 
         return InkWell(
           onTap: () async {

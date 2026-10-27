@@ -76,7 +76,7 @@ class OperationStatsViewModel {
     int negativeOperationsCount = 0;
     double negativeOperationsAmount = 0;
 
-    double moneyManagementAvailableDepense = 0; 
+    double moneyManagementAvailableDepense = 0;
     double moneyManagementIndex = 0;
 
     for (final operation in operations) {
@@ -95,7 +95,9 @@ class OperationStatsViewModel {
         negativeOperationsAmount += operation.amount;
         negativeOperationsCount++;
 
-        if (!Constantes.unavailableMoneyManagementCategories.contains(operation.category)) {
+        if (!Constantes.unavailableMoneyManagementCategories.contains(
+          operation.category,
+        )) {
           moneyManagementAvailableDepense += operation.amount;
         }
       }
